@@ -1,3 +1,4 @@
+package entendendo_vetores_e_matrizes;
 // Import necessário para usar JOptionPane (caixas de diálogo gráficas)
 import javax.swing.JOptionPane;
 
