@@ -71,6 +71,14 @@ resource "google_sql_database_instance" "rh" { # declara um recurso: uma instân
 # ele faz autofailover pra réplica — o "desvio de caminho" da rede confiável.
 ```
 
+**Verificação com Bash** — consultar o estado da instância criada:
+
+```bash
+gcloud sql instances describe rh-db  # consulta no GCP a configuração e o estado atual da instância de banco
+```
+
+O Terraform declara a redundância; o comando Bash ajuda a verificar o que foi realmente provisionado no ambiente.
+
 ---
 
 ## 2. Conexão com a Internet: ISPs e meios de acesso
@@ -140,6 +148,45 @@ sudo ip link set enp0s31f6 up                   # liga a interface Ethernet do P
 # Execute esta linha no PC A depois de configurar os dois lados.
 ping 192.168.50.2                               # envia pacotes ICMP ao PC B para confirmar que o enlace e os IPs funcionam
 ```
+
+---
+
+### 2.6 Intranet, Internet e Extranet
+
+Uma **intranet** é o conjunto privado de LANs e enlaces WAN pertencentes a uma organização. Ela usa tecnologias semelhantes às da Internet, como TCP/IP, mas o acesso é restrito à empresa e aos usuários autorizados. A aula 01 define a intranet como uma conexão privada de LANs e WANs que pertence a uma organização (`01-introducao-as-redes.md:102`).
+
+| Termo | Escopo | Quem pode acessar | Exemplo em engenharia de dados |
+|-------|--------|-------------------|----------------------------|
+| **Internet** | Rede mundial pública de redes | Usuários conforme os controles de cada serviço | Acessar a documentação pública de um provedor cloud |
+| **Intranet** | LANs e WANs privadas da organização | Funcionários e sistemas autorizados | Airflow, warehouse e APIs internas de RH |
+| **Extranet** | Parte controlada da rede privada exposta a externos | Parceiros/clientes autorizados | Provedor de benefícios acessando uma API específica |
+
+**Exemplo com código (Terraform)** — representar uma rede privada interna:
+
+```hcl
+resource "google_compute_network" "intranet_rh" { # cria uma rede virtual privada para os sistemas internos de RH
+  name                    = "intranet-rh" # define o nome usado para identificar a rede privada
+  auto_create_subnetworks = false # impede a criação automática de sub-redes para manter o desenho sob controle
+}
+
+resource "google_compute_subnetwork" "dados" { # cria uma sub-rede privada para os componentes de dados
+  name          = "subnet-dados-rh" # dá um nome à sub-rede usada pelos serviços de dados
+  ip_cidr_range = "10.30.0.0/24" # reserva endereços privados para os recursos dessa sub-rede
+  region        = "us-central1" # coloca a sub-rede em uma região específica
+  network       = google_compute_network.intranet_rh.id # conecta a sub-rede à intranet criada acima
+}
+```
+
+Esse código representa a infraestrutura privada, mas uma intranet completa também depende de conexões entre redes, controles de acesso, DNS interno, VPN ou Interconnect e regras de firewall.
+
+**Verificação com Bash** — testar o caminho até um serviço interno:
+
+```bash
+ip route get 10.30.0.10  # mostra qual interface e qual rota o sistema usaria para alcançar um endereço privado
+nc -vz 10.30.0.10 5432  # testa se a porta 5432 do banco está acessível a partir desta máquina
+```
+
+O Terraform cria a rede privada; os comandos Bash ajudam a investigar se um worker realmente consegue chegar ao serviço.
 
 ---
 
@@ -259,10 +306,19 @@ resource "google_compute_route" "to_dc" {          # cria outra rota específica
   name             = "rota-datacenter-rh"          # nome dessa rota: "rota-datacenter-rh"
   network          = google_compute_network.rh.name # mesma rede da anterior (vpc-rh)
   dest_range       = "10.20.0.0/16"                # só para a rede interna do datacenter de RH (10.20.x.x)
-  next_hop_vpn_tunnel = google_compute_vpn_tunnel.rh.id # manda por um túnel VPN (caminho privado e seguro) p/ o datacenter
+  next_hop_ip = "10.30.0.1"                         # manda para o IP do appliance/roteador VPN que encaminha ao datacenter
 }
 # Resumo: roteamento = "qual caminho cada pacote segue" — a camada de rede decide isso
 ```
+
+**Verificação com Bash** — consultar a rota escolhida pelo host:
+
+```bash
+ip route get 10.20.0.15  # mostra a interface, o próximo salto e a rota usada para chegar ao datacenter de RH
+traceroute 10.20.0.15  # lista os saltos percorridos até o destino, quando a rede permite essa descoberta
+```
+
+O Terraform descreve a rota desejada na infraestrutura cloud; o Bash mostra o caminho que o sistema está usando de fato a partir daquele host.
 
 ---
 
@@ -462,6 +518,15 @@ sequenceDiagram
 
 Na **ida**, cada camada "embrulha" o dado com seu cabeçalho (encapsulamento); na **chegada**, o servidor "desembrulha" camada por camada até chegar à aplicação. Na volta, o mesmo processo se repete com a resposta.
 
+Na recepção de uma resposta web, a ordem é de baixo para cima: **Ethernet → IP → TCP → HTTP**. O host recebe primeiro os bits como um quadro Ethernet, extrai o pacote IP, entrega o segmento ao TCP e, depois que o TCP organiza/valida o fluxo, entrega os dados ao HTTP da aplicação. Esse é o desencapsulamento (`04-comunicacao-e-camada-fisica.md:47-49`).
+
+| Ordem de recepção | Protocolo | PDU recebida | Ação |
+|-------------------|-----------|--------------|------|
+| 1 | Ethernet | Quadro | Verifica a entrega local usando MAC |
+| 2 | IP | Pacote | Processa os endereços IP |
+| 3 | TCP | Segmento | Usa portas, ordena bytes e controla a entrega |
+| 4 | HTTP | Data | Entrega a resposta para o navegador |
+
 > 🧠 **Dica para memorizar (encapsulamento):** "Enviar dados pela rede é como **ligar seu pipeline de dados via fila (Kafka)**: a mensagem grande é dividida em **partes numeradas** (segmentação); cada parte ganha o **tema/partição do tópico** (IP — pra onde vai); e, dentro do cluster, cada pedaço trafega de **broker a broker** (MAC — vizinho a vizinho). No consumer, **agrupa-se pelo número da partição** e remonta na ordem — exatamente como o destino remonta os segmentos."
 
 ### 5.9 Papel dos protocolos em uma comunicação web
@@ -514,9 +579,617 @@ Quando você manda uma mensagem, o dispositivo de origem monta o quadro com **do
 
 ---
 
-## 7. Resumão rápido (colinha final)
+## 7. Sistemas de numeração e endereçamento de rede
 
-### 7.1 Perguntas essenciais
+### 7.1 Bases numéricas usadas em redes
+
+Os dispositivos processam **binário** (base 2), mas os humanos representam endereços de formas mais curtas. Cada base tem um papel específico em redes:
+
+| Base | Nome | Símbolos | Uso principal em redes |
+|------|------|----------|------------------------|
+| **2** | Binário | `0`, `1` | Idioma real dos endereços IP e MAC dentro da máquina |
+| **10** | Decimal | `0` a `9` | Representação dos octetos do IPv4 para humanos |
+| **16** | Hexadecimal | `0` a `9`, `A` a `F` | Representação dos endereços MAC e IPv6 |
+
+> O sistema é **posicional**: o valor de cada algarismo depende da posição que ocupa. Em binário, cada posição vale uma potência de 2; em hexadecimal, uma potência de 16.
+
+### 7.2 IPv4: decimal na tela, binário na máquina
+
+Um **IPv4** tem **32 bits**, divididos em **4 octetos** de 8 bits cada. Nós escrevemos cada octeto em **decimal**, mas o computador interpreta e processa tudo em **binário**:
+
+```text
+Decimal:  192.168.11.10
+Binário:  11000000.10101000.00001011.00001010
+```
+
+Cada ponto separa **8 bits** (um octeto), não um número qualquer. Por isso cada octeto só pode ir de `0` a `255` — é o intervalo de 8 bits (`00000000` a `11111111`).
+
+### 7.3 IPv6: 128 bits em hexadecimal
+
+O **IPv6** tem **128 bits**, muito grande para escrever em decimal ou binário. Para encurtar, cada grupo de **4 bits** vira **um dígito hexadecimal**, totalizando **32 dígitos hexadecimais**. Esses 32 dígitos são agrupados em **8 hextetos** de 16 bits cada, separados por `:`:
+
+```text
+2001:0DB8:0000:0000:0000:FF00:0042:8329
+```
+
+Pode ser encurtado omitindo zeros à esquerda e blocos consecutivos de zeros (`::`), desde que haja apenas uma omissão por endereço.
+
+### 7.4 MAC: endereço físico em hexadecimal
+
+O **endereço MAC** (ou endereço físico) identifica a **NIC** (*Network Interface Card*) de fábrica. Ele tem **48 bits**, divididos em **6 octetos** de 8 bits. Cada octeto é representado por **dois dígitos hexadecimais**, totalizando **12 dígitos hexadecimais**, normalmente separados por `:` ou `-`:
+
+```text
+00:1A:2B:3C:4D:5E
+```
+
+- Os **primeiros 24 bits** (3 octetos / 6 dígitos hex) identificam o **fabricante** (OUI).
+- Os **últimos 24 bits** identificam a interface específica.
+
+### 7.5 Tabela comparativa: IPv4, IPv6 e MAC
+
+| Característica | IPv4 | IPv6 | MAC |
+|----------------|------|------|-----|
+| **Tamanho** | 32 bits | 128 bits | 48 bits |
+| **Divisão** | 4 octetos de 8 bits | 8 hextetos de 16 bits | 6 octetos de 8 bits |
+| **Base de exibição humana** | Decimal | Hexadecimal | Hexadecimal |
+| **Base real da máquina** | Binário | Binário | Binário |
+| **Tipo de endereço** | Lógico (camada 3) | Lógico (camada 3) | Físico (camada 2) |
+| **Muda de rede?** | Sim | Sim | Não |
+| **Exemplo** | `192.168.1.10` | `2001:db8::ff00:42:8329` | `00:1A:2B:3C:4D:5E` |
+
+### 7.6 Análise das afirmativas do ENADE 2021
+
+A questão traz três afirmativas sobre sistemas numéricos em redes. Vamos checar uma a uma:
+
+| Afirmativa | Avaliação | Justificativa |
+|------------|-----------|---------------|
+| **I** — "IPv4 é expresso na base decimal, mas dividido em conjuntos de oito bits e interpretado pelo computador usando a base octal" | ❌ **Errada** | A primeira parte é verdadeira (decimal na tela, octetos de 8 bits), mas o computador interpreta em **binário**, não em octal. Octal (base 8) não é a base usada internamente para IPv4. |
+| **II** — "IPv6 são compostos de 128 bits e para facilitar sua representação é utilizado o sistema hexadecimal" | ✅ **Correta** | IPv6 tem 128 bits e é representado em hexadecimal para encurtar a notação. |
+| **III** — "Endereços físicos são compostos de 6 octetos representados por 12 dígitos no sistema hexadecimal" | ✅ **Correta** | MAC tem 48 bits = 6 octetos = 12 dígitos hexadecimais. |
+
+**Resposta correta:** **Apenas II e III estão corretas.**
+
+### 7.7 Conversão prática: decimal ↔ binário para IPv4
+
+Para converter um octeto decimal para binário, basta decompor em potências de 2. Por exemplo, `168`:
+
+```text
+128 + 32 + 8 = 168
+ 1   0   1   0   1   0   0   0
+128  64  32  16   8   4   2   1
+```
+
+Resultado: `10101000`.
+
+### 7.8 Exemplo com código (Python) — converter IPv4 entre decimal e binário
+
+```python
+# Recebe um IP decimal e mostra o binário de cada octeto.
+# Útil pra entender que, por trás do que vemos na tela, tudo vira 0 e 1.
+
+ip_decimal = "192.168.11.10"  # endereço IPv4 no formato que humanos leem
+octetos = ip_decimal.split(".")  # separa a string nos 4 octetos, usando o ponto como divisor
+
+binarios = []  # lista que vai guardar cada octeto convertido para binário
+for octeto in octetos:  # percorre cada um dos 4 octetos
+    numero = int(octeto)  # transforma o texto do octeto em número inteiro
+    binario = format(numero, "08b")  # converte para binário com 8 dígitos (preenche com zeros à esquerda)
+    binarios.append(binario)  # adiciona o resultado na lista
+
+print(".".join(binarios))  # junta os 4 octetos binários com pontos e imprime
+# Saída: 11000000.10101000.00001011.00001010
+```
+
+> ⚙️ **Por baixo dos panos:** quando você pinga `192.168.11.10`, o sistema operacional não envia "192" para a placa de rede. Ele converte cada octeto para 8 bits e monta o pacote IP com essa sequência binária. A placa Ethernet, por sua vez, lê e transmite bits — sejam eles de IPv4, IPv6 ou MAC.
+
+### 7.9 O que é um octeto? É 8 bits? É 1 byte?
+
+Resposta curta: **octeto = 8 bits**. Na prática, **1 byte também vale 8 bits** na grande maioria dos sistemas modernos, então octeto e byte são frequentemente tratados como sinônimos — especialmente em redes.
+
+| Termo | Definição | Observação |
+|-------|-----------|------------|
+| **bit** | Menor unidade de informação: `0` ou `1` | Base de tudo na computação |
+| **octeto** | Grupo de **8 bits** | Termo técnico comum em redes e telecomunicações |
+| **byte** | Unidade de 8 bits na maioria das arquiteturas atuais | Em alguns contextos históricos, byte podia ter tamanhos diferentes; hoje é padronizado como 8 bits |
+
+#### Por que redes preferem dizer "octeto" em vez de "byte"?
+
+Porque **byte** já teve tamanhos diferentes em arquiteturas antigas (7, 8, 9, 12 bits...). O termo **octeto** deixa claro que são **exatamente 8 bits**, sem ambiguidade. Por isso os protocolos de rede — como IPv4 e MAC — usam "octeto" nas especificações técnicas.
+
+```text
+1 octeto  = 8 bits
+2 octetos = 16 bits
+4 octetos = 32 bits
+6 octetos = 48 bits
+```
+
+#### Octeto na prática: IPv4 e MAC
+
+No IPv4 `192.168.1.10`, cada número entre os pontos é um octeto:
+
+```text
+192  →  11000000   (8 bits)
+168  →  10101000   (8 bits)
+1    →  00000001   (8 bits)
+10   →  00001010   (8 bits)
+```
+
+Total: 4 octetos × 8 bits = **32 bits**.
+
+No MAC `00:1A:2B:3C:4D:5E`, cada par de dígitos hexadecimais representa um octeto:
+
+```text
+00 → 00000000  (8 bits)
+1A → 00011010  (8 bits)
+2B → 00101011  (8 bits)
+3C → 00111100  (8 bits)
+4D → 01001101  (8 bits)
+5E → 01011110  (8 bits)
+```
+
+Total: 6 octetos × 8 bits = **48 bits**.
+
+#### Exemplo com código (Python) — explorar bits, octetos e bytes
+
+```python
+# Mostra como 8 bits formam 1 octeto/1 byte.
+# Útil pra ver que, em redes, "octeto" e "byte" significam a mesma coisa: 8 bits.
+
+numero = 168  # escolhe um valor de exemplo (um octeto qualquer, de 0 a 255)
+
+bits = format(numero, "08b")  # converte o número para binário com 8 dígitos
+print(f"Decimal: {numero}")  # imprime o valor em decimal
+print(f"Binário: {bits}")    # imprime os 8 bits
+print(f"Quantidade de bits: {len(bits)}")  # conta: deve dar 8
+
+# Em Python, 1 byte é representado por bytes() com um único elemento.
+um_byte = numero.to_bytes(1, "big")  # transforma o número em 1 byte (8 bits)
+print(f"Representação como byte: {um_byte}")  # mostra o objeto byte
+print(f"Tamanho em bytes: {len(um_byte)}")    # deve dar 1
+```
+
+> ⚙️ **Por baixo dos panos:** quando você transfere um arquivo CSV de 100 MB, o "B" maiúsculo significa **bytes**. Como cada byte tem 8 bits, o arquivo tem 800 milhões de bits. Quando a rede diz "link de 1 Gbit/s", ela mede em bits. Dividir por 8 é o que converte a capacidade da rede na mesma unidade do arquivo.
+
+### 7.10 Dica para memorizar
+
+> **"IP decimal é a máscara de maquiagem; binário é o rosto real da máquina."** IPv4 usa decimal só pra gente não enlouquecer, mas por baixo tudo é binário. IPv6 e MAC usam hexadecimal porque são grandes demais pra decimal — cada dígito hex resume 4 bits. No seu dia a dia de dados: quando você vê um bucket S3 `s3://rh-dados-prod` ou um endpoint `10.30.0.10:5432`, lembre que o DNS resolve o nome, o IP viaja no pacote e o MAC entrega o quadro ao vizinho. O binário está lá, mesmo que você nunca precise digitá-lo.
+
+---
+
+## 8. Largura de banda e desempenho
+
+### 8.1 O que é largura de banda
+
+**Largura de banda** é a capacidade máxima de um meio ou enlace de transportar dados em determinado intervalo de tempo. Ela é normalmente medida em **bits por segundo**: Kbit/s, Mbit/s ou Gbit/s. A aula 04 define a largura de banda como a capacidade de um meio transportar dados entre dois pontos (`04-comunicacao-e-camada-fisica.md:142-148`).
+
+Uma conexão de **1 Gbit/s** tem capacidade teórica de transportar 1 bilhão de bits por segundo. Como 8 bits formam 1 byte, isso equivale teoricamente a cerca de **125 MB/s**, antes de descontar cabeçalhos, confirmações, retransmissões, latência e outras limitações.
+
+No seu contexto, se um worker precisa enviar um arquivo Parquet de 10 GB para o warehouse por um enlace de 1 Gbit/s, os 125 MB/s são um limite teórico do caminho. O tempo real pode ser maior por causa do tráfego concorrente, do limite do storage, da CPU, da criptografia, da latência e de algum enlace mais lento no caminho.
+
+| Conceito | O que significa | Exemplo no pipeline de dados |
+|----------|-----------------|-----------------------------|
+| **Largura de banda** | Capacidade máxima teórica do enlace | Link de 1 Gbit/s entre worker e serviço cloud |
+| **Throughput** | Taxa efetivamente transferida pelo meio | Job consegue transferir 700 Mbit/s |
+| **Goodput** | Taxa de dados úteis, descontando overhead e retransmissões | Registros úteis gravados no destino por segundo |
+| **Latência** | Tempo para os dados viajarem entre origem e destino | Tempo de ida até o warehouse e retorno da resposta |
+
+### 8.2 Gargalo e caminho completo
+
+O throughput de uma comunicação não pode superar o enlace mais lento do caminho. Se o worker tem uma interface de 10 Gbit/s, mas existe um trecho de 100 Mbit/s entre ele e o warehouse, esse trecho vira o **gargalo**.
+
+```mermaid
+flowchart LR
+    W["Worker ETL<br>10 Gbit/s"] --> R["Roteador<br>1 Gbit/s"] --> V["VPN<br>500 Mbit/s"] --> G["Gateway<br>100 Mbit/s"] --> D["Warehouse<br>destino"]
+```
+
+| Trecho | Capacidade |
+|--------|------------|
+| Worker → roteador | 10 Gbit/s |
+| Roteador → VPN | 1 Gbit/s |
+| VPN → gateway | 500 Mbit/s |
+| Gateway → warehouse | **100 Mbit/s — gargalo** |
+
+### 8.3 Exemplo prático de cálculo
+
+```python
+tamanho_gb = 10  # define o tamanho do arquivo Parquet que o pipeline precisa enviar, em gigabytes
+banda_gbps = 1  # define a capacidade teórica do enlace, em gigabits por segundo
+tamanho_gbits = tamanho_gb * 8  # converte gigabytes em gigabits, porque a banda é medida em bits
+tempo_teorico_segundos = tamanho_gbits / banda_gbps  # calcula o tempo ideal, sem overhead, latência ou concorrência
+print(tempo_teorico_segundos)  # exibe o tempo teórico aproximado da transferência
+```
+
+Esse cálculo é apenas uma estimativa. Em produção, ferramentas como `iperf3`, métricas do storage, logs do job e observabilidade cloud ajudam a medir o throughput real. A largura de banda informa o **limite de capacidade**; ela não garante que o pipeline atingirá esse valor.
+
+### 8.4 Por que dividir bits por 8
+
+Um **byte** é formado por **8 bits**. O bit é a menor unidade binária (`0` ou `1`); o byte é um grupo de 8 bits usado para representar um valor ou, frequentemente, um caractere. Por isso, dividir uma taxa em bits por segundo por 8 apenas converte a unidade:
+
+```text
+1 Gbit/s = 1.000.000.000 bits/s
+1.000.000.000 bits/s ÷ 8 = 125.000.000 bytes/s
+125.000.000 bytes/s = 125 MB/s
+```
+
+Redes costumam anunciar a capacidade em **bits por segundo** porque a comunicação física transmite uma sequência de bits e o setor de telecomunicações padronizou essa medida para enlaces. Aplicações, arquivos, memória e storage normalmente usam **bytes**, então um engenheiro de dados frequentemente converte a banda para estimar o tempo de transferência de um arquivo.
+
+| Unidade | Significado | Uso comum |
+|---------|-------------|-----------|
+| **bit (b)** | `0` ou `1` | Transmissão de rede |
+| **byte (B)** | 8 bits | Arquivos, memória e storage |
+| **Mbit/s** | Milhões de bits por segundo | Velocidade anunciada de rede |
+| **MB/s** | Milhões de bytes por segundo | Taxa observada em arquivos/storage |
+
+A conversão por 8 não representa a velocidade real da aplicação. Depois dela ainda podem existir cabeçalhos, confirmações, retransmissões, criptografia, latência e gargalos. Por isso, um enlace de 1 Gbit/s oferece no máximo cerca de 125 MB/s teóricos, e o goodput de um pipeline tende a ser menor.
+
+> **Dica para memorizar:** no envio de um arquivo de RH, largura de banda é o limite do canal; throughput é o que realmente passou; goodput é o que chegou como dado útil; latência é o tempo de espera. Um link de 1 Gbit/s pode entregar menos quando há gargalo, overhead ou concorrência.
+
+---
+
+## 9. Cabeamento de fibra óptica
+
+### 9.1 Características da fibra
+
+A fibra óptica transmite dados como **pulsos de luz**, geralmente infravermelha. Por não usar corrente elétrica para transportar os dados, ela é **imune a EMI** (interferência eletromagnética) e **RFI** (interferência de radiofrequência). Também apresenta baixa atenuação e alta capacidade de transmissão, sendo usada em backbones, WANs, FTTH e interconexões de alta velocidade (`05-cabeamentos-e-conexoes.md:114-118`).
+
+| Alternativa | Está correta? | Motivo |
+|-------------|---------------|--------|
+| Não é afetado por EMI ou RFI | **Sim** | A fibra transmite pulsos de luz, não sinais elétricos |
+| Cada par é envolvido em folha metálica | Não | Descreve blindagem de cabos metálicos, não fibra |
+| Combina cancelamento, blindagem e torção | Não | Técnicas usadas em cabos de cobre, especialmente para reduzir interferência |
+| Contém 4 pares de fios | Não | Essa é uma característica comum do UTP; fibra usa núcleo, casca e revestimento |
+| É mais barato que UTP | Não | Em geral, fibra e seus componentes têm custo maior que UTP |
+
+| Característica | Fibra óptica | Cobre/UTP |
+|----------------|--------------|-----------|
+| Sinal | Pulsos de luz | Pulsos elétricos |
+| Interferência EMI/RFI | Imune | Suscetível |
+| Capacidade e distância | Muito altas, especialmente em longas distâncias | Menores e limitadas pela atenuação/interferência |
+| Estrutura | Núcleo, casca e revestimento | Pares de fios de cobre trançados |
+| Uso comum | Backbone, WAN, FTTH e links de alta velocidade | LANs e conexões de menor distância |
+
+**Glossário de siglas:**
+
+| Sigla | Nome completo | Significado |
+|-------|---------------|-------------|
+| **EMI** | *Electromagnetic Interference* | Interferência eletromagnética que pode distorcer sinais elétricos |
+| **RFI** | *Radio-Frequency Interference* | Interferência de radiofrequência que pode afetar sinais em cabos de cobre |
+| **UTP** | *Unshielded Twisted Pair* | Par trançado não blindado, comum em redes LAN |
+| **FTTH** | *Fiber To The Home* | Fibra óptica instalada até a residência ou pequeno escritório |
+| **LAN** | *Local Area Network* | Rede local em uma área geográfica limitada |
+| **WAN** | *Wide Area Network* | Rede de longa distância que interliga redes locais |
+
+**Exemplo prático (Linux `ethtool`)** — verificar se uma interface está usando uma porta óptica:
+
+```bash
+sudo ethtool eth0  # exibe as características físicas e a velocidade negociada pela interface eth0
+```
+
+Na saída, procure campos como `Port: FIBRE` e `Speed: 10000Mb/s`. O comando apenas identifica a interface e o link; ele não transforma um cabo UTP em fibra.
+
+### 9.2 Exemplo no contexto de dados
+
+Um link de fibra entre o cluster de processamento e o storage pode transportar grandes volumes de dados com alta taxa de bits e sem sofrer interferência de motores, lâmpadas ou cabos elétricos próximos. Isso é útil para pipelines que movimentam grandes tabelas, arquivos Parquet ou dados entre regiões e datacenters.
+
+### 9.3 Especificações físicas de redes sem fio
+
+As especificações da camada física wireless definem como os bits serão transformados em sinais de rádio. Elas abrangem a **codificação do sinal**, frequência, potência de transmissão, requisitos de recepção/decodificação e projeto da antena (`05-cabeamentos-e-conexoes.md:224-226`).
+
+| Função | Camada responsável | Exemplo |
+|--------|--------------------|---------|
+| Codificar bits em sinal de rádio | Física | Modulação e frequência do Wi-Fi |
+| Identificar a interface no enlace | Enlace | Endereço MAC |
+| Identificar a rede/dispositivo | Rede | Endereço IP |
+| Escolher o caminho dos pacotes | Rede | Roteamento IP |
+| Controlar acesso ao meio compartilhado | Enlace | CSMA/CA no Wi-Fi |
+
+**Exemplo prático (Linux `iw`)** — consultar informações físicas da interface wireless:
+
+```bash
+iw phy  # mostra os recursos físicos da rádio Wi-Fi, como bandas, frequências e taxas suportadas
+```
+
+O comando ajuda a observar a camada física; ele não mostra a rota IP nem substitui a configuração de endereços MAC/IP.
+
+### 9.4 Categorias de cabo UTP e taxa de transmissão
+
+A **Categoria 8** é a que oferece suporte a até **40 Gbit/s**, conforme a aula 05 (`05-cabeamentos-e-conexoes.md:88-94`). A categoria indica a capacidade de transmissão prevista pelo padrão do cabo, mas a taxa realmente alcançada também depende das interfaces, conectores, distância, instalação e equipamentos nas duas pontas.
+
+| Categoria UTP | Uso ou capacidade citada na aula |
+|---------------|-----------------------------------|
+| Categoria 3 | Originalmente comunicação de voz |
+| Categoria 5 | Até 100 Mbit/s |
+| Categoria 5E | Até 1 Gbit/s |
+| Categoria 6 | Até 10 Gbit/s |
+| Categoria 7 | Até 10 Gbit/s |
+| **Categoria 8** | **Até 40 Gbit/s** |
+
+**Exemplo prático (Linux `ethtool`)** — verificar a velocidade negociada pela interface:
+
+```bash
+sudo ethtool eth0  # mostra a velocidade que a placa e o equipamento do outro lado negociaram na interface eth0
+```
+
+Esse comando mostra a velocidade do link atual, mas não identifica sozinho a categoria física do cabo. Para confirmar a categoria, é necessário consultar a marcação do cabo, a documentação ou testar a instalação com equipamentos compatíveis.
+
+### 9.5 Acesso ao canal no Wi-Fi
+
+O Wi-Fi, baseado no padrão **IEEE 802.11**, usa o **CSMA/CA** (*Carrier Sense Multiple Access with Collision Avoidance*) para controlar o acesso ao canal sem fio (`05-cabeamentos-e-conexoes.md:230-235`). Antes de transmitir, a NIC verifica se o canal está livre. Se o canal estiver ocupado, o dispositivo espera um tempo aleatório antes de tentar novamente. O objetivo é **evitar colisões**, porque vários dispositivos compartilham o mesmo meio sem fio.
+
+| Protocolo | Expansão | Uso principal |
+|-----------|----------|---------------|
+| **CSMA/CA** | *Carrier Sense Multiple Access with Collision Avoidance* | Wi-Fi; evita colisões em meio sem fio |
+| **CSMA/CD** | *Carrier Sense Multiple Access with Collision Detection* | Ethernet antigo compartilhado; detectava colisões |
+| **TDMA** | *Time Division Multiple Access* | Divide o acesso em intervalos de tempo |
+| **GSM** | *Global System for Mobile Communications* | Padrão de comunicação celular |
+| **CDMA** | *Code Division Multiple Access* | Separa transmissões por códigos diferentes |
+
+**Exemplo prático (Linux `iw`)** — consultar informações da interface Wi-Fi:
+
+```bash
+iw dev wlan0 info  # mostra detalhes da interface wireless, que usa o mecanismo de acesso definido pelo padrão Wi-Fi
+```
+
+O comando consulta a interface, mas a espera pelo canal e a prevenção de colisões são executadas pela combinação da NIC, do driver e do padrão IEEE 802.11.
+
+### 9.6 Cabo crossover entre roteadores sem Auto-MDIX
+
+Dois roteadores são dispositivos do mesmo tipo. Em portas Fast Ethernet antigas, a porta de um roteador transmite por um par de pinos e recebe por outro. Para conectar dois dispositivos do mesmo tipo, o cabo precisa cruzar os pares de transmissão e recepção. Por isso, quando os roteadores **não possuem Auto-MDIX**, uma ponta deve seguir a norma **EIA/TIA-568A** e a outra deve seguir a norma **EIA/TIA-568B**. A resposta correta da questão é a terceira alternativa (`05-cabeamentos-e-conexoes.md:99-105`).
+
+| Situação | Cabo esperado sem Auto-MDIX |
+|----------|-----------------------------|
+| PC → switch | Direto: mesma norma nas duas pontas |
+| Switch → roteador | Direto: mesma norma nas duas pontas |
+| Roteador → roteador | **Crossover: uma ponta 568A e outra 568B** |
+| PC → PC | Crossover: uma ponta 568A e outra 568B |
+
+Em Fast Ethernet, os pinos 1 e 2 formam um par de transmissão e os pinos 3 e 6 formam um par de recepção. Um cabo direto conecta transmissão com transmissão e recepção com recepção quando dois dispositivos iguais são ligados. O cabo crossover troca esses pares, conectando transmissão de um roteador à recepção do outro.
+
+| Pino usado em Fast Ethernet | Ponta T568A | Ponta T568B |
+|-----------------------------|-------------|-------------|
+| 1 | Branco/verde — transmissão | Branco/laranja — recepção |
+| 2 | Verde — transmissão | Laranja — recepção |
+| 3 | Branco/laranja — recepção | Branco/verde — transmissão |
+| 6 | Laranja — recepção | Verde — transmissão |
+
+**Glossário de siglas:**
+
+| Sigla | Nome completo | Significado |
+|-------|---------------|-------------|
+| **EIA** | *Electronic Industries Alliance* | Organização associada a padrões de cabeamento e conectores |
+| **TIA** | *Telecommunications Industry Association* | Organização que participa da definição de padrões de telecomunicações e cabeamento |
+| **MDIX** | *Medium-Dependent Interface Crossover* | Função que identifica/adapta automaticamente os pares de transmissão e recepção |
+| **Auto-MDIX** | *Automatic Medium-Dependent Interface Crossover* | Recurso que permite usar cabo direto ou crossover sem montagem manual específica |
+| **Cat5E** | *Category 5 Enhanced* | Categoria de cabo UTP com suporte citado de até 1 Gbit/s |
+| **Cat6** | *Category 6* | Categoria de cabo UTP com suporte citado de até 10 Gbit/s |
+
+**Exemplo prático (Linux `ethtool`)** — verificar se o enlace negociou conexão:
+
+```bash
+sudo ethtool eth0  # mostra se a interface detectou o cabo e qual velocidade foi negociada
+```
+
+Se os roteadores não tiverem Auto-MDIX e o cabo estiver montado incorretamente, normalmente o link não sobe. O problema não é resolvido escolhendo Cat5E ou Cat6: a categoria define desempenho, enquanto 568A/568B define a ordem dos fios e o cruzamento dos pares.
+
+---
+
+## 10. Camada de enlace de dados (Data Link Layer)
+
+### 10.1 Propósito e papel na pilha OSI/TCP-IP
+
+A **camada de enlace de dados** (camada 2 do modelo OSI ou parte da camada de Acesso à Rede do TCP/IP) prepara os pacotes da camada de rede (IP) para serem transmitidos pela mídia física (cabo elétrico, fibra óptica ou ondas de rádio no Wi-Fi).
+
+Sua principal função é **abstrair o meio físico** para as camadas superiores: a camada IP não precisa saber se o dado vai trafegar por fibra, cabo de cobre UTP ou Wi-Fi. A camada de enlace aceita o pacote IP (camada 3), adiciona o cabeçalho de enlace (com o endereço MAC do próximo nó) e um trailer de verificação de erros (CRC), gerando a PDU chamada **quadro (frame)**. Na recepção, ela lê o quadro, valida se houve corrupção pelo CRC (descartando se houver erro) e entrega o pacote desencapsulado para a camada de rede.
+
+```mermaid
+flowchart LR
+    A["Camada de Rede (IP)<br>Gera o Pacote"] --> B["Subcamada LLC<br>Identifica o protocolo L3"]
+    B --> C["Subcamada MAC<br>Adiciona MACs e delimita"]
+    C --> D["Trailer CRC/FCS<br>Adiciona detecção de erros"]
+    D --> E["Quadro (Frame)<br>Enviado para a Camada Física"]
+```
+
+### 10.2 As duas subcamadas (LLC e MAC)
+
+Padrões como o IEEE 802 dividem a camada de enlace de dados em duas subcamadas bem definidas:
+
+| Subcamada | Nome Completo | Papel e Responsabilidades |
+|-----------|---------------|---------------------------|
+| **LLC** | *Logical Link Control* | Faz a ponte com as camadas superiores em software. Insere no quadro a informação de qual protocolo de camada 3 (IPv4, IPv6) está sendo transportado. |
+| **MAC** | *Media Access Control* | Gerencia a Placa de Interface de Rede (NIC) e o hardware. Cuida do encapsulamento (delimitadores, endereçamento físico MAC) e do controle de acesso ao meio físico compartilhado. |
+
+### 10.3 Estrutura do quadro (Frame)
+
+Diferente de todas as outras camadas que adicionam apenas um cabeçalho no início da PDU, a camada de enlace adiciona um **cabeçalho (Header)** no início e um **trailer** no final do pacote IP:
+
+```text
++---------------------+-------------------+-------------------+-------------------+-------------------+
+| Cabeçalho Enlace    | Cabeçalho IP      | Cabeçalho TCP     | Dados Aplicação   | Trailer Enlace    |
+| (MAC Origem/Destino)| (IP Origem/Destino)| (Portas Orig/Dest)| (Mensagem HTTP)   | (CRC / FCS)       |
++---------------------+-------------------+-------------------+-------------------+-------------------+
+|<--------------------------------------- QUADRO (FRAME) ------------------------------------------>|
+```
+
+- **Delimitação de quadro**: Marcadores binários que indicam início e fim do quadro para sincronizar transmissor e receptor.
+- **Endereçamento local (MAC)**: Indica a NIC de origem e a NIC de destino na mesma rede local/enlace.
+- **Detecção de erros (CRC)**: Cálculo matemático no trailer. Se os bits forem alterados pelo ruído no cabo/ar, o receptor detecta a divergência e descarta o quadro imediatamente.
+
+### 10.4 Modos de comunicação e controle de acesso ao meio
+
+Em redes multiacesso (vários computadores disputando a mesma mídia), o meio precisa de regras para evitar interferência ou colisões:
+
+| Conceito / Método | Como funciona passo a passo | Exemplo prático / Tecnologia |
+|-------------------|----------------------------|------------------------------|
+| **Half-Duplex** | Um dispositivo transmite de cada vez. Transmite e recebe, mas **nunca simultaneamente**. | Hubs Ethernet antigos, redes Wi-Fi (802.11) |
+| **Full-Duplex** | Transmite e recebe **simultaneamente** sem colisões. A mídia fica disponível a todo momento. | Switches Ethernet modernos em cabo UTP/Fibra |
+| **CSMA/CD** (*Collision Detection*) | Dispositivo "escuta" a rede. Se estiver livre, transmite. Se dois transmitirem juntos, ocorre colisão (alteração na voltagem); ambos detectam, cancelam e esperam um tempo aleatório antes de retransmitir. | Ethernet em barramento/hub (meio com fio legado) |
+| **CSMA/CA** (*Collision Avoidance*) | Dispositivo "escuta" o meio sem fio. Como não consegue detectar colisão no ar, ele envia a duração desejada da transmissão. Outros dispositivos aguardam esse tempo acabar antes de tentar enviar. | Wi-Fi residencial/corporativo (meio sem fio) |
+| **Acesso Controlado** | Cada nó espera estritamente a sua vez em uma fila/token determinístico para transmitir. | Token Ring / FDDI (legados) |
+
+#### 10.4.1 O porquê do tempo aleatório (Exponential Backoff)
+
+- **Quebrar a sincronia**: Se duas placas de rede colidissem e aguardassem um tempo fixo (ex.: exatamente 10 ms), ambas tentariam retransmitir no exato mesmo milissegundo, gerando um **loop infinito de colisões**.
+- **Descongestionamento adaptativo**: O algoritmo escolhe um tempo aleatório em um intervalo. A cada colisão consecutiva, o limite máximo desse intervalo **dobra** (*Exponential Backoff*).
+- **Relação com Cibersegurança**: O tempo aleatório não tem a ver com criptografia ou autenticação, mas evita um estado de **Negação de Serviço (DoS) não intencional** que travaria a rede local.
+
+```mermaid
+flowchart TD
+    Escuta["1. Dispositivo escuta a mídia (Carrier Sense)"] --> Livre{"A mídia está livre?"}
+    Livre -- "Não" --> Espera["Aguardar mídia liberar"] --> Escuta
+    Livre -- "Sim" --> Transmite["2. Transmite o quadro"]
+    Transmite --> Modalidade{"Qual a tecnologia?"}
+    Modalidade -- "CSMA/CD (Ethernet com fio)" --> Colisao{"Ocorreu colisão?"}
+    Colisao -- "Sim" --> Jam["Envia sinal de jam, cancela e aguarda tempo aleatório (backoff)"] --> Escuta
+    Colisao -- "Não / OK" --> Sucesso["Quadro entregue com sucesso"]
+    Modalidade -- "CSMA/CA (Wi-Fi)" --> Reserva["Informa duração aos vizinhos antes de transmitir para EVITAR colisão"] --> Sucesso
+```
+
+### 10.5 Transição de quadros a cada salto (Hop-by-Hop)
+
+Enquanto o **endereço IP de destino permanece o mesmo** do cliente até o servidor final em toda a Internet, o **quadro da camada de enlace é destruído e recriado a cada roteador** pelo caminho:
+
+1. O Roteador A recebe o quadro Ethernet do cabo local na interface de entrada.
+2. O Roteador A desencapsula o quadro, descartando os cabeçalhos de enlace do trecho anterior.
+3. O Roteador A lê o pacote IP (Camada 3) e consulta sua tabela de rotas para decidir a interface de saída.
+4. O Roteador A encapsula o mesmo pacote IP em um **novo quadro** com o endereço MAC de saída e o MAC da interface do Roteador B (próximo salto).
+
+```mermaid
+sequenceDiagram
+    participant PC as PC Cliente (Origem)
+    participant R1 as Roteador 1
+    participant R2 as Roteador 2
+    participant Srv as Servidor (Destino)
+
+    PC->>R1: Quadro Ethernet 1 (MAC Origem: PC, MAC Destino: R1) [Pacote IP: PC -> Srv]
+    Note over R1: Desencapsula Quadro 1,<br>lê IP, descobre próximo salto,<br>encapsula em Quadro 2
+    R1->>R2: Quadro WAN/PPP 2 (Endereços L2 do link WAN) [Pacote IP: PC -> Srv]
+    Note over R2: Desencapsula Quadro 2,<br>lê IP, consulta tabela de rota,<br>encapsula em Quadro 3
+    R2->>Srv: Quadro Ethernet 3 (MAC Origem: R2, MAC Destino: Srv) [Pacote IP: PC -> Srv]
+```
+
+### 10.6 Topologias físicas e lógicas
+
+- **Topologia Física**: Refere-se à disposição física de cabos, placas e equipamentos na rede.
+- **Topologia Lógica**: Refere-se à forma como os quadros trafegam internamente de nó para nó pela camada de enlace.
+
+| Topologia Física | Definição e Funcionamento |
+| :--- | :--- |
+| **Estrela (*Star*)** | Todos os dispositivos finais se conectam diretamente a um único dispositivo intermediário central (switch). |
+| **Estrela Estendida (*Extended Star*)** | Os dispositivos finais se conectam a um dispositivo intermediário central (switch de acesso), que por sua vez se conecta a outro dispositivo intermediário central (switch core/distribuição). |
+| **Barramento (*Bus*)** | Todos os sistemas finais são encadeados em um cabo compartilhado (coaxial) com terminadores nas pontas. |
+| **Anel (*Ring*)** | Os dispositivos são conectados em formato de círculo/anel com seus vizinhos diretos (Token Ring). |
+| **Ponto a Ponto** | Conexão direta e exclusiva entre apenas dois endpoints. |
+| **Hub-and-Spoke** | Topologia WAN em estrela onde um site central conecta várias filiais (filiais não se falam diretamente sem passar pelo centro). |
+| **Malha (*Mesh*)** | Todos os nós se conectam a todos os outros (alta disponibilidade e alto custo). |
+
+### 10.7 Glossário de siglas da camada de enlace
+
+| Sigla | Termo em Inglês | Significado e Explicação |
+|-------|-----------------|--------------------------|
+| **LLC** | *Logical Link Control* | Subcamada de controle de enlace lógico (padrão IEEE 802.2). |
+| **MAC** | *Media Access Control* | Subcamada de controle de acesso ao meio e endereço físico gravado na placa de rede. |
+| **NIC** | *Network Interface Card* | Placa de interface de rede (física ou virtual) onde habita o endereço MAC. |
+| **CRC** | *Cyclic Redundancy Check* | Checagem de redundância cíclica usada no trailer do quadro para detectar corrupção de bits. |
+| **FCS** | *Frame Check Sequence* | Sequência de verificação de quadro, o campo do trailer onde o valor do CRC é armazenado. |
+| **CSMA/CD** | *Carrier Sense Multiple Access with Collision Detection* | Protocolo de acesso ao meio com detecção de colisão usado em redes Ethernet half-duplex. |
+| **CSMA/CA** | *Carrier Sense Multiple Access with Collision Avoidance* | Protocolo de acesso ao meio com prevenção de colisão usado em Wi-Fi (IEEE 802.11). |
+| **PPP** | *Point-to-Point Protocol* | Protocolo de enlace camada 2 para links diretos de longa distância (WAN). |
+| **HDLC** | *High-Level Data Link Control* | Protocolo síncrono de camada de enlace para conexões ponto a ponto WAN. |
+
+#### 10.7.1 Análise de questão ENADE 2017 (Padrões IEEE 802.3 vs 802.11)
+
+- **IEEE 802.3 (Ethernet)**: Padroniza redes locais cabeadas e utiliza o método de acesso ao meio **CSMA/CD** (*Collision Detection*).
+- **IEEE 802.11 (Wi-Fi)**: Padroniza redes locais sem fio e utiliza o método de acesso ao meio **CSMA/CA** (*Collision Avoidance*).
+- **Frequências do Wi-Fi**: 802.11a opera em 5 GHz; 802.11b e 802.11g operam em 2.4 GHz (não usam a mesma frequência).
+- **Coexistência**: Padrões 802.3 e 802.11 coexistem na mesma rede local em harmonia (ex.: um notebook Wi-Fi acessando um servidor via cabo Ethernet).
+
+### 10.8 Exemplo real em engenharia de dados
+
+Imagine um pipeline de dados em engenharia de dados onde um worker Python em container Kubernetes extrai um grande volume de dados de uma API e insere no PostgreSQL/BigQuery:
+
+1. Quando seu job Python faz um `INSERT` em lote com 50.000 registros, ele gera bytes no nível da aplicação.
+2. O sistema operacional agrupa esses bytes em **segmentos TCP** e **pacotes IP** destinados ao banco (`10.30.0.10`).
+3. Ao enviar para a placa de rede da máquina virtual, a **camada de enlace** adiciona o cabeçalho Ethernet com o endereço MAC da interface da VM e o MAC do switch/gateway virtual do cluster.
+4. Se o cabo ou a rede virtual sofresse ruído e alterasse um bit dos dados transmitidos, o cálculo de **CRC** na camada de enlace do destino falharia e o quadro corrompido seria **descartado imediatamente pelo hardware da placa de rede**, sem deixar chegar dado truncado ao seu banco.
+
+### 10.9 Exemplo de código em Terraform (Infraestrutura de Rede e Interfaces L2/L3)
+
+O exemplo abaixo em Terraform demonstra a criação de uma interface de rede virtual (vNIC) onde a camada de enlace opera, associando o endereço MAC virtual à máquina do worker de dados:
+
+```hcl
+# Declara a criação de uma interface de rede virtual (vNIC - Camada 2 / Enlace) no Google Cloud
+resource "google_compute_instance" "worker_dados" {
+  name         = "worker-etl-pipeline"                  # Define o nome da máquina virtual que rodará o pipeline de dados
+  machine_type = "e2-standard-4"                        # Especifica o porte do hardware virtual (4 vCPUs e 16 GB de RAM)
+  zone         = "us-central1-a"                        # Define a zona física do data center onde a instância será provisionada
+
+  boot_disk {                                           # Bloco de configuração do disco de inicialização do sistema operacional
+    initialize_params {                                 # Define os parâmetros de criação do disco boot
+      image = "debian-cloud/debian-11"                  # Define a imagem do sistema operacional Linux Debian 11
+    }                                                   # Fecha o bloco de parâmetros do disco
+  }                                                     # Fecha o bloco de configuração do boot_disk
+
+  network_interface {                                   # Bloco que cria a vNIC (Interface de Rede / Camada de Enlace / MAC virtual)
+    network    = "default"                              # Associa a interface de rede à VPC padrão do projeto
+    subnetwork = "default"                              # Associa a interface à sub-rede padrão da região escolhida
+    # A plataforma Cloud atribui automaticamente um Endereço MAC (Camada 2) e um IP privado (Camada 3) a esta vNIC
+  }                                                     # Fecha o bloco da interface de rede
+}                                                       # Fecha a declaração do recurso de instância computacional
+```
+
+**Verificação no terminal Linux (Bash)** — inspecionar a camada de enlace (endereços MAC, estatísticas de CRC/erros) na placa de rede do worker:
+
+```bash
+# Exibe todas as interfaces de rede com seus endereços MAC (link/ether) e estado da camada de enlace
+ip link show
+
+# Exibe estatísticas detalhadas de transmissão/recepção, incluindo quadros descartados (dropped) e erros de CRC
+ip -s link show eth0
+```
+
+---
+
+## 11. Endereçamento CIDR, Sub-redes e Roteamento em Cloud
+
+### 11.1 Conceito de CIDR e Cálculo de Hosts
+O roteamento inter-domínios sem classe (CIDR - *Classless Inter-Domain Routing*) substituiu o antigo sistema de classes fixas (A, B, C), permitindo alocar blocos IP com tamanhos flexíveis definidos por um prefixo (ex: `/20`).
+- O número após a barra indica quantos bits pertencem à **rede**.
+- O restante ($32 - \text{prefixo}$) pertence aos **hosts**.
+- O total de endereços IP é $2^{\text{bits de host}}$. Destes, 2 são reservados (o primeiro é o endereço de rede e o último é o broadcast), restando $2^{\text{bits de host}} - 2$ endereços utilizáveis para máquinas/instâncias.
+
+### 11.2 Identificação de Broadcast e Gateway
+- **Endereço de rede:** Todos os bits de host zerados (`0`).
+- **Endereço de broadcast:** Todos os bits de host em um (`1`).
+- **Encaminhamento inter-redes:** Se o destino IP pertence a outra sub-rede (verificado aplicando a máscara de sub-rede), o pacote obrigatoriamente é encaminhado ao roteador (gateway padrão) através do MAC do roteador, e não via ARP direto para o host destino.
+
+### 11.3 Glossário de siglas:
+| Sigla | Nome completo | Significado |
+|-------|---------------|-------------|
+| **CIDR** | *Classless Inter-Domain Routing* | Roteamento inter-domínios sem classe, baseado em prefixos de sub-rede |
+| **VPC** | *Virtual Private Cloud* | Nuvem privada virtual que isola recursos de rede na nuvem |
+
+### 11.4 Exemplo com código (Python) — Validar se um IP pertence a uma VPC CIDR
+```python
+import ipaddress  # Importa a biblioteca padrão do Python para manipulação de endereços IP e redes CIDR
+
+# Define o bloco CIDR da VPC corporativa onde rodam os pipelines de dados e clusters Spark
+bloco_vpc = ipaddress.ip_network("10.200.64.0/20", strict=False)
+
+# Define o endereço IP de um worker ou banco de dados que queremos testar
+ip_alvo = ipaddress.ip_address("10.200.79.255")
+
+# Verifica se o IP alvo está dentro do intervalo da VPC (True ou False)
+pertence = ip_alvo in bloco_vpc
+
+# Exibe o resultado da validação no console
+print(f"O IP {ip_alvo} pertence à VPC {bloco_vpc}? {pertence}")
+```
+
+---
+
+## 12. Resumão rápido (colinha final)
+
+### 12.1 Perguntas essenciais
 
 | Pergunta | Resposta |
 |----------|----------|
@@ -530,3 +1203,6 @@ Quando você manda uma mensagem, o dispositivo de origem monta o quadro com **do
 | Quadro recebe qual endereço? | MAC (enlace) |
 | Segmento recebe qual endereço? | Porta (transporte) |
 | Pacote recebe quais endereços? | IP de origem e destino (rede) |
+| Característica importante da fibra? | Imunidade a EMI/RFI e transmissão por pulsos de luz |
+| O que é largura de banda? | Capacidade máxima do meio de transportar dados por tempo |
+
