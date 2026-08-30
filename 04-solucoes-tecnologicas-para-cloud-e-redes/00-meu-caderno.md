@@ -1537,6 +1537,83 @@ flowchart TD
     L2Prot --> L1Meio
 ```
 
+#### 11.4.2 Estrutura e Vantagens do Cabeçalho IPv6 vs. IPv4
+
+A principal vantagem arquitetural do cabeçalho IPv6 em relação ao IPv4 é o **Processamento de Pacotes Eficiente (*Efficient Packet Handling*)**:
+
+| Parâmetro de Comparação | Cabeçalho IPv4 | Cabeçalho IPv6 | Impacto na Performance |
+| :--- | :--- | :--- | :--- |
+| **Tamanho do Cabeçalho Base** | **Variável** (20 bytes a 60 bytes) | **Fixo** (**40 bytes**) | Cabeçalho fixo permite que circuitos de hardware (ASICs) dos roteadores leiam campos em posições de memória exatas e constantes. |
+| **Quantidade de Campos** | **14 campos** | **8 campos** (simplificado) | Menor sobrecarga (*overhead*) de processamento por pacote em cada nó intermediário. |
+| **Campo de Checksum (*Header Checksum*)** | **Presente** (deve ser recalculado por cada roteador a cada salto ao decrementar o TTL) | **Removido** (verificação delegada para as camadas L2 e L4) | **Grande ganho de vazão**: roteadores apenas decrementam o *Hop Limit* sem gastar CPU recalculando checksums matemáticos. |
+| **Tamanho dos Endereços IP** | 32 bits (4 bytes cada) | 128 bits (16 bytes cada) | Endereços IPv6 são 4x maiores, garantindo espaço de endereçamento praticamente ilimitado. |
+| **Tratamento de Fragmentação** | Feito pelos roteadores intermediários (campos *Identification*, *Flags*, *Fragment Offset*) | **Removido do cabeçalho base**; fragmentação é feita exclusivamente pelo host de origem (*Extension Headers*) | Elimina gargalos de processamento e reempacotamento de fragmentos dentro do núcleo da rede (*Core Routers*). |
+| **Campo IHL (*Internet Header Length*)** | Presente (informa o tamanho do cabeçalho devido às opções variáveis) | **Removido** (desnecessário devido ao tamanho fixo de 40 bytes) | Roteador sabe imediatamente onde os dados começam sem ler campos auxiliares. |
+
+#### 11.4.3 Os 8 Campos do Cabeçalho Base do IPv6
+
+```text
+ 0                   1                   2                   3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|Version| Traffic Class |           Flow Label                  |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|         Payload Length        |  Next Header  |   Hop Limit   |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                                                               |
++                                                               +
+|                                                               |
++                         Source Address                        +
+|                           (128 bits)                          |
++                                                               +
+|                                                               |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                                                               |
++                                                               +
+|                                                               |
++                      Destination Address                      +
+|                           (128 bits)                          |
++                                                               +
+|                                                               |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+```
+
+| Campo IPv6 | Tamanho | Função Técnica | Equivalente no IPv4 |
+| :--- | :---: | :--- | :--- |
+| **`Version`** | 4 bits | Identifica a versão do protocolo IP (fixo em `0110` = 6). | *Version* (4 bits) |
+| **`Traffic Class`** | 8 bits | Marca a classe de prioridade do tráfego (QoS / DiffServ). | *Type of Service (ToS) / DiffServ* |
+| **`Flow Label`** | **20 bits** | **Identifica fluxos contínuos de uma mesma conversa/sessão em tempo real.** Informa roteadores e switches para manter o **mesmo caminho de encaminhamento** para todos os pacotes com o mesmo label, evitando reordenação e jitter. | *Não existe no IPv4* |
+| **`Payload Length`** | 16 bits | Informa o tamanho dos dados transportados após o cabeçalho base de 40 bytes. | *Total Length* (no v4 inclui o cabeçalho) |
+| **`Next Header`** | 8 bits | Especifica o protocolo da camada superior (TCP=6, UDP=17, ICMPv6=58) ou o tipo do próximo cabeçalho de extensão. | *Protocol* (8 bits) |
+| **`Hop Limit`** | 8 bits | Contador decrementado por cada roteador que processa o pacote; descarta o pacote quando chega a zero. | *Time To Live (TTL)* |
+| **`Source Address`** | 128 bits | Endereço IPv6 do nó de origem da transmissão. | *Source IP Address* (32 bits) |
+| **`Destination Address`** | 128 bits | Endereço IPv6 do nó ou grupo de nós de destino. | *Destination IP Address* (32 bits) |
+
+#### 11.4.4 Comparativo das Opções: Aplicações em Tempo Real e Caminho de Roteamento
+
+| Alternativa da Questão | Tamanho | Papel Técnico | Mantém o mesmo caminho para pacotes da mesma conversa? |
+| :--- | :---: | :--- | :---: |
+| **`Flow Label`** | **20 bits** | Informa roteadores e switches para manter o mesmo caminho (*same path*) e mesmo tratamento para pacotes de uma mesma sequência/conversa em tempo real. | **SIM (Campo Específico)** |
+| `Traffic Class` | 8 bits | Define a prioridade ou classe de serviço (QoS) do pacote, mas não vincula pacotes a um caminho fixo de roteamento. | Não (define prioridade, não caminho) |
+| `Next Header` | 8 bits | Identifica o protocolo de transporte ou o próximo cabeçalho de extensão. | Não |
+| `Differentiated Services` | 8 bits | Nome do campo de prioridade utilizado no **cabeçalho IPv4** (no IPv6 foi renomeado para *Traffic Class*). | Não (campo de IPv4) |
+| `Endereço IP de origem` | 128 bits | Identifica o nó remetente, sem diferenciar fluxos ou conversas distintas originadas do mesmo nó. | Não |
+
+```mermaid
+flowchart LR
+    subgraph HostOrigem["Host / Aplicação Tempo Real"]
+        App["Streaming / Dados Real-Time"] --> Tag["Gera Pacote IPv6 com Flow Label = 0xABCDE"]
+    end
+    subgraph RoteadoresRede["Roteadores Intermediários"]
+        R1["Roteador 1: Lê Flow Label 0xABCDE"] -->|Encaminha pela Rota 1| R2["Roteador 2: Lê Flow Label 0xABCDE"]
+        R2 -->|Mantém o MESMO caminho| R3["Roteador 3"]
+    end
+    Tag --> R1
+    R3 --> HostDestino["Destino: Recebe dados ordenados e sem jitter"]
+```
+
+
+
 ### 11.5 Endereços de Uso Especial no IPv4 (Loopback e APIPA)
 
 O IPv4 reserva blocos de endereços para finalidades específicas que não podem ser roteados na Internet pública ou atribuídos normalmente a hosts convencionais:
@@ -1553,7 +1630,7 @@ O IPv4 reserva blocos de endereços para finalidades específicas que não podem
 #### 11.5.1 Mecanismo Real da Interface de Loopback (`lo`)
 
 1. **Retorno em Laço no Kernel (*Loopback*)**:
-   Quando qualquer aplicação ou o utilitário `ping` envia pacotes para `127.0.0.1` (ou qualquer endereço dentro de `127.0.0.0/8`), o pacote **não sai para o cabo nem para o transmissor físico da placa de rede (NIC)**.
+   Quando qualquer aplicação ou o utilitário `ping` envia pacotes para `127.0.0.1` (ou qualquer endereço dentro de `127.0.0.0/8` no IPv4 ou `::1` no IPv6), o pacote **não sai para o cabo nem para o transmissor físico da placa de rede (NIC)**.
 2. **Curto-circuito de software**:
    O subsistema de rede do sistema operacional intercepta o pacote na camada IP (Camada 3) e o direciona imediatamente para o buffer de recepção da própria máquina.
 3. **Diagnóstico da Pilha TCP/IP**:
@@ -1562,7 +1639,7 @@ O IPv4 reserva blocos de endereços para finalidades específicas que não podem
 ```mermaid
 flowchart LR
     subgraph HostLocal["Host / Servidor Local"]
-        App["Aplicação / Ping (127.0.0.1)"] --> PilhaIP["Pilha TCP/IP do SO (Kernel)"]
+        App["Aplicação / Ping (127.0.0.1 ou ::1)"] --> PilhaIP["Pilha TCP/IP do SO (Kernel)"]
         PilhaIP --> DriverLo["Interface Virtual Loopback (lo)"]
         DriverLo -->|Curto-circuito interno de software| PilhaIP
         PilhaIP --> App
@@ -1573,7 +1650,18 @@ flowchart LR
     DriverLo -.->|Pacote NUNCA chega ao hardware físico| NIC
 ```
 
+#### 11.5.2 O que o Teste de Loopback Valida vs. O que NÃO Valida
+
+| Alternativa da Questão | Avaliação | Justificativa Técnica |
+| :--- | :---: | :--- |
+| **`A pilha TCP/IP no dispositivo está funcionando corretamente`** | **CORRETA** | O teste processa o pacote por toda a estrutura lógica de software (IP, ICMP, buffers do kernel), confirmando que a pilha de rede interna do SO está operacional. |
+| `O cabo Ethernet está funcionando corretamente` | Incorreta | O pacote faz um curto-circuito em software e **nunca atinge o meio físico**; o teste de loopback responde com sucesso mesmo com o cabo de rede desconectado. |
+| `O DHCP está funcionando corretamente` | Incorreta | A interface de loopback possui endereço estático pré-configurado pelo sistema operacional (`127.0.0.1` / `::1`), sem interação com servidores DHCP. |
+| `O dispositivo possui o endereço IP correto na rede` | Incorreta | O loopback não valida o IP da interface de rede física (ex.: `192.168.1.50`); valida apenas o IP interno virtual do próprio host. |
+| `O dispositivo possui conectividade ponta a ponta` | Incorreta | O teste é estritamente local à máquina; não alcança roteadores, switches ou outros servidores na rede. |
+
 ### 11.6 Exemplo Real em Engenharia de Dados
+
 
 No ecossistema de Engenharia de Dados:
 - **Tolerância a Perda em Pipelines de Big Data**: Quando um job Spark transfere gigabytes de dados entre executores distribuídos via rede, centenas de pacotes IP podem ser descartados por saturação de switches no data center. Como o IP é *best-effort*, a camada de **transporte (TCP)** monitora os números de confirmação (*ACK*) e retransmite automaticamente os segmentos ausentes, garantindo que nenhum registro do DataFrame chegue corrompido ou falte na gravação final.
@@ -1636,9 +1724,157 @@ sock.close()
 
 ---
 
-## 12. Resumão rápido (colinha final)
+## 12. Endereçamento IPv6
 
-### 12.1 Perguntas essenciais
+### 12.1 Estrutura e Representação do IPv6
+
+O protocolo IPv6 foi desenvolvido pelo IETF para substituir o IPv4 e solucionar em definitivo a escassez de endereços IP na Internet.
+
+- **Comprimento**: **128 bits** (divididos em 8 hextetos de 16 bits cada).
+- **Representação**: Notação hexadecimal (32 dígitos hexadecimais de `0` a `F`, separados por dois-pontos `:`).
+- **Total de Endereços**: $2^{128} \approx 3,4 \times 10^{38}$ endereços únicos (aproximadamente 340 undecilhões).
+
+```text
+Formato Preferencial (32 dígitos):
+2001:0db8:0000:00a3:0000:0000:0000:1234
+
+Regras de Compactação:
+1. Omissão de Zeros à Esquerda: 2001:db8:0:a3:0:0:0:1234
+2. Dois-Pontos Duplo (::) para sequência contínua de zeros (usado apenas 1 vez): 2001:db8:0:a3::1234
+```
+
+### 12.2 Por que o NAT NÃO é Necessário no IPv6?
+
+No IPv4, o **NAT (*Network Address Translation*)** foi criado como um mecanismo paliativo de sobrevivência para contornar o esgotamento dos 4,3 bilhões de endereços de 32 bits, permitindo que milhares de hosts com IPs privados (RFC 1918) compartilhem um único IP público.
+
+No **IPv6, o NAT não é mais necessário porque o espaço de endereçamento é gigantesco ($2^{128}$)**:
+
+1. **Endereço Público Global para Qualquer Host**: Qualquer computador, smartphone, sensor IoT ou servidor no planeta pode receber um **Endereço Unicast Global (*Global Unicast Address - GUA*)** público e exclusivo.
+2. **Restauração da Conectividade Ponta a Ponta**: A comunicação entre cliente e servidor volta ao modelo original da Internet, sem necessidade de tradução de portas (PAT), tabelas de estado de NAT nos roteadores ou quebra de protocolos que embutem IPs na camada de aplicação.
+3. **Segurança Não Depende de NAT**: A segurança em redes IPv6 é provida por **Firewalls de Inspeção de Estado (*Stateful Firewalls*)** que bloqueiam conexões de entrada não autorizadas, e não pela ocultação artificial de IPs via NAT.
+
+#### 12.2.1 Comparativo das Alternativas da Questão
+
+| Alternativa da Questão | Avaliação | Justificativa Técnica |
+| :--- | :---: | :--- |
+| **`Qualquer host pode obter um endereço de rede IPv6 público porque o número de endereços disponíveis é grande`** | **CORRETA** | Com 128 bits ($3,4 \times 10^{38}$ endereços), há blocos públicos globais suficientes para que cada dispositivo do planeta tenha um IP público roteável exclusivo. |
+| `O IPv6 é completamente seguro e por isso não há necessidade de ocultar os endereços IPv6 das redes internas` | Incorreta | O IPv6 possui recursos de segurança nativos (IPsec), mas nenhuma tecnologia é "completamente segura". Ocultar IP com NAT nunca foi substituto de firewall. |
+| `Os problemas NAT são resolvidos porque o cabeçalho IPv6 melhora o tratamento de pacotes por roteadores intermediários` | Incorreta | A eficiência do cabeçalho otimiza a velocidade de roteamento, mas não tem relação com a eliminação da necessidade de conservação de endereços. |
+| `O IPv6 aumenta o número de rotas disponíveis` | Incorreta | O IPv6 aumenta o **espaço de endereços**, mas o roteamento hierárquico busca **reduzir/agregar** a quantidade de entradas na tabela de rotas global. |
+| `O IPv6 é misturado ao NAT` | Incorreta | Afirmação sem fundamento técnico; técnicas de transição como NAT64 existem apenas para interoperabilidade temporária com IPv4 legado. |
+
+```mermaid
+flowchart TD
+    subgraph IPv4["Cenário IPv4 com NAT (Escassez de Endereços)"]
+        H1["Host 1: 192.168.1.10"] --> NATRouter["Roteador NAT (Traduz para 200.100.50.1 Público)"]
+        H2["Host 2: 192.168.1.20"] --> NATRouter
+        NATRouter --> InternetV4["Internet IPv4"]
+    end
+    subgraph IPv6["Cenário IPv6 sem NAT (Endereçamento Amplo)"]
+        H3["Host 1: 2001:db8:acad:1::10 (GUA Público)"] --> RouterV6["Roteador / Firewall IPv6 (Apenas Roteia e Aplica Segurança)"]
+        H4["Host 2: 2001:db8:acad:1::20 (GUA Público)"] --> RouterV6
+        RouterV6 --> InternetV6["Internet IPv6 Ponta a Ponta"]
+    end
+```
+
+### 12.3 Estrutura de Sub-redes IPv6: Cálculo a partir de um Prefixo `/48`
+
+Diferente do IPv4 (onde o cálculo de sub-redes busca economizar endereços bit a bit), o IPv6 foi projetado para que **toda sub-rede de usuário final seja um bloco `/64`** (recomendação do IETF / RFC 6177):
+
+```text
+|<------------------------- 128 bits do Endereço IPv6 ------------------------->|
++------------------------------+--------------------+----------------------------+
+| Global Routing Prefix        | Subnet ID          | Interface ID               |
+| (Atribuído pelo ISP / RIR)   | (Definido pela Org)| (Host / Dispositivo)       |
+| 48 bits (Hextetos 1 a 3)     | 16 bits (Hexteto 4)| 64 bits (Hextetos 5 a 8)   |
++------------------------------+--------------------+----------------------------+
+|<---------- 48 bits --------->|<---- 16 bits ----->|<--------- 64 bits -------->|
+|<------------------- Prefixo /64 da Sub-rede ------>|
+```
+
+#### 12.3.1 Passo a Passo do Cálculo de Sub-redes a partir de um `/48`
+
+1. **Prefixo do ISP recebido**: `2001:0db8::/48` (os primeiros 48 bits são fixos).
+2. **Tamanho padrão da Interface ID**: 64 bits (os últimos 64 bits são preservados para endereçamento de hosts e autoconfiguração SLAAC).
+3. **Bits dedicados ao Subnet ID**:
+   $$\text{Bits de Subnet ID} = 64 - 48 = 16 \text{ bits}$$
+4. **Total de sub-redes `/64` possíveis**:
+   $$\text{Total de Sub-redes} = 2^{16} = 65.536 \text{ sub-redes}$$
+   - Faixa de sub-redes: `2001:db8:0:0000::/64` até `2001:db8:0:ffff::/64`.
+   - Cada uma dessas 65.536 sub-redes suporta $2^{64} \approx 18,4 \times 10^{18}$ dispositivos.
+
+#### 12.3.2 Comparativo das Alternativas da Questão
+
+| Alternativa | Valor de Potência | Significado Técnico | Resposta da Questão? |
+| :--- | :---: | :--- | :---: |
+| `16` | $2^4$ | Quantidade de sub-redes se fossem usados apenas 4 bits (1 dígito hexadecimal) para sub-rede (prefixo `/52`). | Incorreta |
+| `256` | $2^8$ | Quantidade de sub-redes se fossem usados 8 bits (prefixo `/56`). | Incorreta |
+| `4096` | $2^{12}$ | Quantidade de sub-redes se fossem usados 12 bits (prefixo `/60`). | Incorreta |
+| **`65536`** | **$2^{16}$** | **Total exato de sub-redes `/64` geradas a partir de um bloco `/48` ($64 - 48 = 16$ bits de Subnet ID).** | **CORRETA** |
+| `1.048.576` | $2^{20}$ | Quantidade de sub-redes se fossem usados 20 bits (prefixo `/68`, violando o padrão `/64`). | Incorreta |
+
+### 12.4 Tipos Principais de Endereço Unicast IPv6
+
+| Tipo de Endereço | Prefixo Típico | Escopo e Finalidade | Roteável na Internet? |
+| :--- | :--- | :--- | :---: |
+| **GUA (*Global Unicast Address*)** | `2000::/3` (ex: `2001:db8::/32`) | Endereço público global equivalente ao IPv4 público. Exclusivo no mundo todo. | **SIM** |
+| **LLA (*Link-Local Address*)** | `fe80::/10` | Usado para comunicação dentro do mesmo segmento local (sub-rede). Não é roteável fora da LAN. | NÃO |
+| **ULA (*Unique Local Address*)** | `fc00::/7` a `fdff::/7` | Endereço privado local para redes corporativas isoladas (semelhante ao RFC 1918). | NÃO |
+| **Loopback** | `::1/128` | Usado pelo host para enviar tráfego para si mesmo (equivalente ao `127.0.0.1`). | NÃO |
+
+### 12.5 Técnicas de Coexistência e Migração IPv4 / IPv6
+
+| Técnica | Como Funciona | Caso de Uso Prático |
+| :--- | :--- | :--- |
+| **Dual-Stack** | Dispositivos executam as duas pilhas (IPv4 e IPv6) simultaneamente na mesma interface de rede. | Padrão atual em provedores, data centers e nuvens públicas. |
+| **Tunneling (Tunelamento)** | Encapsula pacotes IPv6 dentro de pacotes IPv4 para atravessar redes que suportam apenas IPv4. | Conectar filiais IPv6 através de links legados IPv4. |
+| **NAT64** | Traduz pacotes entre hosts que falam exclusivamente IPv6 e servidores legados que falam apenas IPv4. | Redes móveis (4G/5G) puramente IPv6 acessando a Internet legada. |
+
+### 12.6 Exemplo Real em Engenharia de Dados
+
+Em data centers modernos e nuvens públicas (GCP, AWS, Azure):
+
+- **Arquitetura de Microsserviços e Big Data**: Em clusters com dezenas de milhares de pods Kubernetes rodando pipelines Spark, a faixa privada do IPv4 (`10.0.0.0/8`) costuma se esgotar rapidamente (*IP exhaustion*).
+- Com a adoção do **IPv6 (sem NAT)**, cada contêiner e worker recebe um prefixo `/64` ou endereço GUA direto, permitindo conexões diretas entre clusters em diferentes regiões sem complexidade de sobreposição de IPs (*overlapping subnets*) e sem sobrecarga de gateways NAT.
+- **Divisão de Sub-redes em Pipelines**: Ao receber um bloco `/48` de uma nuvem, o engenheiro aloca sub-redes `/64` dedicadas por squad (ex: `2001:db8:0:0001::/64` para ingestão, `2001:db8:0:0002::/64` para processamento distribuído, etc.), dispondo de até 65.536 sub-redes independentes.
+
+### 12.7 Glossário de Siglas IPv6
+
+| Sigla | Nome Completo | Significado e Função |
+| :--- | :--- | :--- |
+| **GUA** | *Global Unicast Address* | Endereço IPv6 globalmente exclusivo e roteável na Internet pública. |
+| **LLA** | *Link-Local Address* | Endereço IPv6 restrito ao link/sub-rede local (prefixo `fe80::/10`). |
+| **ULA** | *Unique Local Address* | Endereço IPv6 privado local (prefixo `fc00::/7`). |
+| **SLAAC** | *Stateless Address Autoconfiguration* | Protocolo que permite a um host gerar seu próprio IPv6 dinamicamente via anúncios de roteador (RA). |
+| **NAT64** | *Network Address Translation 64* | Mecanismo de tradução de pacotes entre IPv6 e IPv4 para permitir migração de redes. |
+| **NDP** | *Neighbor Discovery Protocol* | Protocolo ICMPv6 responsável por resolução de endereços, autoconfiguração e descoberta de roteadores. |
+
+### 12.8 Exemplo com Código Real (Python / Subnetting IPv6)
+
+Script Python para demonstrar a criação e cálculo programático de sub-redes IPv6 `/64` a partir de um bloco `/48`:
+
+```python
+import ipaddress  # Biblioteca padrão do Python para manipulação e cálculos de endereços IP
+
+# Define o bloco de rede IPv6 atribuído pelo provedor (/48)
+bloco_global = ipaddress.IPv6Network("2001:db8::/48")
+
+# Calcula o total de sub-redes /64 possíveis dividindo o prefixo /48
+subredes = list(bloco_global.subnets(new_prefix=64))
+
+# Imprime o total de sub-redes calculadas (esperado: 2^(64-48) = 65.536)
+print(f"Total de sub-redes /64 geradas: {len(subredes)}")
+
+# Exibe os 3 primeiros blocos de sub-rede /64 alocados para pipelines de dados
+for i, sub in enumerate(subredes[:3]):
+    print(f"Sub-rede {i+1}: {sub}")
+```
+
+---
+
+## 13. Resumão rápido (colinha final)
+
+### 13.1 Perguntas essenciais
 
 | Pergunta | Resposta |
 |----------|----------|
@@ -1659,5 +1895,17 @@ sock.close()
 | Qual camada resolve pacotes IP perdidos ou fora de ordem? | Camada de Transporte (especialmente TCP) |
 | Acessa a rede local mas não acessa outras redes/Internet? | Gateway padrão (*Default Gateway*) inválido ou incorreto |
 | Quais as 3 características básicas do IP? | *Connectionless* (sem conexão), *Best-Effort* (melhor esforço) e *Media Independent* (independente do meio) |
+| Mensagem IPv6 equivalente ao ARP para resolução de MAC? | *Neighbor Solicitation* (ICMPv6 NS) |
+| Qual a principal vantagem do cabeçalho IPv6 sobre o IPv4? | Processamento de pacotes eficiente (tamanho fixo de 40 bytes, menos campos e sem checksum) |
+| Campo IPv6 que mantém o mesmo caminho em tempo real? | *Flow Label* (20 bits) |
+| O teste de loopback (127.0.0.1 ou ::1) confirma o quê? | Que a pilha TCP/IP do dispositivo está funcionando corretamente (em software) |
+| Por que o NAT não é necessário no IPv6? | Porque qualquer host pode ter um IP público global devido ao imenso espaço de endereços (128 bits) |
+| Quantas sub-redes /64 podem ser criadas de um prefixo /48? | 65.536 sub-redes (16 bits de Subnet ID: 64 - 48 = 16) |
+
+
+
+
+
+
 
 
