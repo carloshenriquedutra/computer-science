@@ -2436,9 +2436,33 @@ Conforme destacado por Kurose e Ross (2016), quando um cliente Web requisita uma
 | `Porque erros de transmissão podem ser tolerados facilmente` | Incorreta | Páginas web e códigos executáveis **não** toleram perda ou corrupção de caracteres. |
 | `Porque HTTP usa método GET` | Incorreta | O método `GET` é apenas um verbo da camada de aplicação do HTTP, sem relação com a decisão arquitetural da camada de transporte. |
 
+#### 14.6.5 Exercício de Fixação Integrado: Atividades do Usuário e seus Protocolos (FCC / SEGEP-MA)
+
+Análise de cada atividade desempenhada pelo usuário e seu protocolo correspondente da Camada de Aplicação:
+
+1. **Atividade I**: *"Fez transferência de arquivos, criou e alterou diretórios da rede"* $\rightarrow$ **FTP (*File Transfer Protocol*)**:
+   - Protocolo projetado especificamente para manipulação de arquivos remotos, navegação e criação de diretórios (`MKD`, `CWD`, `DELE`, `STOR`, `RETR`).
+2. **Atividade II**: *"Enviou diversas mensagens de e-mail"* $\rightarrow$ **SMTP (*Simple Mail Transfer Protocol*)**:
+   - Protocolo padrão para submissão e **envio** de e-mails para servidores de correio.
+3. **Atividade III**: *"Utilizou um navegador web para fazer pesquisas em diversas páginas da internet..."* $\rightarrow$ **HTTP (*Hypertext Transfer Protocol*)**:
+   - Protocolo de requisição e resposta para recuperação e exibição de páginas e objetos na Web.
+4. **Atividade IV**: *"Digitou o endereço IP de um site e obteve o nome deste site na WWW"* $\rightarrow$ **DNS (*Domain Name System*)**:
+   - Serviço de diretório de rede responsável por traduzir nomes de domínio em IPs e vice-versa (**Resolução Reversa de DNS / Registro PTR**).
+
+#### 14.6.6 Tabela Comparativa das Alternativas da Questão (FCC)
+
+| Alternativa da Questão | I (Arquivos/Pastas) | II (Envio de E-mail) | III (Navegador Web) | IV (IP $\rightarrow$ Nome) | Avaliação Geral |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **`FTP – SMTP – HTTP – DNS`** | **FTP** ✅ | **SMTP** ✅ | **HTTP** ✅ | **DNS** ✅ | **CORRETA** |
+| `TELNET – SNMP – HTTPS – DNS` | TELNET ❌ | SNMP ❌ | HTTPS ⚠️ | DNS ✅ | Incorreta |
+| `FTP – IMAP – TLS/SSL – DHCP` | FTP ✅ | IMAP ❌ (Leitura) | TLS/SSL ❌ (Camada 6) | DHCP ❌ (Atribuição IP) | Incorreta |
+| `NTP – SMTP – HTTP – DNS` | NTP ❌ (Hora) | SMTP ✅ | HTTP ✅ | DNS ✅ | Incorreta |
+| `TELNET – POP3 – TLS/SSL – DHCP` | TELNET ❌ | POP3 ❌ (Leitura) | TLS/SSL ❌ | DHCP ❌ | Incorreta |
+
 ---
 
 ### 14.7 Exemplo Real em Engenharia de Dados
+
 
 
 
@@ -2627,6 +2651,8 @@ conexao_smb.disconnect()
 | Qual protocolo usa UDP cliente-servidor e TCP servidor-servidor? | DNS (*Domain Name System* - Porta 53) |
 | Quais são três protocolos da camada de aplicação que usam TCP? | SMTP, FTP e HTTP |
 | Por que o HTTP usa o TCP como transporte? | Porque o HTTP requer entrega confiável (sem perda de dados) |
+| Protocolos para Arquivos, Envio de E-mail, Navegador e IP $\rightarrow$ Nome? | FTP – SMTP – HTTP – DNS |
+
 
 
 
