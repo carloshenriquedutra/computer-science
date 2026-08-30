@@ -1405,20 +1405,69 @@ A palavra **máscara** vem do mecanismo de "filtragem" bit a bit: ela mascara (o
 flowchart TD
     A["Servidor quer enviar pacote para IP Destino"] --> B["Aplica Máscara de Sub-rede local via Bitwise AND no IP Destino"]
     B --> C{"Resultado igual à Rede Local do Servidor?"}
-    C -- "Sim (Mesma Sub-rede)" --> D["Entrega Direta (Camada 2): Consulta ARP local e envia via Switch"]
-    C -- "Não (Rede Diferente)" --> E["Entrega Indireta (Camada 3): Envia quadro para o MAC do Gateway Padrão / Roteador"]
+    C -- "Sim (Mesma Sub-rede)" --> D["Entrega Direta (Camada 2): Consulta ARP local e envia via Switch (NÃO USA GATEWAY)"]
+    C -- "Não (Rede Diferente)" --> E["Entrega Indireta (Camada 3): Consulta ARP do Gateway Padrão e envia ao Roteador"]
+    E --> F{"Gateway Padrão Configurado Corretamente?"}
+    F -- "Sim" --> G["Roteador recebe e encaminha pacote para redes remotas/Internet"]
+    F -- "Não / Inválido" --> H["FALHA: Host não consegue resolver MAC do Gateway; tráfego para outras redes é descartado"]
 ```
 
-### 11.4 Exemplo Real em Engenharia de Dados
+#### 11.3.1 Diagnóstico de Falhas de Configuração IP (Local vs. Remoto)
 
-Na criação de uma arquitetura de dados em Cloud (GCP/AWS), um engenheiro de dados define a topologia de rede para isolar pipelines:
-- **Sub-rede dos Nós Spark / Dataproc**: `10.100.1.0/24` (Máscara `255.255.255.0`).
-  - Permite até 254 nós de processamento distribuído conversando entre si diretamente sem sobrecarregar o roteador.
-- **Sub-rede do Banco de Dados / Data Warehouse**: `10.100.2.0/24` (Máscara `255.255.255.0`).
-- Quando um worker Spark (`10.100.1.15`) envia dados para outro worker (`10.100.1.20`), a **máscara de sub-rede** identifica que ambos estão na mesma rede (`10.100.1.0`), dispensando o gateway e acelerando o *shuffle* de dados em alta velocidade.
-- Quando o worker Spark precisa carregar dados no PostgreSQL (`10.100.2.50`), a **máscara** revela que a rede é diferente, forçando o pacote a passar pelo **Gateway/Roteador**, onde regras de firewall (*Security Groups*) validam se o cluster tem permissão para acessar o banco.
+| Sintoma Observado no Host | Causa Raiz Técnica | Por que ocorre? |
+| :--- | :--- | :--- |
+| **Acessa a rede local, mas NÃO acessa redes remotas ou Internet** | **Gateway Padrão (*Default Gateway*) inválido, incorreto ou inacessível** | A comunicação local ocorre diretamente via switches L2 e ARP local (sem gateway). O gateway é exigido **exclusivamente** para alcançar sub-redes remotas. |
+| Não acessa a rede local e nem redes remotas | Endereço IP inválido, duplicado na rede ou interface desabilitada (*down*) | Sem um IP válido configurado na interface, a pilha TCP/IP não consegue nem responder a requisições ARP locais. |
+| Acessa alguns hosts remotos, mas confunde locais com remotos | Máscara de sub-rede (*Subnet Mask*) incorreta | Uma máscara errada altera o cálculo de bitwise AND, fazendo o host achar que destinos locais são remotos (e vice-versa). |
+| Queda geral de conectividade por esgotamento de banda | Tempestade de broadcast (*Broadcast Storm*) ou loop L2 | O host envia pacotes em volume excessivo, saturando os buffers dos switches, afetando toda a rede local. |
 
-### 11.4 Endereços de Uso Especial no IPv4 (Loopback e APIPA)
+
+### 11.4 Características Fundamentais do Protocolo IP (Camada 3)
+
+O protocolo IP (IPv4/IPv6) foi projetado para ser simples, rápido e escalável. Ele possui três características arquiteturais essenciais:
+
+| Característica | O que significa na prática | Como funciona o mecanismo |
+| :--- | :--- | :--- |
+| **Não Orientado a Conexão (*Connectionless*)** | Nenhuma sessão dedicada ou circuito virtual é estabelecido antes do envio dos pacotes. | O remetente simplesmente encapsula e despacha os datagramas. Cada roteador toma decisões de próximo salto de forma independente; pacotes do mesmo fluxo podem seguir rotas diferentes e chegar fora de ordem. |
+| **Melhor Esforço (*Best-Effort / Unreliable*)** | A entrega não é garantida e o cabeçalho IP não possui confirmação de recebimento (*ACK*). | O IP não retransmite pacotes perdidos, corrompidos ou descartados por congestionamento de buffer em roteadores. Ele **depende dos serviços da Camada de Transporte (especificamente o TCP)** para reordenação, controle de fluxo e retransmissão de pacotes ausentes. |
+| **Independente do Meio (*Media Independent*)** | O formato e o encapsulamento do pacote IP não mudam em função da mídia física. | O pacote IP é idêntico se trafegar em fibra óptica, cabo de cobre UTP ou ondas de rádio (Wi-Fi). Quem adapta o pacote às particularidades do meio físico é a **Camada de Enlace (L2)** e a **Camada Física (L1)**. |
+
+#### 11.4.1 Comparativo das Afirmações sobre o Protocolo IP
+
+| Afirmação / Característica Analisada | Veredito | Justificativa Técnica |
+| :--- | :---: | :--- |
+| **`Connectionless` (Sem Conexão)** | **CARACTERÍSTICA BÁSICA DO IP** | Não há estabelecimento prévio de sessão (*handshake*); cada datagrama IP é roteado de forma independente. |
+| **"O IP depende dos serviços da camada de transporte para lidar com situações de pacotes ausentes ou fora de ordem"** | **VERDADEIRA** | O IP é *best-effort*; o protocolo **TCP (Camada 4)** utiliza *Sequence Numbers* e *Acks* para detectar perdas e reconstruir o fluxo ordenado para a aplicação. |
+| "Dependente de mídia" | Falsa | O IP é *Media Independent*; opera de maneira transparente sobre cobre, fibra ou rádio. |
+| "Segmentação de dados do usuário" | Falsa | A segmentação primária de fluxos de dados da aplicação em blocos de transporte é função da **Camada 4 (Transporte)**. |
+| "Entrega confiável de ponta a ponta" | Falsa | O IP é inerentemente não confiável (*best-effort*); confiabilidade é provida pelo **TCP**. |
+| "Exclusão de frames" | Falsa | Quadros (*frames*) são a PDU da **Camada 2 (Enlace)**; o descarte de quadros com erro de CRC é feito por L2, não pelo IP (L3). |
+| "O encapsulamento IP é condicionado e modificado com base no meio físico" | Falsa | O IP é *Media Independent*; o cabeçalho IP permanece inalterado independentemente da mídia física usada. |
+| "O IP depende dos protocolos da camada 2 para controle de erros de transmissão" | Falsa | A Camada 2 apenas descarta quadros locais com erro de CRC/FCS; a garantia de entrega ponta a ponta é provida pela Camada 4 (Transporte). |
+| "Os endereços MAC são usados durante o encapsulamento do pacote IP" | Falsa | Endereços MAC são inseridos no cabeçalho do **Quadro (Camada 2)**; o pacote IP (Camada 3) utiliza apenas endereços IP de origem e destino. |
+| "O IP precisa se comunicar com a camada 1 para construir o seu pacote" | Falsa | A arquitetura em camadas é estritamente modular e adjacente: a Camada 3 comunica-se apenas com a Camada 4 (acima) e a Camada 2 (abaixo). |
+
+
+```mermaid
+flowchart TD
+    subgraph L4["Camada 4: Transporte (TCP)"]
+        TCP["Garante Confiabilidade, Reordenação de Pacotes e Retransmissão de Faltantes"]
+    end
+    subgraph L3["Camada 3: Rede (IP)"]
+        IP["Melhor Esforço (Best-Effort) e Sem Conexão (Connectionless)<br>Endereçamento Lógico e Roteamento"]
+    end
+    subgraph L2["Camada 2: Enlace (Ethernet/Wi-Fi)"]
+        L2Prot["Encapsula em Quadros (MAC) e Abstrai a Mídia Física"]
+    end
+    subgraph L1["Camada 1: Física"]
+        L1Meio["Bits, Sinais Elétricos, Ópticos ou Rádio"]
+    end
+    TCP -->|Fornece fluxo confiável| IP
+    IP -->|Independente de Meio| L2Prot
+    L2Prot --> L1Meio
+```
+
+### 11.5 Endereços de Uso Especial no IPv4 (Loopback e APIPA)
 
 O IPv4 reserva blocos de endereços para finalidades específicas que não podem ser roteados na Internet pública ou atribuídos normalmente a hosts convencionais:
 
@@ -1431,7 +1480,7 @@ O IPv4 reserva blocos de endereços para finalidades específicas que não podem
 | **`128.0.0.1`** | **Unicast Público** | Endereço IP público globalmente roteável (antiga Classe B, intervalo 128.0.0.0 a 191.255.255.255). | Não (é endereço externo) |
 | **`169.254.0.0/16`** | **APIPA / Link-Local** | Endereçamento IP Privado Automático gerado pelo próprio SO quando o cliente DHCP não obtém resposta na rede local. | Não (usado para autoconfiguração local) |
 
-#### 11.4.1 Mecanismo Real da Interface de Loopback (`lo`)
+#### 11.5.1 Mecanismo Real da Interface de Loopback (`lo`)
 
 1. **Retorno em Laço no Kernel (*Loopback*)**:
    Quando qualquer aplicação ou o utilitário `ping` envia pacotes para `127.0.0.1` (ou qualquer endereço dentro de `127.0.0.0/8`), o pacote **não sai para o cabo nem para o transmissor físico da placa de rede (NIC)**.
@@ -1454,18 +1503,21 @@ flowchart LR
     DriverLo -.->|Pacote NUNCA chega ao hardware físico| NIC
 ```
 
-### 11.5 Exemplo Real em Engenharia de Dados
+### 11.6 Exemplo Real em Engenharia de Dados
 
-No dia a dia da engenharia de dados, a interface de loopback (`127.0.0.1`) é fundamental em múltiplos cenários:
-- **Testes e Desenvolvimento Local de Pipelines**: Um engenheiro de dados sobe um banco PostgreSQL e um broker Redis via Docker localmente. A aplicação em Python conecta em `postgresql://usuario:senha@127.0.0.1:5432/analytics` e `redis://127.0.0.1:6379/0` comunicando-se diretamente em memória via kernel sem gerar tráfego na rede externa da empresa.
-- **Pods do Kubernetes (Padrão Sidecar)**: Em um pod de processamento de dados contendo dois containers (ex.: um worker de extração de dados e um proxy de autenticação/segurança), ambos compartilham o mesmo *Network Namespace*. O worker envia o tráfego HTTP para o proxy via `http://127.0.0.1:8080` em altíssima velocidade.
-- **Liveness/Readiness Probes**: O Kubernetes executa pings e requisições HTTP em `127.0.0.1` dentro do contêiner para checar se o serviço de ETL está vivo.
+No ecossistema de Engenharia de Dados:
+- **Tolerância a Perda em Pipelines de Big Data**: Quando um job Spark transfere gigabytes de dados entre executores distribuídos via rede, centenas de pacotes IP podem ser descartados por saturação de switches no data center. Como o IP é *best-effort*, a camada de **transporte (TCP)** monitora os números de confirmação (*ACK*) e retransmite automaticamente os segmentos ausentes, garantindo que nenhum registro do DataFrame chegue corrompido ou falte na gravação final.
+- **Desenvolvimento Local e Contêineres**: A interface de loopback (`127.0.0.1`) permite subir bancos locais (PostgreSQL, ClickHouse, Redis) e conectar aplicações de ingestão em testes unitários sem emitir tráfego externo.
+- **Segmentação de Subnets em VPCs**: Subnets `/24` isolam workers Spark de instâncias de banco, garantindo que o tráfego intra-cluster permaneça na camada local L2 e o tráfego inter-redes passe por firewalls no gateway.
 
-### 11.6 Glossário de Siglas
+### 11.7 Glossário de Siglas
 
 | Sigla | Nome Completo | Significado e Função |
 |-------|---------------|----------------------|
-| **IPv4** | *Internet Protocol version 4* | Protocolo de endereçamento lógico de 32 bits da Camada de Rede (Camada 3). |
+| **IP** | *Internet Protocol* | Protocolo de camada de rede responsável pelo endereçamento lógico e roteamento de pacotes. |
+| **IPv4** | *Internet Protocol version 4* | Protocolo de endereçamento de 32 bits da Camada de Rede. |
+| **TCP** | *Transmission Control Protocol* | Protocolo orientado a conexão da Camada 4 que provê entrega confiável e reordenação de dados. |
+| **UDP** | *User Datagram Protocol* | Protocolo não orientado a conexão da Camada 4 que não garante entrega nem reordenação (menor overhead). |
 | **APIPA** | *Automatic Private IP Addressing* | Endereçamento automático link-local (169.254.0.0/16) usado quando o DHCP falha. |
 | **CIDR** | *Classless Inter-Domain Routing* | Notação de prefixo flexível (ex: `/24`) que substituiu o endereçamento rígido por classes (A, B, C). |
 | **DNS** | *Domain Name System* | Sistema hierárquico que traduz nomes legíveis (ex.: `dw.empresa.com`) em endereços IP numéricos. |
@@ -1476,7 +1528,7 @@ No dia a dia da engenharia de dados, a interface de loopback (`127.0.0.1`) é fu
 | **VLSM** | *Variable Length Subnet Masking* | Técnica de divisão de sub-redes em tamanhos variáveis para otimizar o uso do espaço de endereçamento. |
 | **VPC** | *Virtual Private Cloud* | Rede virtual isolada em nuvem pública onde residem instâncias, sub-redes e bancos de dados. |
 
-### 11.7 Exemplo com Código Real (Python / Bash)
+### 11.8 Exemplo com Código Real (Python / Bash)
 
 **1. Teste no terminal Linux (Bash) para validar a pilha de rede e interface de loopback:**
 
@@ -1488,12 +1540,12 @@ ping -c 4 127.0.0.1
 ip addr show lo
 ```
 
-**2. Script Python em Pipeline de Dados verificando saúde da conexão local via loopback:**
+**2. Script Python em Pipeline de Dados verificando integridade de conexão TCP sobre IP:**
 
 ```python
 import socket  # Biblioteca padrão do Python para operações de rede e sockets de baixo nível
 
-# Cria um socket TCP para comunicação via protocolo IPv4
+# Cria um socket TCP (SOCK_STREAM) sobre o protocolo IPv4 (AF_INET)
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Define o tempo limite máximo de espera da conexão em 2 segundos
@@ -1534,4 +1586,8 @@ sock.close()
 | O que é largura de banda? | Capacidade máxima do meio de transportar dados por tempo |
 | Qual propriedade identifica a rede e o host no IPv4? | Máscara de sub-rede (*Subnet Mask*) |
 | Qual endereço IPv4 testa a interface de loopback? | 127.0.0.1 (bloco 127.0.0.0/8) |
+| Qual camada resolve pacotes IP perdidos ou fora de ordem? | Camada de Transporte (especialmente TCP) |
+| Acessa a rede local mas não acessa outras redes/Internet? | Gateway padrão (*Default Gateway*) inválido ou incorreto |
+| Quais as 3 características básicas do IP? | *Connectionless* (sem conexão), *Best-Effort* (melhor esforço) e *Media Independent* (independente do meio) |
+
 
