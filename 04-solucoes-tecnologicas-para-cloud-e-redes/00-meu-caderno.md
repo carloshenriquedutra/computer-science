@@ -1359,9 +1359,79 @@ ip link show
 ip -s link show eth0
 ```
 
+### 10.10 Resolução de Endereços: ARP (IPv4) vs. Neighbor Discovery ICMPv6 (IPv6)
+
+Para que um quadro Ethernet seja transmitido na rede local, o emissor conhece o IP de destino (Camada 3), mas precisa descobrir o **endereço MAC físico da placa de rede** (Camada 2). Esse mapeamento é chamado de **resolução de endereços**.
+
+#### 10.10.1 Como o IPv4 Resolve: Protocolo ARP
+
+- **ARP Request (Solicitação)**: O host transmissor envia uma mensagem em **Broadcast** (`FF:FF:FF:FF:FF:FF`) para todos os dispositivos do segmento de rede perguntando: *"Quem possui o IPv4 X.X.X.X? Responda com seu MAC para o meu IP/MAC"*.
+- **ARP Reply (Resposta)**: O host que possui o IP solicitado responde em **Unicast** diretamente ao transmissor: *"Eu possuo esse IP e meu MAC é AA:BB:CC:DD:EE:FF"*.
+- **Cache ARP**: O resultado é salvo temporariamente na memória RAM para evitar novas consultas a cada pacote enviado.
+
+#### 10.10.2 Como o IPv6 Resolve: ICMPv6 Neighbor Discovery (ND / NDP)
+
+No IPv6, **o Broadcast NÃO existe**. Em seu lugar, a resolução de endereços utiliza o protocolo **Neighbor Discovery (NDP)** baseado em mensagens do protocolo **ICMPv6**:
+
+1. **Neighbor Solicitation (NS)**: Mensagem enviada pelo host emissor para descobrir o MAC de um nó vizinho cujo IPv6 é conhecido (equivalente direto ao **ARP Request**). É enviada via **Solicited-Node Multicast**, garantindo que apenas os nós com terminação de endereço compatível processem o pacote no hardware da NIC, economizando processamento de todos os outros dispositivos da rede.
+2. **Neighbor Advertisement (NA)**: Mensagem de resposta enviada em **Unicast** pelo nó detentor do IPv6 contendo seu endereço MAC (equivalente direto ao **ARP Reply**).
+3. **Router Solicitation (RS)**: Mensagem do host para roteadores solicitando informações de autoconfiguração de rede (SLAAC).
+4. **Router Advertisement (RA)**: Mensagem do roteador anunciando prefixos e parâmetros da rede aos hosts.
+5. **Redirect Message**: Mensagem do roteador informando ao host um caminho de próximo salto mais eficiente.
+
+| Função de Rede | IPv4 (Mecanismo Tradicional) | IPv6 (Protocolo ICMPv6 NDP) | Tipo de Envio |
+| :--- | :--- | :--- | :--- |
+| **Requisitar MAC de um nó (Pergunta)** | **ARP Request** | **`Neighbor Solicitation (NS)`** | IPv4: Broadcast (`FF:FF:...`) / IPv6: *Solicited-Node Multicast* |
+| **Informar MAC ao requisitante (Resposta)** | **ARP Reply** | **`Neighbor Advertisement (NA)`** | Unicast |
+| **Requisitar parâmetros de roteador** | DHCP / Rota Estática | **`Router Solicitation (RS)`** | Multicast (`ff02::2`) |
+| **Anunciar parâmetros aos hosts** | DHCP / Anúncio de Rota | **`Router Advertisement (RA)`** | Multicast (`ff02::1`) |
+| **Informar rota de melhor salto** | ICMP Redirect | **`ICMPv6 Redirect`** | Unicast |
+
+#### 10.10.3 Comparativo das Alternativas da Questão
+
+| Alternativa | O que é tecnicamente? | É equivalente ao ARP para resolução de endereços? |
+| :--- | :--- | :---: |
+| **`Neighbor solicitation`** | Mensagem ICMPv6 enviada para solicitar o endereço MAC de um vizinho com IPv6 conhecido. | **SIM (Equivalente ao ARP Request)** |
+| `Broadcast` | Método de envio para todos os nós. **Foi eliminado no IPv6** (substituído por Multicast). | Não (nem existe no IPv6) |
+| `Anycast` | Tipo de endereçamento ("um para o mais próximo"), não um tipo de mensagem de resolução de MAC. | Não |
+| `Echo request` | Mensagem ICMP (tipo 128 em IPv6) usada pelo utilitário `ping` para testar conectividade. | Não |
+| `Echo reply` | Mensagem ICMP de resposta (tipo 129 em IPv6) emitida após receber um *Echo Request*. | Não |
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant H1 as Host 1 (Origem)
+    participant H2 as Host 2 (Destino)
+    
+    rect rgb(240, 248, 255)
+    Note over H1,H2: Resolução em IPv4 (ARP)
+    H1->>H2: ARP Request (Broadcast: todos da rede recebem)
+    H2->>H1: ARP Reply (Unicast com MAC de H2)
+    end
+    
+    rect rgb(240, 255, 240)
+    Note over H1,H2: Resolução em IPv6 (NDP / ICMPv6)
+    H1->>H2: Neighbor Solicitation - NS (Multicast de nó solicitado)
+    H2->>H1: Neighbor Advertisement - NA (Unicast com MAC de H2)
+    end
+```
+
+#### 10.10.4 Comandos Linux para Tabela de Vizinhos IPv6
+
+No Linux moderno, a tabela ARP do IPv4 e a tabela de vizinhos IPv6 são gerenciadas pelo utilitário `ip neigh`:
+
+```bash
+# Exibe a tabela de resolução de vizinhos IPv6 (tabela NDP / equivalente à tabela ARP do IPv6)
+ip -6 neigh show
+
+# Envia manualmente uma mensagem Neighbor Solicitation (NS) para descobrir o MAC de um IP IPv6
+ndisc6 2001:db8::50 eth0
+```
+
 ---
 
 ## 11. Endereçamento IPv4, Máscaras e Segmentação de Redes
+
 
 ### 11.1 Conceito de CIDR e Cálculo de Hosts
 O roteamento inter-domínios sem classe (CIDR - *Classless Inter-Domain Routing*) substituiu o antigo sistema de classes fixas (A, B, C), permitindo alocar blocos IP com tamanhos flexíveis definidos por um prefixo (ex: `/24` ou `/20`).
