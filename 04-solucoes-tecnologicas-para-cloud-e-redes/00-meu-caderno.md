@@ -2707,15 +2707,71 @@ Quando ocorre concorrência ou congestionamento na rede, os roteadores e switche
 ---
 
 
-### 15.4 Ferramentas de Diagnóstico e Resolução de Problemas (*Troubleshooting*)
+### 15.4 Ferramentas de Diagnóstico, Análise de Tráfego e Troubleshooting
 
 | Ferramenta / Método | Camada OSI | Protocolo / Tipo | Função Prática |
 | :--- | :---: | :---: | :--- |
 | **`ping`** | Camada 3 | ICMP (Tipo 8 Request / Tipo 0 Reply) | Testa conectividade fim a fim e mede o tempo de ida e volta (*round-trip time - RTT*). |
 | **`traceroute` / `tracert`** | Camada 3 | ICMP / UDP (TTL progressivo) | Identifica cada salto (*hop*) de roteador ao longo do caminho, localizando onde ocorre falha ou latência. |
+| **Analisador de Protocolos** (Wireshark, `tcpdump`) | Camadas 2 a 7 | Captura de Pacotes / PCAP | Captura tráfego em tempo real para **documentar e analisar requisitos de tráfego** em cada segmento de rede. |
 | **Linha de Base (*Baseline*)** | Todas | Métricas históricas (Zabbix/SNMP) | Registra o comportamento normal da rede para identificar anomalias de latência e consumo de banda. |
 
+#### 15.4.1 Objetivo da Captura de Tráfego com Analisador de Protocolos ao Atualizar uma Rede
+
+Para dimensionar e planejar adequadamente a atualização de uma rede corporativa:
+
+1. **Documentação e Análise de Requisitos Reais por Segmento**:
+   - Antes de adquirir novos equipamentos ou reconfigurar enlaces, o administrador utiliza analisadores de protocolo (como Wireshark ou `tcpdump`) para **documentar e analisar os requisitos de tráfego de rede em cada segmento específico**.
+   - Isso permite identificar quais protocolos trafegam em cada switch/VLAN, qual o volume gerado nos horários de pico e quais servidores exigem maior capacidade de comutação (*backplane* e portas 10G/40G).
+2. **Avaliação de Origem, Destino e Tipos de Fluxo**:
+   - Analisar a origem e o destino do tráfego permite realocar serviços e servidores para segmentos mais próximos dos usuários, evitando sobrecarga desnecessária nos roteadores centrais (*core switches*).
+
+#### 15.4.2 Tabela Comparativa das Alternativas da Questão: Analisador de Protocolos
+
+| Alternativa da Questão | Avaliação | Justificativa Técnica |
+| :--- | :---: | :--- |
+| **`Para documentar e analisar os requisitos de tráfego de rede em cada segmento de rede`** | **CORRETA** | **Objetivo primário de planejamento**: dimensionar a rede com base nos tipos de aplicações, volumes e fluxos reais capturados em cada segmento antes do upgrade. |
+| `Para identificar a origem e o destino do tráfego da rede local` | Incorreta | A identificação de IPs de origem/destino é apenas um dado bruto intermediário da captura, e não o objetivo final de projeto. |
+| `Para capturar o requisito de largura de banda de conexão à Internet` | Incorreta | A análise é feita nos segmentos internos da rede local (LAN), não se limitando ao link WAN/Internet. |
+| `Para estabelecer um baseline para a análise de segurança após a rede ser atualizada` | Incorreta | O objetivo antes da atualização é o dimensionamento de capacidade e tráfego; a análise de segurança posterior é uma atividade distinta. |
+| `Para associar os endereçamentos devidos` | Incorreta | A atribuição e o planejamento de endereços IP são feitos na fase de desenho topológico, não dependendo de analisador de pacotes para atualização. |
+
+#### 15.4.3 As 6 Etapas Metodológicas do Processo de Troubleshooting (Solução de Problemas)
+
+Conforme a metodologia padrão de engenharia de redes e sistemas (TANENBAUM e WETHERALL, 2011; KUROSE e ROSS, 2016; CompTIA / Cisco):
+
+```mermaid
+graph TD
+    P1["1. Identificação do Problema<br><i>(Coletar sintomas e escopo)</i>"] --> P2["2. Estabelecimento de Teoria de Causas Prováveis<br><i>(Levantar hipóteses do que causou)</i>"]
+    P2 --> P3["3. Teste da Teoria para Determinar a Causa<br><i>(Validar ou refutar a hipótese)</i>"]
+    P3 -- "Hipótese não confirmada" --> P2
+    P3 -- "Causa confirmada" --> P4["4. Estabelecimento de Plano de Ação e Implementação<br><i>(Executar a solução)</i>"]
+    P4 --> P5["5. Verificação da Funcionalidade Total e Prevenção<br><i>(Garantir que o sistema opera sem efeitos colaterais)</i>"]
+    P5 --> P6["6. Documentação de Achados, Ações e Resultados<br><i>(Post-mortem e base de conhecimento)</i>"]
+```
+
+| Ordem | Etapa do Troubleshooting | Ação Principal |
+| :---: | :--- | :--- |
+| **Passo 1** | **Identificação do problema** (*Identify the problem*) | Coletar sintomas com usuários, determinar o escopo (um único host ou a rede inteira) e verificar alterações recentes. |
+| **Passo 2** | **Estabelecimento de uma teoria das causas prováveis** (*Establish theory of probable cause*) | **Executado imediatamente após o Passo 1**: formular hipóteses lógicas e questionar o óbvio. |
+| **Passo 3** | **Teste da teoria para determinar a causa** (*Test theory*) | Realizar diagnósticos (`ping`, `traceroute`, logs, cabos) para confirmar ou refutar a hipótese. |
+| **Passo 4** | **Estabelecimento de um plano de ação e solução** (*Plan and implement*) | Planejar a correção minimizando impactos e aplicar a solução técnica. |
+| **Passo 5** | **Verificação da funcionalidade total do sistema** (*Verify functionality*) | Testar se todos os serviços voltaram ao normal e aplicar medidas preventivas para não reincidir. |
+| **Passo 6** | **Documentação dos achados, ações e resultados** (*Document*) | Registrar a causa raiz e a solução no histórico de incidentes (*Post-mortem*). |
+
+#### 15.4.4 Tabela Comparativa das Alternativas da Questão: Próximo Passo do Troubleshooting
+
+| Alternativa da Questão | Ordem / Posição | Avaliação | Justificativa Técnica |
+| :--- | :---: | :---: | :--- |
+| **`Estabelecimento de uma teoria das causas prováveis`** | **Passo 2** | **CORRETA** | **Passo imediato após o Passo 1 (Identificação)**: criar hipóteses técnicas sobre a causa raiz do problema. |
+| `Teste da teoria para determinar a causa` | Passo 3 | Incorreta | Executado somente após a teoria ter sido estabelecida. |
+| `Estabelecimento de um plano de ação para resolver o problema` | Passo 4 | Incorreta | Executado somente após a causa ter sido confirmada no teste. |
+| `Verificação da funcionalidade total do sistema` | Passo 5 | Incorreta | Executado após a implementação da solução para validar que tudo funciona. |
+| `Mitigação do problema` | N/A | Incorreta | Ação paliativa emergencial; não constitui o passo metodológico estruturado após a identificação. |
+
 ---
+
+
 
 ### 15.5 Exemplo Real em Engenharia de Dados
 
@@ -2778,9 +2834,192 @@ resource "aws_nat_gateway" "nat_gw_a" {
 
 ---
 
-## 16. Resumão rápido (colinha final)
+## 16. Aula 16 - Tópicos Avançados de Redes
 
-### 16.1 Perguntas essenciais
+### 16.1 Novas Tendências e Modelos de Rede
+
+As redes modernas evoluíram para acomodar novas dinâmicas de trabalho, automação e computação distribuída (TANENBAUM e WETHERALL, 2011; KUROSE e ROSS, 2016):
+
+| Tendência / Conceito | Descrição e Aplicação Prática |
+| :--- | :--- |
+| **BYOD (*Bring Your Own Device*)** | Liberdade para colaboradores e estudantes utilizarem seus próprios dispositivos pessoais (laptops, smartphones, tablets) para acessar recursos da rede corporativa/acadêmica com segurança. |
+| **Colaboração e Vídeo** | Prioridade estratégica de comunicação corporativa em tempo real (videoconferências, chamadas de voz), exigindo redes com baixo jitter e QoS configurado. |
+| **Computação em Nuvem (*Cloud Computing*)** | Acesso sob demanda a recursos computacionais (processamento, armazenamento, bancos de dados e redes) hospedados em *Data Centers* distribuídos, reduzindo o Custo Total de Propriedade (*Total Cost of Ownership - TCO*). |
+| **Casas Inteligentes (*Smart Home*)** | Integração de eletrodomésticos, iluminação, sensores e sistemas de segurança domésticos conectados à Internet e automatizados via IoT. |
+
+#### 16.1.1 BYOD (*Bring Your Own Device* - Traga Seu Próprio Dispositivo)
+
+1. **Conceito e Mecanismo**:
+   - O **BYOD** descreve a política e a capacidade técnica que permite aos usuários (funcionários, estudantes, parceiros) utilizarem seus **dispositivos pessoais** (smartphones, notebooks, tablets particulares) para se conectarem à rede corporativa e acessarem informações e ferramentas de trabalho.
+   - O mantra do BYOD é: *"qualquer dispositivo, de qualquer propriedade, usado em qualquer lugar"*.
+2. **Impacto na Arquitetura de Rede e Segurança**:
+   - Para suportar o BYOD com segurança sem expor dados confidenciais da empresa, os administradores de rede implementam:
+     - **VLANs Isoladas para Visitantes/BYOD (*Guest Networks*)**: impedem que um dispositivo pessoal infectado escaneie servidores internos.
+     - **Controle de Acesso à Rede (*NAC - Network Access Control*)** e **MDM (*Mobile Device Management*)**: autenticam o usuário e verificam se o dispositivo atende a requisitos mínimos de segurança (antivírus ativo, SO atualizado).
+
+#### 16.1.2 Tabela Comparativa das Alternativas da Questão: Dispositivos Pessoais na Rede Corporativa
+
+| Alternativa da Questão | Definição Real | Foco da Tecnologia / Conceito | Avaliação |
+| :--- | :--- | :--- | :---: |
+| **`BYOD`** | **Capacidade e política que permite aos usuários conectarem seus dispositivos pessoais à rede da empresa.** | **Uso de dispositivos pessoais em ambiente corporativo** | **CORRETA** |
+| `Extranet` | Rede controlada que estende serviços da intranet para parceiros, clientes e fornecedores externos autorizados. | Escopo de rede interorganizacional | Incorreta |
+| `Intranet` | Rede privada e exclusiva para colaboradores de uma organização compartilharem informações internas. | Escopo de rede interna privada | Incorreta |
+| `Internet` | Malha pública global de redes interconectadas sob a pilha TCP/IP. | Infraestrutura pública mundial | Incorreta |
+| `Peer-to-peer` (P2P) | Modelo de software descentralizado onde cada nó funciona simultaneamente como cliente e servidor. | Topologia de aplicação cliente/servidor | Incorreta |
+
+#### 16.1.3 Escopos de Rede: Intranet vs Extranet vs Internet
+
+As redes corporativas são categorizadas pelo seu nível de isolamento, público-alvo e perímetro de acesso:
+
+```mermaid
+graph TD
+    subgraph "Mundo Externo / Público"
+        Internet["🌍 INTERNET<br><i>(Acesso público global - qualquer pessoa)</i>"]
+    end
+
+    subgraph "Perímetro Controlado Intermediário"
+        Extranet["🤝 EXTRANET<br><i>(Acesso seguro a indivíduos de <b>organizações diferentes</b>:<br>Fornecedores, Parceiros, Clientes, Terceiros)</i>"]
+    end
+
+    subgraph "Núcleo Privado da Empresa"
+        Intranet["🏢 INTRANET<br><i>(Acesso exclusivo para funcionários da <b>mesma organização</b>)</i>"]
+    end
+
+    Internet --> Extranet
+    Extranet --> Intranet
+```
+
+| Tipo de Rede | Público-Alvo e Abrangência | Acesso e Segurança | Exemplos Práticos |
+| :--- | :--- | :--- | :--- |
+| **Intranet** | Exclusiva para **colaboradores da mesma organização**. | Altamente restrita; fechada para o público externo; acessada via LAN local ou VPN corporativa. | Portal de RH interno, folha de pagamento, repositórios de código internos. |
+| **Extranet** | Fornece **acesso seguro e protegido a indivíduos que trabalham para uma organização diferente** (parceiros comerciais, clientes, fornecedores de matéria-prima, prestadores de serviço terceirizados). | Protegida por autenticação dedicada (mTLS, VPN B2B, portal seguro com SSO restrito). | Portal de fornecedores para upload de notas fiscais, acesso seguro de clientes a relatórios analíticos, integrações B2B de dados. |
+| **Internet** | **Público global** sem restrições institucionais. | Acesso aberto a qualquer dispositivo conectado; depende de segurança na camada de aplicação (HTTPS). | Sites de comércio eletrônico, Wikipédia, Google, blogs. |
+
+#### 16.1.4 Tabela Comparativa das Alternativas da Questão: Acesso de Organizações Diferentes
+
+| Alternativa da Questão | Definição Real | Atende ao Acesso de Outra Organização? | Avaliação |
+| :--- | :--- | :---: | :---: |
+| **`Extranet`** | **Rede que provê acesso seguro e protegido a parceiros e indivíduos que trabalham para organizações diferentes.** | **SIM** | **CORRETA** |
+| `Cloud` | Modelo de fornecimento sob demanda de recursos computacionais via data centers na Internet/privados. | Não | Incorreta |
+| `BYOD` | Política de conexão de aparelhos particulares de funcionários à rede. | Não | Incorreta |
+| `Peer-to-peer` | Arquitetura distribuída de software cliente/servidor mútuo. | Não | Incorreta |
+| `Escalabilidade` | Propriedade de uma rede de crescer sem perder desempenho. | Não | Incorreta |
+
+---
+
+
+
+### 16.2 Tecnologias de Conectividade Alternativa e Residencial
+
+#### 16.2.1 Rede Powerline (*Power Line Communication - PLC*)
+
+A tecnologia **Powerline** permite que dispositivos de rede se comuniquem e transmitam dados **utilizando a própria fiação elétrica existente** do imóvel:
+
+1. **Como Funciona na Prática**:
+   - Conecta-se um **adaptador Powerline** em uma tomada elétrica comum perto do roteador principal (ligado via cabo Ethernet RJ-45).
+   - Conecta-se um segundo adaptador Powerline em qualquer outra tomada elétrica da casa ou escritório.
+   - O adaptador modula os sinais de dados em frequências muito mais altas do que a corrente elétrica alternada (50/60 Hz), transformando a rede elétrica em um barramento de rede local (LAN).
+2. **Vantagens e Casos de Uso**:
+   - Não requer instalação de novos cabos de rede (furação de paredes/conduítes).
+   - Resolve problemas de cobertura onde o sinal Wi-Fi sofre atenuação severa (paredes espessas de concreto, múltiplos andares/lajes).
+   - Não consome energia elétrica adicional significativa.
+
+```mermaid
+graph LR
+    subgraph "Cômodo 1 (Roteador)"
+        Router[Roteador Internet] -->|Cabo RJ-45| PLC1[Adaptador Powerline 1]
+        PLC1 -->|Plugado na Tomada| Tomada1((Tomada Elétrica 1))
+    end
+
+    Tomada1 <== "Fiação Elétrica Existente na Parede (Rede Elétrica)" ==> Tomada2((Tomada Elétrica 2))
+
+    subgraph "Cômodo 2 (Dispositivo Remoto)"
+        Tomada2 --> PLC2[Adaptador Powerline 2]
+        PLC2 -->|Cabo RJ-45 ou Wi-Fi| PC[PC / Smart TV / Servidor]
+    end
+```
+
+#### 16.2.2 Tabela Comparativa das Alternativas da Questão: Tecnologias e Conceitos de Rede
+
+| Alternativa da Questão | Definição / Função Real | Usa a Rede Elétrica? | Avaliação |
+| :--- | :--- | :---: | :---: |
+| **`Powerline`** | **Tecnologia que utiliza a fiação elétrica existente para transmitir pacotes de dados de rede entre dispositivos.** | **SIM** | **CORRETA** |
+| `Peer-to-peer` (P2P) | Modelo de arquitetura de software onde os nós atuam simultaneamente como clientes e servidores (ex.: BitTorrent). | Não | Incorreta |
+| `Internet` | Rede pública mundial de computadores interconectados pela pilha de protocolos TCP/IP. | Não | Incorreta |
+| `Intranet` | Rede privada e restrita acessível apenas por membros autorizados de uma organização. | Não | Incorreta |
+| `Extranet` | Extensão privada e controlada da Intranet permitindo acesso seguro a parceiros, fornecedores e clientes externos. | Não | Incorreta |
+
+---
+
+### 16.3 Segurança em Redes Avançadas: Ameaças e Mecanismos de Proteção
+
+| Categoria | Tipo de Ameaça / Solução | Mecanismo e Impacto |
+| :--- | :--- | :--- |
+| **Ameaças Passivas** | Espionagem (*Sniffing*) e Interceptação | Captura silenciosa de tráfego sem alterar os pacotes (mitigada por criptografia/TLS). |
+| **Ameaças Ativas** | *Zero-day*, DoS, Spoofing, Malware | Alteração de mensagens, personificação de hosts e indisponibilidade de serviços. |
+| **Defesa Doméstica** | Antivírus, Antispyware e Firewall básico | Proteção de endpoints e bloqueio de portas não solicitadas no roteador de borda. |
+| **Defesa Corporativa** | Firewalls Dedicados, ACLs, IPS e VPNs | Filtragem em massa por IP/porta (ACLs), inspeção profunda de pacotes (*IPS/NGFW*) e túneis criptografados (*VPN*). |
+
+---
+
+### 16.4 Exemplo Real em Engenharia de Dados
+
+Em projetos de **Smart Grids e Indústria 4.0**:
+
+- **Telemetria de Medidores Inteligentes via Powerline (PLC)**: Medidores de energia elétrica em indústrias e prédios utilizam protocolos Powerline (como *PRIME* ou *G3-PLC*) para enviar leituras de consumo elétrico, tensão e falhas através dos próprios cabos elétricos de alta/baixa tensão até uma subestação concentradora.
+- **Pipeline de Dados**: Da subestação, esses fluxos de dados são encapsulados em mensagens JSON e enviados para tópicos do Apache Kafka e ingeridos em um Data Lake (BigQuery / S3) para monitoramento em tempo real e previsão de sobrecarga na rede elétrica.
+
+---
+
+### 16.5 Glossário de Siglas de Tópicos Avançados de Redes
+
+| Sigla | Nome Completo | Significado e Função |
+| :--- | :--- | :--- |
+| **PLC** | *Power Line Communication* | Comunicação via rede elétrica; tecnologia de transmissão de dados usando a infraestrutura de energia elétrica. |
+| **BYOD** | *Bring Your Own Device* | Política corporativa que autoriza o uso de dispositivos pessoais no ambiente de trabalho. |
+| **WISP** | *Wireless Internet Service Provider* | Provedor de serviços de Internet que atende assinantes via rádio/enlace sem fio (comum em áreas rurais). |
+| **TCO** | *Total Cost of Ownership* | Custo Total de Propriedade; soma de todos os custos diretos e indiretos de aquisição e operação de TI. |
+| **DoS** | *Denial of Service* | Ataque de Negação de Serviço que busca sobrecarregar um sistema para torná-lo indisponível. |
+| **IPS** | *Intrusion Prevention System* | Sistema de prevenção de intrusões que inspeciona o tráfego em tempo real para bloquear ataques ativos. |
+| **ACL** | *Access Control List* | Lista de controle de acesso configurada em roteadores e switches para permitir ou negar tráfego. |
+| **GPON** | *Gigabit Passive Optical Network* | Tecnologia de rede óptica passiva para distribuição de banda larga de alta velocidade. |
+
+---
+
+### 16.6 Exemplo de Código Real (Python / Ingestão de Dados de Sensores Powerline/PLC em Pipeline Kafka)
+
+```python
+import json  # Biblioteca para serialização de dados no formato JSON
+from kafka import KafkaProducer  # Cliente Kafka para publicação de mensagens em tópicos de streaming
+
+# 1. Configuração do produtor Kafka conectado ao cluster de mensageria
+produtor = KafkaProducer(
+    bootstrap_servers=["kafka-broker.corp.internal:9092"], # Endereço do broker Kafka
+    value_serializer=lambda v: json.dumps(v).encode("utf-8") # Serializa o dicionário Python para bytes JSON
+)
+
+# 2. Dados de telemetria recebidos via barramento Powerline (PLC) de medidores elétricos
+leitura_sensor_powerline = {
+    "sensor_id": "PLC-METER-042",               # Identificador único do dispositivo Powerline
+    "protocolo_meio": "Powerline_PLC_HomePlug", # Tecnologia de transmissão física (rede elétrica)
+    "tensao_volts": 220.4,                      # Tensão medida na rede elétrica local
+    "consumo_kwh": 14.85,                       # Consumo de energia acumulado
+    "temperatura_celsius": 32.1                 # Temperatura operacional do equipamento
+}
+
+# 3. Publicação do evento no tópico de telemetria do Data Lake
+topico_destino = "iot_telemetria_powerline"
+produtor.send(topico_destino, value=leitura_sensor_powerline) # Envia o registro de forma assíncrona
+produtor.flush() # Garante a entrega do lote de dados no broker
+
+print(f"Evento de telemetria do medidor Powerline enviado com sucesso para o tópico: {topico_destino}")
+```
+
+---
+
+## 17. Resumão rápido (colinha final)
+
+### 17.1 Perguntas essenciais
 
 | Pergunta | Resposta |
 |----------|----------|
@@ -2820,6 +3059,18 @@ resource "aws_nat_gateway" "nat_gw_a" {
 | Por que o HTTP usa o TCP como transporte? | Porque o HTTP requer entrega confiável (sem perda de dados) |
 | Protocolos para Arquivos, Envio de E-mail, Navegador e IP $\rightarrow$ Nome? | FTP – SMTP – HTTP – DNS |
 | Qual é uma associação adequada à redundância? | Projetar a rede para usar vários caminhos entre os switches para garantir que não haja um único ponto de falha |
+| Qual serviço demanda alta prioridade ao tráfego em tempo real? | Vídeo (e Voz sobre IP / VoIP) |
+| Objetivo de usar analisador de protocolo na atualização de rede? | Documentar e analisar os requisitos de tráfego de rede em cada segmento de rede |
+| Qual passo é executado após a identificação do problema no troubleshooting? | Estabelecimento de uma teoria das causas prováveis (Passo 2) |
+| Tecnologia que permite conectar dispositivos usando a rede elétrica? | Powerline (PLC - Power Line Communication) |
+| Capacidade de usar dispositivos pessoais em rede corporativa? | BYOD (Bring Your Own Device) |
+| Rede que dá acesso seguro a indivíduos de organização diferente? | Extranet |
+
+
+
+
+
+
 
 
 
