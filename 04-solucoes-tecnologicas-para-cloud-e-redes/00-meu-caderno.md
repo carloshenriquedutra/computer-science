@@ -2611,9 +2611,176 @@ conexao_smb.disconnect()
 
 ---
 
-## 15. Resumão rápido (colinha final)
+## 15. Aula 15 - Projetando uma Rede
 
-### 15.1 Perguntas essenciais
+### 15.1 Introdução e Confiabilidade em Projetos de Rede
+
+O projeto de uma rede de computadores envolve equilibrar custo, desempenho, segurança, escalabilidade e, acima de tudo, **confiabilidade e disponibilidade** (TANENBAUM e WETHERALL, 2011; KUROSE e ROSS, 2016).
+
+---
+
+### 15.2 Redundância e Eliminação de Pontos Únicos de Falha (*Single Point of Failure - SPOF*)
+
+Um dos aspectos mais críticos no design de redes corporativas é garantir que a falha de um único dispositivo (roteador, switch, servidor) ou enlace de comunicação (cabo, fibra) não interrompa a operação da empresa.
+
+#### 15.2.1 Como a Redundância Funciona na Prática
+
+1. **Caminhos Múltiplos (*Multipath*) entre Switches e Roteadores**:
+   - Projetar a topologia de forma que existam **vários caminhos alternativos entre os switches e roteadores**.
+   - Se um enlace físico for rompido ou um switch falhar, o tráfego é automaticamente redirecionado por um caminho redundante sobressalente (usando protocolos como *Spanning Tree Protocol* - STP, ou protocolos de roteamento dinâmico como OSPF e BGP).
+2. **Eliminação do Ponto Único de Falha (*SPOF*)**:
+   - Duplicação de equipamentos críticos (switches em stack/alta disponibilidade, roteadores com VRRP/HSRP).
+   - Duplicação de interfaces de rede nos servidores (*NIC Teaming / Bonding*) conectadas a switches físicos diferentes.
+   - Provedores de Internet redundantes (links de operadoras distintas com BGP multi-homed).
+
+```mermaid
+graph TD
+    subgraph "Topologia SEM Redundância (Ponto Único de Falha)"
+        HostA1[Host A] --> SwitchA[Switch Único - SPOF ❌]
+        SwitchA --> RouterA[Roteador Único ❌]
+        RouterA --> Internet1((Internet))
+    end
+
+    subgraph "Topologia COM Redundância (Alta Disponibilidade)"
+        HostB1[Host B] --> SwitchB1[Switch 1 Primário]
+        HostB1 -. Enlace Redundante .-> SwitchB2[Switch 2 Secundário]
+        SwitchB1 <== Link Inter-Switch ==> SwitchB2
+        SwitchB1 --> RouterB1[Roteador 1]
+        SwitchB2 --> RouterB2[Roteador 2]
+        RouterB1 --> ISP1((Link ISP A))
+        RouterB2 --> ISP2((Link ISP B))
+    end
+```
+
+#### 15.2.2 Tabela Comparativa das Alternativas da Questão: Redundância em Redes
+
+| Alternativa da Questão | Avaliação | Justificativa Técnica |
+| :--- | :---: | :--- |
+| **`Projetar uma rede para usar vários caminhos entre os switches para garantir que não haja um único ponto de falha`** | **CORRETA** | **Definição exata de redundância**: criar enlaces e caminhos múltiplos para que a falha de um switch ou enlace físico não cause indisponibilidade geral. |
+| `Configurar um roteador com endereços MAC completos para garantir que todos os frames possam ser encaminhados para o destino correto` | Incorreta | Roteadores operam na Camada 3 (tabelas de roteamento com IPs), e preencher MACs estáticos trata de endereçamento na Camada 2, sem relação com redundância. |
+| `Configurar um switch com segurança adequada para garantir que todo o tráfego encaminhado através de uma interface seja filtrado` | Incorreta | Refere-se ao requisito de **Segurança** (ex.: *Port Security*, ACLs, 802.1X), e não à redundância estrutural. |
+| `Projetar uma rede para usar vários dispositivos virtuais para garantir que todo o tráfego use o melhor caminho através da internetwork` | Incorreta | A escolha do melhor caminho é função do **Roteamento Dinâmico (QoS / Métricas de Roteamento)**, não o propósito essencial da redundância. |
+| `Projetar uma rede para que todos dispositivos passem por um mesmo host` | Incorreta | Cria exatamente o oposto: um **Ponto Único de Falha (*SPOF*)** catastrófico e um gargalo severo de tráfego. |
+
+---
+
+### 15.3 Fatores de Decisão em Projetos de Redes
+
+| Fator de Projeto | Descrição e Impacto |
+| :--- | :--- |
+| **Custo** | Capacidade de comutação do backplane, quantidade/tipo de portas (cobre/fibra), redundância de fontes de alimentação e licenças de software. |
+| **Tipos de Portas** | Escolha entre portas Gigabit (1 Gbps) para estações finais e portas 10G/40G/100G para servidores e uplinks entre switches centrais. |
+| **Expansibilidade** | Dispositivos de configuração física fixa (não expansíveis) vs. modulares (com slots para adição futura de novas interfaces e mídias). |
+| **Serviços do SO** | Suporte a roteamento Camada 3 (*Layer 3 Switching*), NAT, DHCP, QoS, segurança avançada e VPNs. |
+| **Gerenciamento de Tráfego** | Aplicação de QoS para priorizar tráfego em tempo real sensível à latência (Voz sobre IP - VoIP e Vídeo) frente a tráfego comum de dados. |
+
+#### 15.3.1 Gerenciamento de Tráfego e Priorização de Aplicações em Tempo Real (QoS)
+
+Quando ocorre concorrência ou congestionamento na rede, os roteadores e switches precisam decidir quais pacotes encaminhar primeiro e quais podem esperar em filas de buffer:
+
+1. **Aplicações em Tempo Real (*Real-Time Traffic* - Alta Prioridade)**:
+   - **Vídeo (Streaming ao vivo / Videoconferência) e Voz (VoIP)**: São extremamente sensíveis a **latência** (*delay*), **variação de atraso** (*jitter*) e **perda de pacotes**. Um atraso superior a 150-200ms torna uma videoconferência incompreensível ou congela a imagem. Por isso, recebem a **mais alta prioridade de encaminhamento**.
+2. **Aplicações Interativas / Transacionais (Média Prioridade)**:
+   - Consultas a bancos de dados, ERPs e navegação web comum (*HTTP/HTTPS*).
+3. **Aplicações em Lote / Não Tempo Real (Baixa Prioridade / *Best-Effort*)**:
+   - **E-mail (SMTP/IMAP)**, **Transferência de Arquivos (FTP)** e **Gerenciamento de Rede (SNMP)**: Não sofrem impacto se chegarem com alguns segundos ou minutos de atraso; toleram buffers e retransmissões.
+
+#### 15.3.2 Tabela Comparativa de Classes de Tráfego e Prioridade de Rede
+
+| Classe de Tráfego | Exemplos de Aplicação | Sensibilidade a Latência / Jitter | Prioridade de Fila (QoS) |
+| :--- | :--- | :---: | :---: |
+| **Tempo Real (*Real-Time*)** | **Vídeo (Conferência / Streaming)** e **Voz (VoIP)** | **Altíssima** (exige $< 150$ ms) | **Alta (Fila Prioritária)** |
+| **Transacional / Crítico** | ERPs, APIs de Pagamento, SSH | Média | **Média / Alta** |
+| **Dados em Lote (*Batch*)** | **Email**, **FTP**, Backups, Relatórios | Baixa (Tolerante a atrasos) | **Baixa (*Best-Effort*)** |
+| **Gerência de Rede** | **SNMP**, Logs de auditoria | Baixa | **Baixa** |
+
+#### 15.3.3 Tabela Comparativa das Alternativas da Questão
+
+| Alternativa da Questão | Avaliação | Justificativa Técnica |
+| :--- | :---: | :--- |
+| **`Vídeo`** | **CORRETA** | Aplicação em **tempo real** com requisitos estritos de latência mínima e baixo jitter; demanda alta prioridade no QoS. |
+| `Email` | Incorreta | Tráfego em **lote** assíncrono; mensagens toleram atrasos de segundos ou minutos sem degradação do serviço. |
+| `Mensagem instantânea` | Incorreta | Tráfego leve de texto; embora interativo, tolera pequenos buffers na rede sem perda de sentido comunicativo. |
+| `FTP` | Incorreta | Transferência de arquivos em lote sobre TCP; prioriza integridade de dados e tolera atrasos de pacotes. |
+| `SNMP` | Incorreta | Protocolo de gerência/monitoramento em segundo plano; opera com prioridade padrão ou baixa. |
+
+---
+
+
+### 15.4 Ferramentas de Diagnóstico e Resolução de Problemas (*Troubleshooting*)
+
+| Ferramenta / Método | Camada OSI | Protocolo / Tipo | Função Prática |
+| :--- | :---: | :---: | :--- |
+| **`ping`** | Camada 3 | ICMP (Tipo 8 Request / Tipo 0 Reply) | Testa conectividade fim a fim e mede o tempo de ida e volta (*round-trip time - RTT*). |
+| **`traceroute` / `tracert`** | Camada 3 | ICMP / UDP (TTL progressivo) | Identifica cada salto (*hop*) de roteador ao longo do caminho, localizando onde ocorre falha ou latência. |
+| **Linha de Base (*Baseline*)** | Todas | Métricas históricas (Zabbix/SNMP) | Registra o comportamento normal da rede para identificar anomalias de latência e consumo de banda. |
+
+---
+
+### 15.5 Exemplo Real em Engenharia de Dados
+
+No desenho de arquitetura de dados de alta escala:
+
+1. **Redundância de Redes em Clusters Kubernetes / Hadoop / Spark**:
+   - Nós de processamento de dados (trabalhando com petabytes) possuem placas de rede duplas em modo *LACP / Bonding* conectadas a dois switches *Top-of-Rack (ToR)* independentes.
+   - Se um dos switches ToR queimar durante um job de processamento de 8 horas, o tráfego de dados é chaveado instantaneamente para o segundo switch sem derrubar o pipeline.
+2. **Topologia Multi-AZ e Multi-Região em Cloud (AWS / GCP / Azure)**:
+   - Bancos analíticos e brokers Kafka são distribuídos em pelo menos 3 Zonas de Disponibilidade (*Availability Zones - AZs*) com conexões redundantes de fibra dedicada (*Cloud Interconnect / Direct Connect*), eliminando pontos únicos de falha de data center.
+
+---
+
+### 15.6 Glossário de Siglas de Projeto de Redes
+
+| Sigla | Nome Completo | Significado e Função |
+| :--- | :--- | :--- |
+| **SPOF** | *Single Point of Failure* | Ponto Único de Falha; qualquer componente cuja quebra cause a indisponibilidade de todo o sistema. |
+| **STP** | *Spanning Tree Protocol* | Protocolo de camada 2 que previne loops em redes com caminhos redundantes entre switches. |
+| **LACP** | *Link Aggregation Control Protocol* | Protocolo que agrupa múltiplos links físicos entre switches em um único canal lógico redundante. |
+| **QoS** | *Quality of Service* | Conjunto de mecanismos que prioriza tráfego crítico (voz/vídeo) em caso de congestionamento. |
+| **RTT** | *Round-Trip Time* | Tempo total decorrido entre o envio de um pacote e o recebimento de sua confirmação. |
+| **ICMP** | *Internet Control Message Protocol* | Protocolo da camada de rede usado para mensagens de controle, diagnóstico e teste (`ping`/`traceroute`). |
+| **VoIP** | *Voice over IP* | Transmissão de voz e comunicações multimídia através de redes IP. |
+
+---
+
+### 15.7 Exemplo de Código Real (Terraform / Infraestrutura como Código com Redundância e Alta Disponibilidade)
+
+```hcl
+# Definição de VPC e Sub-redes Redundantes em Múltiplas Zonas de Disponibilidade (Multi-AZ)
+
+# 1. Criação da VPC principal da infraestrutura de dados
+resource "aws_vpc" "vpc_dados" {
+  cidr_block           = "10.0.0.0/16" # Bloco de endereçamento IP privado da rede
+  enable_dns_hostnames = true          # Habilita resolução interna de nomes DNS
+  enable_dns_support   = true          # Suporte a resolução DNS da nuvem
+}
+
+# 2. Sub-rede Primária na Zona de Disponibilidade A (AZ 1)
+resource "aws_subnet" "subnet_primaria" {
+  vpc_id            = aws_vpc.vpc_dados.id # Associa à VPC criada
+  cidr_block        = "10.0.1.0/24"        # Bloco de IPs para a sub-rede da AZ A
+  availability_zone = "us-east-1a"         # Zona física de data center 1
+}
+
+# 3. Sub-rede Secundária na Zona de Disponibilidade B (AZ 2 - Redundância Física)
+resource "aws_subnet" "subnet_secundaria" {
+  vpc_id            = aws_vpc.vpc_dados.id # Associa à mesma VPC
+  cidr_block        = "10.0.2.0/24"        # Bloco de IPs para a sub-rede da AZ B
+  availability_zone = "us-east-1b"         # Zona física de data center 2 separada contra desastres
+}
+
+# 4. Gateway NAT redundante para garantir que a falha de uma AZ não derrube o cluster
+resource "aws_nat_gateway" "nat_gw_a" {
+  allocation_id = "eipalloc-01"                      # IP elástico dedicado
+  subnet_id     = aws_subnet.subnet_primaria.id      # Alocado no primeiro caminho redundante
+}
+```
+
+---
+
+## 16. Resumão rápido (colinha final)
+
+### 16.1 Perguntas essenciais
 
 | Pergunta | Resposta |
 |----------|----------|
@@ -2652,6 +2819,8 @@ conexao_smb.disconnect()
 | Quais são três protocolos da camada de aplicação que usam TCP? | SMTP, FTP e HTTP |
 | Por que o HTTP usa o TCP como transporte? | Porque o HTTP requer entrega confiável (sem perda de dados) |
 | Protocolos para Arquivos, Envio de E-mail, Navegador e IP $\rightarrow$ Nome? | FTP – SMTP – HTTP – DNS |
+| Qual é uma associação adequada à redundância? | Projetar a rede para usar vários caminhos entre os switches para garantir que não haja um único ponto de falha |
+
 
 
 
