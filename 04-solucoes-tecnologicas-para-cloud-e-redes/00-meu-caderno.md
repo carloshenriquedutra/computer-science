@@ -1872,9 +1872,361 @@ for i, sub in enumerate(subredes[:3]):
 
 ---
 
-## 13. Resumão rápido (colinha final)
+## 13. Camada de Transporte: TCP vs. UDP
 
-### 13.1 Perguntas essenciais
+A Camada de Transporte (Camada 4 do modelo OSI / Camada de Transporte no TCP/IP) é responsável pela **comunicação lógica de ponta a ponta entre aplicações/processos** em execução em hosts diferentes.
+
+### 13.1 Portas, Sockets e Alocação de Portas
+
+Para entregar os dados para o processo de aplicação correto, a camada de transporte utiliza **números de portas** (campos de 16 bits, variando de `0` a `65535`).
+
+#### 13.1.1 Faixas de Portas Padronizadas pela IANA
+
+| Categoria de Porta | Faixa Numérica | Descrição e Finalidade | Exemplos |
+| :--- | :---: | :--- | :--- |
+| **Portas Bem Conhecidas (*Well-Known Ports*)** | `0` a `1023` | Reservadas para serviços e protocolos de servidores padrão de sistema. | DNS (53), DHCP (67/68), HTTP (80), HTTPS (443), NTP (123) |
+| **Portas Registradas (*Registered Ports*)** | `1024` a `49151` | Atribuídas pela IANA a processos ou aplicações de fornecedores específicos. | PostgreSQL (5432), MySQL (3306), Redis (6379), ClickHouse (8123) |
+| **Portas Dinâmicas / Efêmeras (*Dynamic/Private Ports*)** | `49152` a `65535` | **Alocadas aleatoriamente/dinamicamente pelo sistema operacional do cliente** como porta de origem para cada nova conversa de saída. | Portas de clientes Web, clientes DNS, scripts Python (`52410`, `61002`) |
+
+#### 13.1.2 O Conceito de Socket e Socket Pair
+
+- **Socket**: É a combinação de um **endereço IP e um número de porta**. Ele representa um ponto de terminação de comunicação (*endpoint*) exclusivo para uma aplicação em um host:
+  - **Socket de Origem (*Source Socket*)**: $\text{IP}_{\text{origem}} : \text{Porta}_{\text{origem}}$ (ex.: `192.168.1.50:52410`).
+  - **Socket de Destino (*Destination Socket*)**: $\text{IP}_{\text{destino}} : \text{Porta}_{\text{destino}}$ (ex.: `192.168.1.7:80`).
+  - Portanto, um socket é **a combinação de um endereço IP de origem e número de porta OU um endereço IP de destino e número de porta**.
+- **Socket Pair (Par de Soquetes)**: Identifica exclusivamente qualquer conversação bidirecional fim a fim na rede:
+  $$(\text{IP}_{\text{origem}} : \text{Porta}_{\text{origem}} \,,\, \text{IP}_{\text{destino}} : \text{Porta}_{\text{destino}})$$
+
+```mermaid
+flowchart LR
+    subgraph HostCliente["Host Cliente (192.168.1.50)"]
+        ProcCli["Processo Web / Python<br/>(Porta: 52410)"]
+        SockOrigem["<b>Socket de Origem</b><br/>192.168.1.50:52410"]
+        ProcCli --> SockOrigem
+    end
+
+    subgraph HostServidor["Host Servidor (10.0.0.1)"]
+        SockDestino["<b>Socket de Destino</b><br/>10.0.0.1:443"]
+        ProcServ["Serviço HTTPS / Nginx<br/>(Porta: 443)"]
+        SockDestino --> ProcServ
+    end
+
+    SockOrigem <== "<b>Socket Pair</b> (Conversa Fim a Fim)" ==> SockDestino
+```
+
+##### Análise das Alternativas da Questão: "O que é um socket?"
+
+| Alternativa da Questão | Avaliação | Justificativa Técnica |
+| :--- | :---: | :--- |
+| **`A combinação de um endereço IP de origem e número de porta ou um endereço IP de destino e número de porta`** | **CORRETA** | Um socket é definido como a junção de uma camada de rede (IP) e uma camada de transporte (Porta), identificando o host e o processo. |
+| `A combinação do endereço IP de origem e destino e o endereço Ethernet de origem e destino` | Incorreta | Mistura camada de rede (IP) com camada de enlace (Ethernet/MAC), sem incluir o número da porta de transporte. |
+| `A combinação dos números de sequência de origem e destino e números de porta` | Incorreta | Números de sequência (SEQ) rastreiam bytes no TCP, não compõem a definição de socket. |
+| `A combinação da sequência de origem e destino e números de confirmação` | Incorreta | SEQ e ACK são campos de controle de fluxo e confiabilidade do cabeçalho TCP. |
+| `A combinação de endereços físicos de origem e destino` | Incorreta | Endereços físicos são endereços MAC da Camada de Enlace (Camada 2). |
+
+##### Comparativo de Identificadores por Camada de Rede
+
+| Camada | PDU | Identificador Utilizado | Função Prática |
+| :--- | :---: | :--- | :--- |
+| **Camada 2 (Enlace)** | Quadro | **Endereço MAC** (ex.: `00:1A:2B:3C:4D:5E`) | Entrega local entre placas de rede no mesmo segmento físico. |
+| **Camada 3 (Rede)** | Pacote | **Endereço IP** (ex.: `192.168.1.7`) | Roteamento global de host a host através de redes distintas. |
+| **Camada 4 (Transporte)** | Segmento / Datagrama | **Número de Porta** (ex.: `80`, `5432`) | Identificação do processo/aplicação em execução no host. |
+| **Camada 3 + 4 (Interconexão)** | - | **Socket** (`IP:Porta`) | Ponto final exclusivo de comunicação para envio e recepção de dados. |
+
+---
+
+### 13.2 Comunicação com UDP: O que o Cliente Executa?
+
+O **UDP (*User Datagram Protocol*)** é um protocolo **não orientado a conexão (*connectionless*)** e de **melhor esforço (*best-effort*)**:
+
+1. **Seleção da Porta de Origem**: Ao disparar uma mensagem para um servidor (ex.: consulta DNS na porta de destino 53), **o cliente seleciona aleatoriamente um número de porta de origem disponível na faixa efêmera**. Essa porta é gravada no cabeçalho UDP para que o servidor saiba para onde enviar o datagrama de resposta.
+2. **Ausência de Sessão e Handshake**: O UDP **não realiza handshake de 3 vias**, não envia números de sequência inicial (*ISN*), não envia mensagens de sincronização (*SYN*) e **não define tamanho de janela (*Window Size*)**.
+3. **Disparo Imediato**: O cliente monta o datagrama e o entrega diretamente à camada IP para transmissão imediata sem esperar qualquer autorização do servidor.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Cliente as Cliente (Kernel SO)
+    participant Servidor as Servidor UDP (ex: DNS :53)
+    
+    Note over Cliente: 1. SO aloca porta de origem aleatória (ex: :53120)<br/>2. Monta Datagrama UDP (Src: 53120, Dst: 53)
+    Cliente->>Servidor: Datagrama UDP (Sem Handshake / Sem SYN / Sem ISN)
+    Note over Servidor: Processa a requisição imediatamente
+    Servidor->>Cliente: Datagrama UDP de Resposta (Src: 53, Dst: 53120)
+```
+
+#### 13.2.1 Análise Comparativa das Alternativas da Questão
+
+| Alternativa da Questão | Avaliação | Justificativa Técnica |
+| :--- | :---: | :--- |
+| **`O cliente seleciona aleatoriamente um número de porta de origem`** | **CORRETA** | Para que o servidor consiga devolver a resposta, a pilha do cliente aloca dinamicamente uma porta efêmera aleatória não utilizada (ex.: `53120`) como porta de origem. |
+| `O cliente define o tamanho da janela para a sessão` | Incorreta | O campo *Window Size* (Controle de Fluxo por janela deslizante) e o conceito de "sessão" existem **exclusivamente no TCP**. O UDP não possui controle de fluxo. |
+| `O cliente envia um ISN ao servidor para iniciar o handshake de 3 vias` | Incorreta | O *Initial Sequence Number* (ISN) e o handshake de 3 vias (SYN, SYN-ACK, ACK) pertencem **apenas ao TCP**. O UDP é *connectionless*. |
+| `O cliente envia um segmento de sincronização para iniciar a sessão` | Incorreta | Segmentos de sincronização (flag `SYN`) são usados pelo **TCP** para estabelecer conexão. O UDP não utiliza flags de controle de sessão. |
+| `O cliente exclui o pacote` | Incorreta | O cliente transmite o datagrama para a rede; ele não descarta seus próprios pacotes de transmissão. |
+
+---
+
+### 13.3 Estabelecimento de Sessão no TCP: O Handshake de 3 Vias (*3-Way Handshake*)
+
+Para garantir que ambos os hosts estejam prontos para trocar dados de forma confiável, o **TCP** executa obrigatoriamente o **Handshake de 3 vias (*Three-Way Handshake*)** antes de qualquer transmissão de aplicação:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Cliente as Host Cliente
+    participant Servidor as Host Servidor (ex: PostgreSQL :5432)
+    
+    Cliente->>Servidor: 1. SYN (Seq = ISN_cli, Flag SYN=1)
+    Note over Servidor: Servidor aloca buffers e recursos de sessão
+    Servidor->>Cliente: 2. SYN-ACK (Seq = ISN_srv, Ack = ISN_cli + 1, Flags SYN=1, ACK=1)
+    Note over Cliente: Cliente valida a resposta e confirma
+    Cliente->>Servidor: 3. ACK (Seq = ISN_cli + 1, Ack = ISN_srv + 1, Flag ACK=1)
+    Note over Cliente,Servidor: SESSÃO ESTABELECIDA (Estado: ESTABLISHED)<br/>Pronto para transferência de dados confiável
+```
+
+#### 13.3.1 As 3 Etapas do Estabelecimento de Sessão
+
+1. **Passo 1 (SYN - Sincronização)**: O cliente envia um segmento com a flag `SYN=1` e um Número de Sequência Inicial (**ISN** - *Initial Sequence Number*) gerado aleatoriamente (ex.: `Seq = 1000`). Isso informa ao servidor o desejo de abrir uma sessão e estabelece o ponto de partida dos números de sequência do cliente.
+2. **Passo 2 (SYN-ACK - Sincronização e Confirmação)**: O servidor responde com as flags `SYN=1` e `ACK=1`. Ele confirma o recebimento do ISN do cliente definindo `Ack = ISN_cli + 1` (ex.: `Ack = 1001`) e envia seu próprio ISN gerado (ex.: `Seq = 5000`).
+3. **Passo 3 (ACK - Confirmação Final)**: O cliente envia um segmento com a flag `ACK=1`, confirmando o ISN do servidor (`Ack = ISN_srv + 1` / `Ack = 5001`). A partir deste momento, a sessão está no estado **`ESTABLISHED`** em ambos os lados.
+
+#### 13.3.2 Análise das Alternativas da Questão
+
+| Alternativa da Questão | Avaliação | Justificativa Técnica |
+| :--- | :---: | :--- |
+| **`Handshake TCP de 3 vias`** | **CORRETA** | É o mecanismo padrão da camada de transporte que sincroniza números de sequência (SYN) e confirmações (ACK) para garantir o estabelecimento da sessão. |
+| `Flag UDP SYN` | Incorreta | O protocolo UDP é *connectionless* (sem conexão) e **não possui flags SYN, ACK ou FIN** nem cabeçalhos de controle de sessão. |
+| `Flag UDP ACK` | Incorreta | O UDP não realiza confirmações de entrega nem possui flag ACK em seu cabeçalho. |
+| `Número de sequência UDP` | Incorreta | O cabeçalho UDP tem apenas 8 bytes (Porta Origem, Porta Destino, Tamanho, Checksum) e **não possui campo de número de sequência**. |
+| `Número da porta TCP` | Incorreta | A porta TCP identifica o processo de software no host (multiplexação), mas não estabelece nem garante uma sessão por si só. |
+
+---
+
+### 13.4 Controle de Fluxo: Janela Deslizante (*Window Size*) e Cálculo de Segmentos
+
+O TCP utiliza o mecanismo de **Janela Deslizante (*Sliding Window*)** para controle de fluxo, evitando que um transmissor rápido sobrecarregue os buffers de memória de um receptor mais lento.
+
+- **Window Size (Tamanho da Janela)**: Campo de 16 bits no cabeçalho TCP onde o receptor informa quantos bytes ele pode receber e armazenar em buffer antes de emitir uma confirmação (**ACK**).
+- **Mecanismo de Bloqueio**: O transmissor pode enviar dados continuamente até que o volume total de bytes transmitidos sem confirmação atinja o *Window Size*. Ao atingir esse limite, o transmissor **é obrigado a pausar e aguardar o ACK** do receptor.
+
+#### 13.4.1 Fórmula de Cálculo de Segmentos por Janela
+
+$$\text{Quantidade de Segmentos} = \frac{\text{Tamanho da Janela (\textit{Window Size})}}{\text{Tamanho de Cada Segmento (\textit{MSS})}}$$
+
+**Aplicação no problema**:
+- $\text{Window Size} = 1000\text{ bytes}$
+- $\text{Tamanho do Segmento} = 100\text{ bytes}$
+- $\text{Segmentos enviados antes do ACK} = \frac{1000}{100} = \mathbf{10\text{ segmentos}}$
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Servidor as Servidor Transmissor
+    participant PC as PC Receptor (Buffer: 1000B)
+    
+    Note over PC: Anuncia Window Size = 1000 bytes
+    loop Envio de 10 segmentos de 100B (Total: 1000B)
+        Servidor->>PC: Segmento 1 a 10 (100 bytes cada)
+    end
+    Note over Servidor: Limite da Janela (1000B) atingido!<br/>Transmissor PAUSA e aguarda ACK
+    PC->>Servidor: ACK 1001 (Confirma 1000B recebidos e libera nova janela)
+    Note over Servidor: Janela desliza. Servidor retoma o envio dos próximos segmentos.
+```
+
+#### 13.4.2 Análise das Alternativas da Questão: Cálculo de Segmentos
+
+| Alternativa da Questão | Avaliação | Justificativa do Cálculo |
+| :--- | :---: | :--- |
+| **`10 segmentos`** | **CORRETA** | $\frac{1000\text{ bytes}}{100\text{ bytes/segmento}} = 10\text{ segmentos}$. O servidor despacha os 10 segmentos e pausa aguardando a confirmação. |
+| `1 segmento` | Incorreta | Ocorrerá apenas se a janela do receptor for de 100 bytes (ou se a confirmação for imediata a cada segmento). |
+| `100 segmentos` | Incorreta | 100 segmentos de 100 bytes totalizariam 10.000 bytes, estourando a janela anunciada de 1.000 bytes. |
+| `1000 segmentos` | Incorreta | Confunde o número de bytes da janela ($1000\text{ B}$) com a contagem de segmentos. |
+| `10000 segmentos` | Incorreta | Totalizaria 1.000.000 de bytes ($1\text{ MB}$), valor completamente fora da janela. |
+
+---
+
+#### 13.4.3 O Fator que Determina o Tamanho da Janela TCP
+
+O tamanho da janela (*Window Size* ou *Receive Window - rwnd*) é **determinado exclusivamente pela quantidade de dados que o destino (receptor) pode receber e processar de uma só vez** de forma confiável em sua memória buffer.
+
+1. **Recursos do Destino**: O receptor possui um buffer de recepção limitado alocado pelo sistema operacional. O espaço disponível nesse buffer define o valor do campo *Window Size* anunciado no cabeçalho TCP.
+2. **Ajuste Dinâmico em Tempo Real**:
+   - Se a aplicação no destino lê e consome os dados do buffer rapidamente, a janela permanece ampla.
+   - Se a CPU do destino estiver sobrecarregada e a aplicação demorar para ler o buffer, o espaço livre diminui. O receptor envia um ACK com um *Window Size* reduzido (podendo chegar a 0 - *Zero Window*), forçando a fonte a desacelerar ou pausar a transmissão.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Fonte as Host Fonte (Transmissor)
+    participant Destino as Host Destino (Receptor)
+    
+    Note over Destino: Buffer Livre: 64 KB<br/>Destino define Window Size = 64 KB
+    Destino->>Fonte: ACK (Window Size = 64 KB)
+    Fonte->>Destino: Envia 64 KB de dados
+    Note over Destino: Aplicação lenta: buffer enchendo!<br/>Buffer Livre caiu para 16 KB
+    Destino->>Fonte: ACK (Window Size = 16 KB - Reduz janela)
+    Note over Fonte: Fonte adapta taxa e envia no máximo 16 KB
+```
+
+##### Análise das Alternativas da Questão: "Qual fator determina o tamanho da janela TCP?"
+
+| Alternativa da Questão | Avaliação | Justificativa Técnica |
+| :--- | :---: | :--- |
+| **`A quantidade de dados que o destino pode processar de uma vez`** | **CORRETA** | O tamanho da janela é estipulado pelo receptor para proteger seu buffer de recepção contra sobrecarga (*overflow*). |
+| `A quantidade de dados que a fonte é capaz de enviar de uma só vez` | Incorreta | A fonte pode ter capacidade para 100 Gbps, mas é obrigada a respeitar o limite imposto pelo destino. |
+| `A quantidade de dados a serem transmitidos` | Incorreta | O tamanho do arquivo total (ex.: 10 GB) não define a janela de fluxo (que tipicamente varia de KBs a MBs). |
+| `O número de serviços incluídos no segmento TCP` | Incorreta | Cada segmento atende a um único serviço/porta por vez. |
+| `O número de flags no segmento` | Incorreta | As flags (SYN, ACK, FIN, etc.) controlam o estado da sessão e não possuem relação com o tamanho em bytes do buffer. |
+
+---
+
+#### 13.4.4 Remontagem e Reordenação de Segmentos: O Papel dos Números de Sequência (*SEQ*)
+
+Como a camada IP opera com comutação de pacotes sem conexão (*connectionless*), os pacotes podem percorrer rotas físicas diferentes na rede e chegar ao receptor **fora de ordem** (*out-of-order*) ou duplicados.
+
+- **Números de Sequência (*Sequence Numbers - SEQ*)**: O cabeçalho TCP possui um campo de **32 bits** que numera o primeiro byte de dados de cada segmento transmitido.
+- **Buffer de Recepção e Reordenação**: O receptor armazena temporariamente os segmentos no buffer, utiliza os **números de sequência** para ordenar perfeitamente cada byte na ordem original em que foram emitidos e, só então, entrega o fluxo contínuo de dados para a aplicação.
+
+```mermaid
+flowchart LR
+    subgraph Emissor["Host Emissor"]
+        AppEnvio["Mensagem da Aplicação<br/>(Bytes 1 a 3000)"]
+        Seg1["Segmento 1 (Seq: 1)"]
+        Seg2["Segmento 2 (Seq: 1001)"]
+        Seg3["Segmento 3 (Seq: 2001)"]
+        AppEnvio --> Seg1 & Seg2 & Seg3
+    end
+
+    subgraph RedeIP["Rede IP (Rotas Distintas)"]
+        Seg1 -.->|"Rota Curta"| Chegada1["Chega 1º (Seq: 1)"]
+        Seg3 -.->|"Rota Média"| Chegada2["Chega 2º (Seq: 2001) - Fora de Ordem!"]
+        Seg2 -.->|"Rota Lenta"| Chegada3["Chega 3º (Seq: 1001)"]
+    end
+
+    subgraph Receptor["Host Receptor (Buffer TCP)"]
+        Buffer["<b>Buffer de Reordenação TCP</b><br/>Reordena via <b>Números de Sequência</b>:<br/>1. Seq: 1 (Bytes 1-1000)<br/>2. Seq: 1001 (Bytes 1001-2000)<br/>3. Seq: 2001 (Bytes 2001-3000)"]
+        AppDest["Aplicação de Destino<br/>(Recebe o Fluxo Perfeitamente Ordenado)"]
+        Chegada1 & Chegada2 & Chegada3 --> Buffer --> AppDest
+    end
+```
+
+##### Análise das Alternativas da Questão: "Informações usadas pelo TCP para remontar e reordenar segmentos"
+
+| Alternativa da Questão | Avaliação | Justificativa Técnica |
+| :--- | :---: | :--- |
+| **`Números de sequência`** | **CORRETA** | O campo *Sequence Number* (SEQ) de 32 bits identifica a posição exata de cada byte no fluxo de dados, permitindo ordenar segmentos fora de ordem. |
+| `Números de porta` | Incorreta | Identificam a aplicação/processo em execução no host (multiplexação), mas não fornecem qualquer informação sobre a ordem dos bytes. |
+| `Números de confirmação` | Incorreta | O campo *Acknowledgment Number* (ACK) informa ao transmissor qual o próximo byte esperado de volta, confirmando entrega, mas não é o identificador de ordenação dos dados recebidos. |
+| `Números de fragmentos` | Incorreta | Fragmentação ocorre na camada de rede (IPv4) com os campos *Identification* e *Fragment Offset*, não sendo o mecanismo de segmentação/ordenação do TCP. |
+| `Números de flags` | Incorreta | Flags (SYN, ACK, FIN, RST, PSH, URG) são bits de controle de estado e não possuem sequência numérica para ordenar dados. |
+
+---
+
+### 13.5 Tabela Comparativa Completa: TCP vs. UDP
+
+
+
+
+| Característica | TCP (*Transmission Control Protocol*) | UDP (*User Datagram Protocol*) |
+| :--- | :--- | :--- |
+| **Orientação a Conexão** | **Orientado a Conexão** (estabelece sessão antes de trafegar dados) | **Sem Conexão (*Connectionless*)** (envia dados imediatamente) |
+| **Handshake Inicial** | **Sim (Handshake de 3 Vias: SYN $\rightarrow$ SYN-ACK $\rightarrow$ ACK)** | **Não (Zero Handshake)** |
+| **Garantia de Sessão** | **Sim (Handshake TCP de 3 Vias)** | **Não (Sem Sessão / Sem Handshake)** |
+| **Confiabilidade** | **Garantida** (retransmissão automática de pacotes perdidos via ACK/SEQ) | **Melhor Esforço (*Best-Effort*)** (sem confirmação de entrega ou retransmissão) |
+| **Ordenação de Pacotes** | **Sim** (usa números de sequência para remontar dados fora de ordem) | **Não** (aplicação recebe os datagramas na ordem em que chegarem) |
+| **Controle de Fluxo e Janela** | **Sim** (campo *Window Size* e *MSS* evitam sobrecarregar o receptor) | **Não** (não regula taxa de transmissão) |
+| **Controle de Congestionamento** | **Sim** (reduz taxa de envio se detectar perda de pacotes na rede) | **Não** (transmite continuamente) |
+| **Tamanho do Cabeçalho** | **20 bytes** (mínimo, podendo ter opções) | **8 bytes** (cabeçalho fixo e ultra-leve) |
+| **Aplicações Típicas** | HTTP/HTTPS (Web), SSH, Transferência de Arquivos, JDBC/Bancos, Kafka | DNS, DHCP, NTP, VoIP, Streaming de vídeo ao vivo, Telemetria / StatsD |
+
+---
+
+### 13.5 Exemplo Real em Engenharia de Dados
+
+Em pipelines de dados distribuídos:
+
+- **Quando usamos TCP (Confiabilidade Crítica)**:
+  - Comunicação entre drivers e executors Spark, queries SQL em bancos (PostgreSQL, BigQuery, ClickHouse) e replicação de tópicos no Apache Kafka. Se um pacote com dados de uma transação financeira for perdido na rede, o **TCP retransmite e garante a integridade dos dados**. O handshake de 3 vias garante que o banco de dados e a aplicação estão em sincronia antes de transacionar queries.
+- **Quando usamos UDP (Baixa Latência e Telemetria)**:
+  - **Métricas e Telemetria de Pipeline (StatsD / Datadog / Prometheus)**: Agentes de monitoramento emitem métricas de throughput (ex.: "100.000 linhas/s processadas") via **UDP**. Como o cliente UDP apenas seleciona uma porta de origem e cospe o datagrama na rede sem handshake, o impacto de latência e CPU no pipeline é praticamente zero — se 1 métrica de CPU for perdida a cada milhão, não compromete o pipeline.
+
+---
+
+### 13.6 Glossário de Siglas da Camada de Transporte
+
+| Sigla | Nome Completo | Significado e Função |
+| :--- | :--- | :--- |
+| **TCP** | *Transmission Control Protocol* | Protocolo de transporte confiável e orientado a conexão (Camada 4). |
+| **UDP** | *User Datagram Protocol* | Protocolo de transporte leve, sem conexão e de melhor esforço (Camada 4). |
+| **ISN** | *Initial Sequence Number* | Número de sequência inicial negociado no handshake de 3 vias do TCP. |
+| **SYN** | *Synchronize* | Flag de controle do TCP utilizada para sincronizar números de sequência ao abrir conexão. |
+| **ACK** | *Acknowledgment* | Flag de confirmação do TCP indicando que bytes de dados foram recebidos com sucesso. |
+| **FIN** | *Finish* | Flag de controle do TCP usada para encerrar ordenadamente uma conexão de 4 vias. |
+| **RST** | *Reset* | Flag do TCP usada para abortar imediatamente uma conexão anormal ou recusada. |
+| **MSS** | *Maximum Segment Size* | Tamanho máximo de payload que um dispositivo suporta em um segmento TCP. |
+| **IANA** | *Internet Assigned Numbers Authority* | Entidade responsável pela padronização global das faixas de portas de rede. |
+
+---
+
+### 13.7 Exemplo com Código Real (Python / Cliente UDP e Conexão TCP)
+
+**1. Cliente UDP (envio direto sem handshake):**
+
+```python
+import socket  # Biblioteca padrão do Python para chamadas de rede e sockets de baixo nível
+
+# Cria um socket UDP (SOCK_DGRAM) utilizando o protocolo IPv4 (AF_INET)
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+# Define o endereço IP do servidor de destino e a porta bem conhecida (DNS: 53 ou NTP: 123)
+servidor_destino = ("8.8.8.8", 53)
+
+# Mensagem simples em bytes para envio imediato (sem necessidade de handshake de 3 vias)
+mensagem = b"ping_telemetria"
+
+# O cliente envia o datagrama diretamente para o destino
+client_socket.sendto(mensagem, servidor_destino)
+
+# Obtém as informações do socket local alocado pelo sistema operacional
+ip_origem, porta_origem_alocada = client_socket.getsockname()
+
+# Imprime a porta de origem selecionada aleatoriamente/dinamicamente pelo kernel
+print(f"Datagrama UDP enviado com sucesso!")
+print(f"Porta de Origem alocada aleatoriamente pelo SO: {porta_origem_alocada}")
+print(f"Porta de Destino do Servidor: {servidor_destino[1]}")
+
+# Fecha o descritor de socket no sistema operacional
+client_socket.close()
+```
+
+**2. Cliente TCP (executando o Handshake de 3 Vias):**
+
+```python
+import socket  # Biblioteca padrão do Python para chamadas de rede
+
+# Cria um socket TCP (SOCK_STREAM) utilizando o protocolo IPv4 (AF_INET)
+sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Define o destino do banco de dados (Host e Porta TCP 5432)
+destino_banco = ("10.0.1.50", 5432)
+
+# O comando connect() aciona no kernel o envio de SYN, recebimento de SYN-ACK e envio de ACK (Handshake de 3 Vias)
+print("Iniciando Handshake TCP de 3 vias...")
+sock_tcp.connect(destino_banco)
+
+# Quando o método connect() retorna sem erros, a sessão TCP está no estado ESTABLISHED
+print("Sessão TCP estabelecida com sucesso via 3-Way Handshake!")
+
+# Fecha a conexão disparando a sequência FIN-ACK de encerramento
+sock_tcp.close()
+```
+
+---
+
+## 14. Resumão rápido (colinha final)
+
+### 14.1 Perguntas essenciais
 
 | Pergunta | Resposta |
 |----------|----------|
@@ -1901,6 +2253,18 @@ for i, sub in enumerate(subredes[:3]):
 | O teste de loopback (127.0.0.1 ou ::1) confirma o quê? | Que a pilha TCP/IP do dispositivo está funcionando corretamente (em software) |
 | Por que o NAT não é necessário no IPv6? | Porque qualquer host pode ter um IP público global devido ao imenso espaço de endereços (128 bits) |
 | Quantas sub-redes /64 podem ser criadas de um prefixo /48? | 65.536 sub-redes (16 bits de Subnet ID: 64 - 48 = 16) |
+| Ao comunicar com servidor via UDP, o que o cliente faz? | Seleciona aleatoriamente um número de porta de origem (efêmera) |
+| Qual recurso garante o estabelecimento da sessão? | Handshake TCP de 3 vias (SYN, SYN-ACK, ACK) |
+| O que é um socket? | Combinação de endereço IP e número de porta (origem ou destino) |
+| Janela de 1000 bytes e segmentos de 100 bytes envia quantos antes do ACK? | 10 segmentos (1000 / 100 = 10) |
+| Qual fator determina o tamanho da janela TCP? | A quantidade de dados que o destino pode processar de uma vez (buffer do receptor) |
+| O que o TCP usa para remontar e reordenar segmentos? | Números de sequência (*Sequence Numbers* - SEQ) |
+
+
+
+
+
+
 
 
 
