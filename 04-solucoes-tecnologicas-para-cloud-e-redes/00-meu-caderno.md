@@ -2905,7 +2905,24 @@ graph TD
 | `Peer-to-peer` | Arquitetura distribuída de software cliente/servidor mútuo. | Não | Incorreta |
 | `Escalabilidade` | Propriedade de uma rede de crescer sem perder desempenho. | Não | Incorreta |
 
+#### 16.1.5 Computação em Nuvem e Terceirização (*Outsourcing*) de TI (ENADE 2017)
+
+A computação em nuvem (*Cloud Computing*) transformou a gestão de TI ao viabilizar um novo patamar de terceirização (*outsourcing*) de infraestrutura e serviços (KUROSE e ROSS, 2016):
+
+1. **Asserção I (Verdadeira)**:
+   - A computação em nuvem é uma ferramenta central para o *outsourcing* de TI, pois permite que as empresas contratem capacidade de computação, armazenamento e software como serviços gerenciados (IaaS, PaaS, SaaS) fornecidos por terceiros especializados (AWS, GCP, Azure, etc.).
+2. **Asserção II (Verdadeira e Justificativa Correta da I)**:
+   - Ao adotar o *outsourcing* em nuvem, a empresa passa a dispor de infraestrutura e computadores de ponta com alta disponibilidade sem precisar construir ou manter data centers físicos locais (*on-premises*).
+   - Isso desonera a equipe interna de TI da manutenção operacional rotineira de hardware, conferindo **agilidade operacional** e permitindo que o time foque seus esforços em **inovações estratégicas e soluções voltadas ao núcleo do negócio (*core business*)**.
+
+| Elemento Analisado | Proposição | Status | Justificativa |
+| :--- | :--- | :---: | :--- |
+| **Asserção I** | *A computação em nuvem é uma ferramenta importante para o outsourcing de TI.* | **Verdadeira** | A nuvem permite terceirizar servidores, redes e plataformas sob demanda. |
+| **Asserção II** | *O outsourcing de cloud coloca computadores de ponta à disposição, favorece a agilidade e permite que a TI promova inovações.* | **Verdadeira** | Elimina a sobrecarga de gerenciar infraestrutura física e libera a equipe para focar no negócio. |
+| **Relação Lógica** | *A asserção II justifica a asserção I?* | **SIM (Justifica)** | A asserção I ocorre exatamente pelos benefícios de ponta e foco estratégico expostos na asserção II. |
+
 ---
+
 
 
 
@@ -3065,6 +3082,8 @@ print(f"Evento de telemetria do medidor Powerline enviado com sucesso para o tó
 | Tecnologia que permite conectar dispositivos usando a rede elétrica? | Powerline (PLC - Power Line Communication) |
 | Capacidade de usar dispositivos pessoais em rede corporativa? | BYOD (Bring Your Own Device) |
 | Rede que dá acesso seguro a indivíduos de organização diferente? | Extranet |
+| Cloud Computing e Outsourcing de TI (ENADE 2017)? | As asserções I e II são proposições verdadeiras, e a II é uma justificativa correta da I |
+
 
 
 
