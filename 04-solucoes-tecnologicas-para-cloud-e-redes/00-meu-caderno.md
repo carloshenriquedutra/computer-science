@@ -939,7 +939,44 @@ print(f"Tamanho em bytes: {len(um_byte)}")    # deve dar 1
 
 > ⚙️ **Por baixo dos panos:** quando você transfere um arquivo CSV de 100 MB, o "B" maiúsculo significa **bytes**. Como cada byte tem 8 bits, o arquivo tem 800 milhões de bits. Quando a rede diz "link de 1 Gbit/s", ela mede em bits. Dividir por 8 é o que converte a capacidade da rede na mesma unidade do arquivo.
 
-### 7.10 Dica para memorizar
+### 7.10 Tipos de Endereçamento MAC: Unicast, Broadcast e Multicast
+
+Na camada de enlace (Ethernet), os quadros são direcionados com base em três tipos fundamentais de endereços MAC (KUROSE e ROSS, 2016; TANENBAUM e WETHERALL, 2011):
+
+```mermaid
+graph TD
+    MAC["Tipos de Endereço MAC (Camada 2 - 48 bits)"]
+    MAC --> UNI["🎯 1. Unicast<br><i>(1 para 1: interface exclusiva)</i><br>Ex: 00-1A-2B-3C-4D-5E"]
+    MAC --> BRC["📢 2. Broadcast<br><i>(1 para TODOS na LAN)</i><br>Fixo: FF-FF-FF-FF-FF-FF"]
+    MAC --> MUL["👥 3. Multicast<br><i>(1 para um GRUPO de inscritos)</i><br>• IPv4: <b>01-00-5E-xx-xx-xx</b><br>• IPv6: <b>33-33-xx-xx-xx-xx</b><br>• STP: 01-80-C2-00-00-00"]
+```
+
+| Tipo de MAC | Prefixo / Formato Hexadecimal | Destinatários | Exemplo Real |
+| :--- | :--- | :--- | :--- |
+| **Unicast** | OUI do fabricante + ID da placa (bit I/G = 0) | Um único dispositivo receptor exclusivo. | `00-1A-2B-3C-4D-5E` |
+| **Broadcast** | Fixo: **`FF-FF-FF-FF-FF-FF`** (todos os 48 bits em 1) | **Todos** os hosts da rede local / LAN. | `FF-FF-FF-FF-FF-FF` (usado em requisição ARP e DHCP Discover) |
+| **Multicast** | **`01-00-5E-xx-xx-xx`** (IPv4)<br>**`33-33-xx-xx-xx-xx`** (IPv6) | Apenas os hosts pertencentes ao **grupo multicast**. | **`01-00-5E-00-00-03`** (mapeado para IPv4 `224.0.0.3`) |
+
+#### 7.10.1 Mapeamento IPv4 Multicast $\rightarrow$ MAC Multicast (`01-00-5E`)
+
+1. A IANA reservou o intervalo de endereços MAC **`01-00-5E-00-00-00` até `01-00-5E-7F-FF-FF`** exclusivamente para tráfego multicast IPv4.
+2. Os primeiros **24 bits** são fixos em **`01-00-5E`**, o bit 25 é sempre `0`, e os últimos **23 bits** do endereço IP de grupo (de `224.0.0.0` a `239.255.255.255`) são copiados diretamente para os 23 bits inferiores do endereço MAC.
+3. Logo, qualquer endereço MAC iniciado por **`01-00-5E`** (como `01-00-5E-00-00-03`) é categoricamente um **endereço MAC Multicast**.
+
+#### 7.10.2 Tabela Comparativa das Alternativas da Questão: Endereço `01-00-5E-00-00-03`
+
+| Alternativa | Tipo de Endereço Real | Camada OSI | Avaliação |
+| :--- | :--- | :---: | :---: |
+| **`Multicast.`** | **Endereço MAC de grupo IPv4 reservado pela IANA (`01-00-5E-xx-xx-xx`).** | **Camada 2 (Enlace)** | **CORRETA** |
+| `Unicast.` | Endereço individual exclusivo atribuído a uma placa de rede específica (bit I/G = 0). | Camada 2 (Enlace) | Incorreta |
+| `Broadcast.` | Endereço de difusão geral para todos os hosts (`FF-FF-FF-FF-FF-FF`). | Camada 2 (Enlace) | Incorreta |
+| `Loopback.` | Endereço lógico de teste da pilha TCP/IP (`127.0.0.1` ou `::1`). **Não existe MAC de loopback.** | Camada 3 (Rede) | Incorreta |
+| `Experimental.` | Bloco IPv4 Classe E reservado para pesquisas (`240.0.0.0/4`). **Não existe MAC experimental.** | Camada 3 (Rede) | Incorreta |
+
+---
+
+### 7.11 Dica para memorizar
+
 
 > **"IP decimal é a máscara de maquiagem; binário é o rosto real da máquina."** IPv4 usa decimal só pra gente não enlouquecer, mas por baixo tudo é binário. IPv6 e MAC usam hexadecimal porque são grandes demais pra decimal — cada dígito hex resume 4 bits. No seu dia a dia de dados: quando você vê um bucket S3 `s3://rh-dados-prod` ou um endpoint `10.30.0.10:5432`, lembre que o DNS resolve o nome, o IP viaja no pacote e o MAC entrega o quadro ao vizinho. O binário está lá, mesmo que você nunca precise digitá-lo.
 
@@ -3083,6 +3120,8 @@ print(f"Evento de telemetria do medidor Powerline enviado com sucesso para o tó
 | Capacidade de usar dispositivos pessoais em rede corporativa? | BYOD (Bring Your Own Device) |
 | Rede que dá acesso seguro a indivíduos de organização diferente? | Extranet |
 | Cloud Computing e Outsourcing de TI (ENADE 2017)? | As asserções I e II são proposições verdadeiras, e a II é uma justificativa correta da I |
+| Que tipo de endereço MAC é 01-00-5E-00-00-03? | Multicast (IPv4 Multicast MAC) |
+
 
 
 
