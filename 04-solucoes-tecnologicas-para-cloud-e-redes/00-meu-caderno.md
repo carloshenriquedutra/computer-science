@@ -1426,13 +1426,14 @@ No IPv6, **o Broadcast NÃO existe**. Em seu lugar, a resolução de endereços 
 
 #### 10.10.3 Comparativo das Alternativas da Questão
 
-| Alternativa | O que é tecnicamente? | É equivalente ao ARP para resolução de endereços? |
-| :--- | :--- | :---: |
-| **`Neighbor solicitation`** | Mensagem ICMPv6 enviada para solicitar o endereço MAC de um vizinho com IPv6 conhecido. | **SIM (Equivalente ao ARP Request)** |
-| `Broadcast` | Método de envio para todos os nós. **Foi eliminado no IPv6** (substituído por Multicast). | Não (nem existe no IPv6) |
-| `Anycast` | Tipo de endereçamento ("um para o mais próximo"), não um tipo de mensagem de resolução de MAC. | Não |
-| `Echo request` | Mensagem ICMP (tipo 128 em IPv6) usada pelo utilitário `ping` para testar conectividade. | Não |
-| `Echo reply` | Mensagem ICMP de resposta (tipo 129 em IPv6) emitida após receber um *Echo Request*. | Não |
+| Alternativa da Questão | Definição Técnica | Equivale a *Neighbor Solicitation* do IPv6? | Avaliação |
+| :--- | :--- | :---: | :---: |
+| **`ARP`** | **Protocolo do IPv4 para resolução de endereços IP em endereços MAC na rede local.** | **SIM (Equivalente direto)** | **CORRETA** |
+| `Broadcast` | Modo de transmissão para todos os nós da LAN (eliminado no IPv6). | Não (é um método de entrega, não um protocolo de resolução) | Incorreta |
+| `Unicast` | Modo de transmissão direcionado a um único destinatário exclusivo. | Não (é um método de entrega) | Incorreta |
+| `ToS` (*Type of Service*) | Campo de 8 bits do cabeçalho IPv4 destinado à priorização e qualidade de serviço (QoS). | Não (campo de QoS) | Incorreta |
+| `DiffServ` (*Differentiated Services*) | Arquitetura de Camada 3 para classificação de pacotes e QoS baseada nos campos ToS (IPv4) / Traffic Class (IPv6). | Não (arquitetura de QoS) | Incorreta |
+
 
 ```mermaid
 sequenceDiagram
@@ -1465,7 +1466,28 @@ ip -6 neigh show
 ndisc6 2001:db8::50 eth0
 ```
 
+#### 10.10.5 Protocolos de Descoberta e Resolução de Endereços
+
+| Protocolo | Nome Completo | Camada / Escopo | Função Principal |
+| :--- | :--- | :---: | :--- |
+| **ARP** | *Address Resolution Protocol* | Camada 2 / 3 | **Descobre o endereço MAC físico associado a um endereço IPv4 lógico conhecido na rede local.** |
+| **RARP** | *Reverse Address Resolution Protocol* | Camada 2 / 3 | Protocolo legado que permitia a computadores sem disco (*diskless*) descobrirem seu próprio IP a partir do seu MAC (substituído por BOOTP e DHCP). |
+| **CDP** | *Cisco Discovery Protocol* | Camada 2 | Protocolo proprietário da Cisco para que switches e roteadores descubram informações sobre dispositivos vizinhos diretamente conectados. |
+| **LLDP** | *Link Layer Discovery Protocol* | Camada 2 (IEEE 802.1AB) | Padrão aberto neutro de fabricante equivalente ao CDP para mapeamento de topologia de dispositivos vizinhos na rede. |
+| **LLTD** | *Link Layer Topology Discovery* | Camada 2 (Microsoft) | Protocolo proprietário da Microsoft usado pelo Windows para diagnóstico e desenho gráfico do mapa de rede local. |
+
+#### 10.10.6 Tabela Comparativa das Alternativas da Questão: Descoberta de MAC na LAN
+
+| Alternativa da Questão | Função Real | Descobre o MAC de um Host a partir do IP? | Avaliação |
+| :--- | :--- | :---: | :---: |
+| **`ARP`** | **Mapeia endereço lógico IPv4 para endereço físico MAC na rede local.** | **SIM** | **CORRETA** |
+| `RARP` | Mapeava MAC para IP (função inversa e obsoleta; substituída pelo DHCP). | Não (faz o inverso) | Incorreta |
+| `CDP` | Descobre informações de hardware/firmware de switches/roteadores Cisco vizinhos. | Não (descoberta de vizinhos de rede) | Incorreta |
+| `LLDP` | Descobre capacidades e portas de equipamentos de rede vizinhos (padrão aberto). | Não (descoberta de vizinhos de rede) | Incorreta |
+| `LLTD` | Mapeia topologia gráfica de computadores no Windows. | Não (mapeamento de mapa de rede) | Incorreta |
+
 ---
+
 
 ## 11. Endereçamento IPv4, Máscaras e Segmentação de Redes
 
@@ -1574,7 +1596,18 @@ flowchart TD
     L2Prot --> L1Meio
 ```
 
-#### 11.4.2 Estrutura e Vantagens do Cabeçalho IPv6 vs. IPv4
+#### 11.4.2 Tabela Comparativa das Alternativas: Resolução de Pacotes Ausentes ou Fora de Ordem no IP
+
+| Alternativa da Questão | Protocolo / Mecanismo | Comportamento Real frente a Pacotes Perdidos / Fora de Ordem | Avaliação |
+| :--- | :--- | :--- | :---: |
+| **`Camada de transporte com o TCP.`** | **TCP (*Transmission Control Protocol*)** | **Reordena os segmentos usando *Sequence Numbers* (SEQ) e solicita retransmissão de faltantes via *Acknowledgments* (ACK) e temporizadores.** | **CORRETA** |
+| `Camada de transporte com o UDP.` | UDP (*User Datagram Protocol*) | Não possui controle de fluxo, retransmissão nem reordenação (*unreliable* / *best-effort*). | Incorreta |
+| `Camada de enlace com CRC.` | Enlace (CRC / FCS) | O CRC apenas detecta erros de integridade no salto físico atual e descarta o quadro corrompido, mas não reordena nem recupera perdas ponta a ponta. | Incorreta |
+| `Camada física.` | Camada 1 (Física) | Apenas codifica e transmite pulsos elétricos, de luz ou rádio; não tem noção lógica de pacotes ou ordem. | Incorreta |
+| `Camada de aplicação.` | Aplicação (HTTP, SMTP, etc.) | Delega o transporte confiável à camada 4 (TCP); não implementa reordenação de rede na arquitetura padrão. | Incorreta |
+
+#### 11.4.3 Estrutura e Vantagens do Cabeçalho IPv6 vs. IPv4
+
 
 A principal vantagem arquitetural do cabeçalho IPv6 em relação ao IPv4 é o **Processamento de Pacotes Eficiente (*Efficient Packet Handling*)**:
 
@@ -3121,6 +3154,8 @@ print(f"Evento de telemetria do medidor Powerline enviado com sucesso para o tó
 | Rede que dá acesso seguro a indivíduos de organização diferente? | Extranet |
 | Cloud Computing e Outsourcing de TI (ENADE 2017)? | As asserções I e II são proposições verdadeiras, e a II é uma justificativa correta da I |
 | Que tipo de endereço MAC é 01-00-5E-00-00-03? | Multicast (IPv4 Multicast MAC) |
+| Descobrir o endereço MAC de um host na rede local é função do? | ARP (Address Resolution Protocol) |
+
 
 
 
