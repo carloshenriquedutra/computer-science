@@ -35,6 +35,7 @@
 | **FTP** | File Transfer Protocol | Protocolo de Transferência de Arquivos na camada de aplicação |
 | **GAE** | Google App Engine | Plataforma como Serviço (PaaS) da Google para implantação e execução escalável de aplicações |
 | **GC** | Gestão do Conhecimento | Knowledge Management (KM); ações integradas para capturar, gerenciar e compartilhar o ativo de informações e experiências |
+| **HaaS** | Hardware as a Service | Hardware como Serviço; modelo em que o equipamento físico é fornecido sob demanda ou comodato/locação |
 | **HTTP** | Hypertext Transfer Protocol | Protocolo de Transferência de Hipertexto; base da comunicação web |
 | **HTTPS** | Hypertext Transfer Protocol Secure | Versão segura e criptografada do protocolo HTTP |
 | **IaaS** | Infrastructure as a Service | Infraestrutura como Serviço (computação, rede e storage brutos) |
@@ -70,6 +71,7 @@
 | **WAF** | Web Application Firewall | Firewall de Aplicação Web; inspeciona tráfego HTTP na camada de borda |
 | **WSDL** | Web Services Description Language | Linguagem baseada em XML usada para descrever o contrato técnico de um Web Service |
 | **XML** | Extensible Markup Language | Linguagem de marcação para formatação, estruturação e intercâmbio padronizado de dados |
+| **XaaS** | Anything as a Service / Everything as a Service | Tudo como Serviço; modelo guarda-chuva que engloba qualquer modalidade de entrega de TI pela nuvem |
 
 ---
 
@@ -1536,11 +1538,3 @@ resource "aws_instance" "servidor_vendas_iaas" {                     # Cria o se
   }                                                                  # Fecha o bloco de tags
 }                                                                    # Fecha o recurso da instância EC2
 ```
-
-
-
-
-
-
-
-
