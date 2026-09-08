@@ -985,3 +985,143 @@ Assinale a alternativa INCORRETA sobre modelo de volume​
 - [x] **​Determina a técnica de representação, utiliza-se a representação visual do que se quer comunicar​**
 
 =====
+
+Renata é dona de uma pequena empresa de e-commerce e contratou uma equipe de desenvolvimento para criar seu novo site. Ela quer um sistema simples, com funcionalidades básicas, e tem um cronograma e orçamento bem limitados. O gerente de projetos propôs o uso de uma metodologia tradicional, que documentaria todas as etapas com antecedência, garantindo previsibilidade. Diante desse cenário, qual característica das metodologias tradicionais justifica a escolha feita pelo gerente de projetos?
+
+- [ ] Possuem foco exclusivo na usabilidade do sistema.
+- [ ] Priorizam a interação constante com o cliente e adaptações frequentes.
+- [ ] Estimulam a criação de softwares sem documentação.
+- [x] **Adotam processos sequenciais e documentados, oferecendo controle e previsibilidade.**
+- [ ] Trabalham com ciclos curtos de entrega e feedbacks rápidos.
+
+=====
+
+João trabalha em uma startup que desenvolve soluções para o setor agrícola. A empresa decidiu incorporar princípios de economia sustentável em seus processos, inclusive na produção de software. Durante uma apresentação interna, João defendeu que a engenharia de software pode contribuir com essa abordagem por meio de práticas alinhadas à legislação ambiental, inovação e otimização de recursos. De que forma a engenharia de software pode contribuir de maneira significativa para uma economia sustentável, considerando os desafios e tendências atuais?
+
+- [ ] Criando softwares exclusivamente offline para economizar energia e evitar uso de servidores.
+- [ ] Reduzindo o número de testes no processo de desenvolvimento, diminuindo tempo e custo.
+- [x] **Aplicando métodos ágeis, integrando tecnologias emergentes e acompanhando legislações sustentáveis.**
+- [ ] Evitando a adoção de novas tecnologias para manter a compatibilidade com sistemas legados.
+- [ ] Utilizando apenas soluções comerciais fechadas, com foco na padronização.
+
+=====
+
+Uma pequena empresa foi contratada para desenvolver um sistema de controle de estoque para um cliente. O gerente do projeto optou pelo modelo cascata, acreditando que esse método facilitaria a previsão de custos e prazos, além de organizar melhor a equipe, dividindo o trabalho entre desenvolvedores juniores e seniores. Com base na escolha do modelo cascata, qual das seguintes vantagens é corretamente atribuída a esse modelo?
+
+- [x] **Facilita o controle do escopo, orçamento e cronograma por ser altamente documentado.**
+- [ ] Permite entregas frequentes e feedback constante do cliente.
+- [ ] Flexibiliza mudanças nos requisitos durante todas as etapas.
+- [ ] Elimina a necessidade de documentação formal.
+- [ ] Dispensa o envolvimento do cliente até a fase final.
+
+=====
+
+Leia o trecho a seguir:
+
+"O modelo cascata é um dos métodos mais antigos e tradicionais de desenvolvimento de software. Ele é caracterizado pela sequência rígida de fases, em que uma etapa só se inicia após a conclusão da anterior, tornando o processo linear e altamente documentado. Embora ofereça previsibilidade e organização, dificulta mudanças durante o projeto, o que pode comprometer a entrega caso os requisitos iniciais não estejam bem definidos."
+
+Com base no texto e nos seus conhecimentos, analise as afirmações a seguir:
+
+I. O modelo cascata proporciona controle e documentação robusta, favorecendo a previsibilidade do projeto.
+
+II. Alterações nos requisitos durante o desenvolvimento são facilmente incorporadas no modelo cascata.
+
+III. A linearidade do modelo pode ser um problema quando os requisitos do projeto mudam com frequência.
+
+IV. O método é indicado para projetos com requisitos bem definidos desde o início.
+
+V. No modelo cascata, o cliente tem acesso às funcionalidades do sistema apenas após a conclusão de todas as etapas.
+
+Assinale a alternativa que apresenta as afirmações corretas:
+
+- [ ] I, II e III.
+- [ ] I, III e IV.
+- [ ] II, IV e V.
+- [x] **I, III, IV e V.**
+- [ ] I, II, IV e V.
+
+=====
+
+Durante a criação de um aplicativo de gerenciamento de tarefas, a equipe decidiu adiar a escolha da tecnologia de banco de dados até entender melhor o comportamento e as necessidades dos usuários. Esse adiamento gerou dúvidas entre os estagiários, que foram orientados a não tomar decisões precipitadas para evitar retrabalho e desperdícios. Com base na situação e nos seus conhecimentos sobre o método Lean, assinale a alternativa correta:
+
+- [ ] O adiamento das decisões vai contra os princípios do Lean, que valoriza decisões rápidas.
+- [ ] O Lean defende que decisões críticas devem ser tomadas o quanto antes, mesmo com poucas informações.
+- [ ] O método Lean não se aplica a decisões técnicas, apenas a decisões gerenciais.
+- [ ] A escolha de tecnologias deve ser feita antes de qualquer interação com o cliente.
+- [x] **O adiamento dos comprometimentos é um princípio Lean que visa decisões mais assertivas com base em informações acumuladas.**
+
+=====
+
+eia o trecho a seguir:
+
+A equipe de desenvolvimento da startup DevFlex decidiu implementar o Kanban para melhorar a transparência de suas tarefas. Em uma reunião, o gerente mostrou um quadro dividido em colunas "To Do", "Doing" e "Done", com cartões sendo movidos entre elas conforme o progresso. Essa visualização passou a ser acessível por toda a equipe em tempo real.
+
+Com base nesse cenário e em seus conhecimentos sobre métodos ágeis, assinale a alternativa correta:
+
+- [ ] O quadro descrito é característico do Scrum e serve para definir os papéis de Product Owner e Scrum Master.
+- [ ] O quadro representa o Backlog do Produto, que é refinado a cada sprint durante a reunião de revisão.
+- [x] **O modelo descrito é típico do Kanban e permite o acompanhamento visual do fluxo de trabalho.**
+- [ ] O Kanban exige planejamento de sprints com durações fixas para garantir entregas incrementais.
+- [ ] O método descrito é o XP (eXtreme Programming), focado em testes automatizados e par programming.
+
+=====
+
+Leia o caso a seguir:
+
+A empresa SoftLean, especializada em soluções digitais, resolveu combinar Scrum e Kanban no mesmo projeto para aproveitar o melhor de cada abordagem. O Scrum foi usado para organizar sprints, papéis e cerimônias. Já o Kanban foi utilizado para visualizar e controlar o fluxo contínuo de tarefas dentro de cada sprint. Um dos objetivos era evitar microgerenciamento e promover um ambiente mais colaborativo e sustentável.
+
+Considerando esse cenário, qual alternativa melhor descreve a aplicação híbrida dos métodos ágeis?
+
+- [ ] A combinação de Scrum e Kanban, conhecida como Scrumban, é inadequada, pois conflita com os princípios do Lean.
+- [ ] A abordagem híbrida permite entregas contínuas com papéis fixos e rígidos, centralizando decisões no Scrum Master.
+- [ ] O uso combinado de Scrum e Kanban elimina a necessidade de reuniões diárias e sprints.
+- [ ] A abordagem híbrida prioriza o modelo cascata, segmentando fases e evitando mudanças de escopo.
+- [x] **A fusão Scrum + Kanban permite planejamento estruturado com visualização contínua das tarefas e foco na eliminação de desperdícios.**
+
+=====
+
+Laura é estagiária em uma equipe de desenvolvimento de software e começou a usar o Trello para organizar suas tarefas. Ao abrir o quadro do projeto, ela se deparou com três listas principais: Do, Doing e Done. Com dúvidas, perguntou ao seu supervisor como essas listas funcionam no gerenciamento de tarefas. No Trello, as listas "Do", "Doing" e "Done" têm como objetivo principal:
+
+- [x] **Representar o status das tarefas no fluxo de trabalho.**
+- [ ] Definir os responsáveis pelas tarefas técnicas do projeto.
+- [ ] Organizar as tarefas segundo sua complexidade técnica.
+- [ ] Controlar o tempo de desenvolvimento de cada tarefa.
+- [ ] Classificar as tarefas em categorias temáticas.
+
+=====
+
+A equipe de desenvolvimento de uma startup chamada Mentes Criativas está buscando soluções inovadoras para melhorar a experiência dos usuários em seu aplicativo educacional. Para isso, decidiram adotar a abordagem do Design Thinking. No processo de imersão, realizaram tanto pesquisas em campo quanto levantamentos em fontes digitais e acadêmicas, buscando compreender as dores e expectativas dos usuários. Com base no cenário apresentado e nos princípios do Design Thinking, qual alternativa expressa corretamente a diferença entre a pesquisa exploratória e a pesquisa desk no processo de imersão?
+
+- [ ] A pesquisa exploratória é quantitativa, enquanto a desk é exclusivamente qualitativa.
+- [ ] A pesquisa desk é voltada à coleta de dados diretamente com o usuário, já a exploratória é feita em fontes digitais.
+- [ ] A pesquisa exploratória é voltada à observação de tendências futuras, enquanto a desk identifica dados estatísticos do presente.
+- [x] **A pesquisa exploratória é realizada em campo com os usuários, enquanto a desk utiliza fontes bibliográficas e digitais.**
+- [ ] A pesquisa desk é aplicada para definir o perfil emocional do usuário, enquanto a exploratória se limita ao reenquadramento.
+
+=====
+
+Leia o trecho a seguir:
+
+"A imersão em profundidade no Design Thinking permite que a equipe mergulhe no universo do cliente e do usuário final, buscando compreender suas rotinas, emoções, comportamentos e necessidades, utilizando ferramentas como entrevistas, sessões generativas e simulações de 'um dia na vida'."
+
+Com base no texto e nos seus conhecimentos, analise as afirmações a seguir:
+
+I. A entrevista é uma ferramenta fundamental para captar não só o que é dito, mas os porquês por trás das respostas dos usuários, o que contribui para criação de personas mais realistas.
+
+II. A sessão generativa estimula o usuário a compartilhar suas experiências de forma estratégica e simbólica, podendo envolver materiais como cadernos de sensibilização.
+
+III. A atividade “um dia na vida” busca gerar empatia e compreensão profunda ao simular, de forma prática, o cotidiano do usuário final com base nos dados previamente coletados.
+
+IV. A imersão em profundidade é voltada apenas à coleta de dados quantitativos para validação estatística de hipóteses no desenvolvimento de software.
+
+V. A pesquisa em profundidade deve buscar compreender tanto os comportamentos observáveis quanto os padrões emocionais e culturais dos usuários.
+
+Assinale a alternativa que apresenta as afirmações corretas:
+
+- [x] **I, II, III.**
+- [ ] IV, V.
+- [ ] III, V.
+- [ ] Todas estão corretas.
+- [ ] II, apenas.
+
+=====

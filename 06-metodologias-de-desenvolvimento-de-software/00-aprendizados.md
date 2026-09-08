@@ -238,3 +238,96 @@ LEFT JOIN
 GROUP BY
   c.id_cliente -- Agrupa os registros por cliente para consolidação das métricas
 ```
+
+---
+
+## 3. Dinâmica do Scrum: Planejamento, Timeboxes, Estimativas e Papéis
+
+### 3.1 Papéis e Responsabilidades no Scrum
+Conforme as práticas de gestão ágil em `09-scrum-e-kanban.md` e o *Scrum Guide*:
+- **Product Owner (PO)**: Define as prioridades de negócio, gerencia o *Product Backlog* e maximiza o valor do produto entregue.
+- **Desenvolvedores (Developers)**: Responsáveis por estimar o esforço, puxar os itens do backlog para a Sprint, definir a arquitetura técnica e construir o incremento funcional com qualidade.
+- **Scrum Master (SM)**: Líder-servidor e facilitador. Garante a adesão ao método Scrum, remove impedimentos e protege o time contra interferências externas e microgerenciamento. **O Scrum Master NÃO define escopo, prazos ou tarefas técnicas.**
+
+```mermaid
+flowchart TD
+    subgraph Papeis_Scrum["Separação Clara de Responsabilidades no Scrum"]
+        PO["Product Owner<br>(O QUÊ fazer e prioridade de negócio)"]
+        DEV["Equipe de Desenvolvimento<br>(COMO fazer, estimativas e construção)"]
+        SM["Scrum Master<br>(Facilitação do processo e remoção de impedimentos)"]
+    end
+    PO <-->|"Colaboração na Meta da Sprint"| DEV
+    SM -.->|"Protege e apoia"| DEV
+    SM -.->|"Apoia na gestão do backlog"| PO
+```
+
+---
+
+### 3.2 Timeboxes e o Planejamento da Sprint (Sprint Planning)
+O conceito de **Timebox** estabelece uma duração máxima fixa para cada evento do Scrum, evitando reuniões intermináveis e paralisia por análise:
+- **Sprint**: Ciclo de desenvolvimento fixo de no máximo 1 mês (geralmente 2 a 4 semanas).
+- **Sprint Planning**:
+  - Para um Sprint de **1 mês**, a reunião de planejamento tem timebox de **até 8 horas**.
+  - Para Sprints menores (ex.: 2 semanas), a duração é proporcionalmente menor (cerca de 4 horas).
+  - A equipe possui autonomia para encerrar a reunião assim que o objetivo do planejamento for atingido, adaptando o tempo necessário.
+
+---
+
+### 3.3 Estimativas Relativas: Story Points e Dias Ideais vs. Horas Tradicionais
+- **Mecanismo real**: O Scrum e as metodologias ágeis substituíram o controle fabril por horas por **estimativas de esforço relativo** (*Story Points*, *Planning Poker*, *T-Shirt Sizing* ou *Dias Ideais*).
+- **Compromisso de Capacidade**: A equipe compromete-se com a **Meta da Sprint (*Sprint Goal*)** baseada em sua velocidade empírica média histórica, e não com uma promessa contratual rígida de horas.
+- **Impedimentos e Ajustes**: Quando surgem imprevistos ou bloqueios técnicos, o escopo da Sprint é renegociado entre os Desenvolvedores e o Product Owner, sendo desnecessário justificar o não cumprimento por meio de métricas de horas trabalhadas.
+
+---
+
+### 3.4 Tabela Comparativa: Papéis, Estimativas e Regras do Scrum
+
+| Elemento | Regra Canônica do Scrum | Erro / Distorção Comum de Avaliação |
+|---|---|---|
+| **Definição de Escopo da Sprint** | Definido em conjunto pelos **Desenvolvedores** e o **Product Owner** com base na capacidade real do time. | Atribuir ao *Scrum Master* o poder de definir escopo e prazos. |
+| **Unidade de Estimativa** | Estimativa relativa de complexidade/esforço (*Story Points*, dias ideais). O uso de horas é desnecessário. | Exigir controle rígido em horas para justificar atrasos de itens. |
+| **Duração do Planejamento** | Até 8 horas para Sprint de 1 mês; proporcionalmente menor para Sprints mais curtos. | Impor uma duração inflexível e idêntica independentemente do tamanho do ciclo. |
+| **Natureza do Compromisso** | Compromisso com a Meta da Sprint e melhor esforço técnico baseado na capacidade (*Capacity*). | Tratar o Sprint Backlog como um contrato jurídico rígido de escopo fechado. |
+
+---
+
+### 3.5 Ponto de Vista da Engenharia de Sistemas e Cloud
+Para um líder técnico ou engenheiro de infraestrutura:
+- **Mecanismo real**: Durante o planejamento de uma sprint de migração de cluster Kubernetes ou refatoração de APIs, a equipe pontua tarefas por complexidade técnica e riscos de dependência (ex.: 5 pontos para provisionar VPC, 8 pontos para migrar banco com zero downtime).
+- Se a migração do banco encontrar um bloqueio de rede não previsto, o Scrum Master ajuda a destravar o acesso com a equipe de segurança, enquanto o time ajusta o escopo secundário da sprint sem penalizações burocráticas de horas.
+
+---
+
+### 3.6 Exemplo Real em Engenharia de Dados: Sprint Planning em Squads de BI e ETL
+Em uma equipe de engenharia de dados:
+- **Planejamento por Capacidade (Capacity)**: Se a squad possui velocidade histórica média de 40 *Story Points* por Sprint (2 semanas), o time seleciona 3 a 4 modelos dimensionais do Dataform que somem ~38 pontos.
+- **Impedimentos Reais**: Se a API da fonte externa (ex.: Salesforce) instabilizar e atrasar a extração, os engenheiros reportam o impedimento na Daily. O time replaneja com o PO a entrega daquela tabela para a sprint seguinte, focando em entregar prontas as tabelas já extraídas que garantam o *Sprint Goal*.
+
+---
+
+### 3.7 Exemplo com Código: Cálculo de Capacidade e Velocidade de Sprint em Python
+
+O script abaixo simula como uma equipe ágil calcula sua capacidade empírica para planejar a Sprint com base em Story Points:
+
+```python
+from dataclasses import dataclass  # Importa o decorador dataclass para criar classes de dados de forma concisa e legível
+from typing import List  # Importa o tipo List para tipagem estática de coleções de dados
+
+@dataclass
+class ItemBacklog:  # Define a estrutura de um item do backlog do produto
+    titulo: str  # Nome ou identificador da funcionalidade ou pipeline a ser construído
+    story_points: int  # Estimativa de esforço relativo atribuída pela equipe técnica
+
+def planejar_sprint(itens_priorizados: List[ItemBacklog], velocidade_media: int) -> List[ItemBacklog]:  # Declara a função de planejamento
+    sprint_backlog: List[ItemBacklog] = []  # Inicializa a lista de itens que entrarão no Sprint Backlog
+    pontos_acumulados = 0  # Inicializa o contador de esforço total selecionado
+
+    for item in itens_priorizados:  # Itera sobre os itens previamente ordenados por valor pelo Product Owner
+        if pontos_acumulados + item.story_points <= velocidade_media:  # Verifica se o item cabe na capacidade empírica do time
+            sprint_backlog.append(item)  # Adiciona o item ao compromisso da Sprint atual
+            pontos_acumulados += item.story_points  # Atualiza a soma de pontos planejados
+        else:  # Caso o item ultrapasse o limite de capacidade sustentável
+            break  # Interrompe a inclusão para evitar sobrecarga e manter o ritmo sustentável
+
+    return sprint_backlog  # Retorna o conjunto de itens selecionados para a Sprint
+```
