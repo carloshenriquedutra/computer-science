@@ -332,3 +332,187 @@ Assinale a alternativa INCORRETA sobre os últimos princípios da abordagem Lean
 
 =====
 
+Assinale a alternativa CORRETA sobre os últimos princípios da abordagem Lean
+
+​Um dos princípios da abordagem Lean é a entrega final e completa, pois velocidade é antônimo de ausência de desperdício
+
+Um dos princípios da abordagem Lean é o respeito às pessoas, provendo um ambiente de trabalho ao time na forma de gerenciamento auto-organizado e autodirigido, num ambiente sustentável, evitando o micro gerenciamento
+
+​Um dos princípios da abordagem Lean é o respeito às pessoas, pois entende-se que as pessoas é o capital menos importante de uma organização de um projeto de software
+
+Um dos princípios da abordagem Lean é a otimização, onde se é possível utilizar métricas confusas para medir, analisando parcialmente os resultados, sem entender bem o software como um todo
+Um dos princípios da abordagem Lean é a otimização, onde o software terminado é uma soma de partes que foram desenvolvidas, sem que o software como um todo agregue valor aos objetivos do cliente
+
+=====
+
+/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/05-manifesto-agil.md
+
+​Assinale a alternativa INCORRETA sobre os valores sobre os indivíduos e interação do manifesto ágil​
+
+​Apenas os processos e ferramentas utilizadas à risca são insuficientes para a comunicação e a interação entre os indivíduos e a comunicação é muito importante na criação de um software​
+
+​Os softwares são feitos para outras pessoas e para dar soluções aos problemas das pessoas, por isso, a comunicação e interação são importantes​
+
+​Reuniões presenciais, troca de ideias, esboços, rabiscos são fundamentais na comunicação e interação para o desenvolvimento do software​
+
+​A valorização das pessoas, da comunicação e interação é importante e fundamental, pois valoriza o lado humano e o alcance de melhores resultados​
+
+​Focando em processos e ferramentas, as chances de alcançar os melhores resultados do seu software aumentam substancialmente​
+
+=====
+
+Assinale a alternativa que está de acordo com os valores do Manifesto Ágil relacionados aos indivíduos e à interação:
+
+Apenas processos e ferramentas bem definidos são suficientes para garantir a comunicação e interação entre os indivíduos, sendo a comunicação escrita o elemento central na criação de um software
+Softwares são feitos para solucionar problemas das pessoas, e por isso a comunicação e interação devem ser exclusivamente escritas e formais para garantir precisão
+Reuniões presenciais, troca de ideias, esboços e rabiscos são dispensáveis no desenvolvimento de software, uma vez que os processos já são padronizados e garantem o alinhamento necessário
+A valorização das pessoas, da comunicação e da interação é fundamental, pois prioriza o lado humano e contribui para melhores resultados no desenvolvimento de software
+Focando em processos e ferramentas, as chances de alcançar melhores resultados aumentam, já que eles definem claramente os papéis e responsabilidades
+
+=====
+
+Assinale a alternativa INCORRETA sobre os valores sobre o software em funcionamento
+
+​A entrega de um software em funcionamento, mesmo que parcial é muito mais importante no manifesto ágil do que uma documentação abrangente​
+
+​É importante buscar um ponto de equilíbrio de se produzir uma documentação fundamental e importante, trazendo a equipe para o desenvolvimento por meio da comunicação​
+
+
+​No manifesto ágil, o ponto de equilíbrio que evita documentação desnecessária e alcança uma comunicação assertiva, resulta no desenvolvimento rápido e assertivo do software​
+
+​Todo analista de sistemas deve ter apenas a função de produzir modelos gráficos e textuais​
+
+​Apesar da Engenharia de Software ter passado a produzir documentação exagerada na produção de software, ela não se restringe apenas ao desenvolvimento de documentação do software que está sendo criado​
+
+=====
+
+​Assinale a alternativa CORRETA sobre os valores sobre o software em funcionamento​
+
+​A entrega de um software em funcionamento, mesmo que parcial é igualmente importante no manifesto ágil do que uma documentação abrangente que é imprescindível
+
+​É desnecessário buscar um ponto de equilíbrio de se produzir uma documentação fundamental e importante, trazendo a equipe para o desenvolvimento por meio da documentação
+
+​No manifesto ágil, o ponto de equilíbrio que evita documentação desnecessária e alcança uma comunicação assertiva, resulta no desenvolvimento rápido e assertivo do software
+
+Todo analista de sistemas deve ter apenas a função de produzir modelos gráficos e textuais
+
+​A Engenharia de Software passou a produzir documentação exagerada na produção de software, pois isso a restringe apenas ao desenvolvimento de documentação do software que está sendo criado
+
+=====
+
+​Assinale a alternativa INCORRETA sobre o valor da colaboração com o cliente​
+
+​Quando se trata da colaboração do cliente na criação do software, vai muito além do que foi definido no escopo do software em um documento de contrato​
+
+​Documentos de contratos com cláusulas não fecham o escopo que se precisa para se desenvolver um software de qualidade, muito menos o que resolve os problemas esperados pelo cliente​
+
+​A colaboração com o cliente é um dos valores que existe um ponto de fragilidade e pessoalidade do manifesto ágil​
+
+​É desnecessário a colaboração entre as pessoas da equipe de desenvolvimento quanto o time do cliente​
+
+​É imprescindível a confiança e a colaboração entre os desenvolvedores e o cliente​
+
+=====
+
+Assinale a alternativa CORRETA sobre o valor da colaboração com o cliente
+
+​Quando se trata da colaboração do cliente na criação do software, o que foi definido no escopo do software em um documento de contrato são o suficiente para o desenvolvimento do software​
+
+​Documentos de contratos com cláusulas fecham o escopo que se precisa para se desenvolver um software de qualidade, inclusive o que resolve os problemas esperados pelo cliente​
+
+​A colaboração com o cliente é um dos valores que existe um ponto de fragilidade e pessoalidade do manifesto ágil​
+
+​É desnecessário a colaboração entre as pessoas da equipe de desenvolvimento quanto o time do cliente​
+
+​É desnecessário a confiança e a colaboração entre os desenvolvedores e o cliente​
+
+=====
+
+/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/06-principios-1-a-4-do-manifesto-agil.md
+
+​Assinale a alternativa INCORRETA sobre as mudanças de requisitos bem-vindas​
+
+​As mudanças são sempre bem-vindas, independente do estágio do desenvolvimento do software​
+
+​As mudanças são bem-vindas para o foco na vantagem competitiva​
+
+​As mudanças são bem-vindas porque o cliente dificilmente consegue enxergar todas as necessidades no início do desenvolvimento do software​
+
+​O pensamento é que as mudanças tardias são maléficas​
+
+Todo e qualquer tipo de mudança é encarado como normal​
+
+=====
+
+​Assinale a alternativa CORRETA sobre mudanças de requisitos bem-vindas​
+
+​As mudanças nunca são bem-vindas, independente do estágio do desenvolvimento do software​
+
+​As mudanças são bem-vindas para o foco na desvantagem competitiva​
+
+​As mudanças são bem-vindas porque o cliente dificilmente consegue enxergar todas as necessidades no início do desenvolvimento do software​
+
+​O pensamento é que as mudanças tardias são maléficas​
+
+​Todo e qualquer tipo de mudança é encarado como anormal​
+
+=====
+
+Assinale a alternativa INCORRETA sobre entregas frequentes​
+
+​As entregas funcionais obedecem a uma escala de tempo menor, agregando valor ao software​
+
+​A entrega frequente segue por ciclos longos, com respostas para as mudanças indesejadas​
+
+​As entregas rápidas dão um ritmo ao trabalho da equipe de desenvolvimento​
+
+​A equipe consegue prever melhor a capacidade de produção de cada ciclo​
+
+​Os pontos de melhoria no software são identificados e atuados, gerando relação de confiança com o cliente​
+
+=====
+
+​Assinale a alternativa CORRETA sobre entregas frequentes​
+
+As entregas funcionais obedecem a uma escala de tempo menor, agregando valor ao software​
+
+​A entrega frequente segue por ciclos longos, com respostas para as mudanças indesejadas​
+
+​As entregas rápidas impedem de ditar ritmo ao trabalho da equipe de desenvolvimento​
+
+​A equipe desconhece o tempo de desenvolvimento e de produção de cada ciclo​
+
+​Os pontos de melhoria no software são identificados e ignorados, gerando relação de desconfiança com o cliente​
+
+=====
+
+​Assinale a alternativa INCORRETA sobre equipe única de negócios e desenvolvedores​
+
+​Ter uma equipe única de negócios e desenvolvedores mantém a mesma comunicação durante todo o projeto​
+
+Constrangimentos com frases do tipo “não foi exatamente o que eu pedi” são evitados
+
+​As necessidades do negócio mudam por ser uma realidade do ambiente em que o software está inserido, por isso é importante manter uma única equipe de negócios e desenvolvedores​
+
+​O trabalho conjunto do cliente com a equipe de desenvolvimento proporciona o trabalho contínuo, com apresentações, discussões e feedbacks​
+
+​Apenas o trabalho numa equipe única de negócios e desenvolvedores não garante o sucesso do projeto​
+
+=====
+
+​Assinale a alternativa CORRETA sobre equipe única de negócios e desenvolvedores​
+
+​Ter uma equipe única de negócios e desenvolvedores impedem a comunicação durante todo o projeto​
+
+​Constrangimentos com frases do tipo “não foi exatamente o que eu pedi” sempre vão aparecer​
+
+​As necessidades do negócio não mudam por ser uma realidade do ambiente em que o software está inserido, por isso é desnecessário manter uma única equipe de negócios e desenvolvedores​
+
+​O trabalho conjunto do cliente com a equipe de desenvolvimento proporciona o trabalho contínuo, com apresentações, discussões e feedbacks​
+
+​Apenas o trabalho numa equipe única de negócios e desenvolvedores não garante o sucesso do projeto​
+
+=====
+
+/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/07-principios-5-a-8-do-manifesto-agil.md
+
