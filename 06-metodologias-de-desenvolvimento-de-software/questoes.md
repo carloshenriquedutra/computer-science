@@ -1,202 +1,196 @@
-# Exercícios - Metodologias de Desenvolvimento de Software
+/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/01-os-metodos-e-suas-aplicacoes.md
 
-## 01. Os métodos e suas aplicações
+Assinale a alternativa INCORRETA sobre as metodologias de desenvolvimento de software
 
-Assinale a alternativa INCORRETA sobre os métodos e suas aplicações
-
-- [ ] ​Podem ser consideradas como um conjunto de regras ou abordagens para ser utilizado no desenvolvimento de software​
-- [ ] O desenvolvimento de software é uma tarefa complexa, pois envolve pessoas, prazos, orçamentos e a satisfação dos clientes
+- [ ] Podem ser consideradas como um conjunto de regras ou abordagens para ser utilizado no desenvolvimento de software
+- [ ] A escolha da metodologia de desenvolvimento de software pode refletir na qualidade, no tempo de execução, criação e na entrega do software
+- [ ] Toda e qualquer metodologia de desenvolvimento de software tem suas vantagens e desvantagens
 - [x] **Existem três grupos de metodologias de software, as metodologias antigas, as metodologias tradicionais e as metodologias ágeis**
-- [ ] ​As metodologias tradicionais de desenvolvimento de software são conhecidas também por metodologias preditivas​
-- [ ] ​As metodologias de desenvolvimento de software surgiram para diminuir o índice de fracassos nos desenvolvimentos de software​
+- [ ] A escolha da metodologia de desenvolvimento de software é importante para alcançar os objetivos e metas que se espera com o projeto e cumprir prazos e orçamentos existentes
 
----
+=====
 
-Assinale a alternativa CORRETA sobre os métodos e suas aplicações
+Assinale a alternativa CORRETA sobre as metodologias de desenvolvimento de software​
 
 - [x] **​Podem ser consideradas como um conjunto de regras ou abordagens para ser utilizado no desenvolvimento de software​**
-- [ ] ​O desenvolvimento de software é uma tarefa simples, pois envolve pessoas, prazos, orçamentos e a satisfação dos clientes​
+- [ ] ​Podem ser consideradas como um conjunto de regras ou abordagens para ser utilizado no desenvolvimento de software​
+- [ ] ​A escolha da metodologia de desenvolvimento de software pode refletir na qualidade e criação, mas não na entrega ou tempo de execução do software​
+- [ ] ​Toda e qualquer metodologia de desenvolvimento de software tem apenas suas vantagens. Não há desvantagens se escolhidas adequadamente ao projeto​
 - [ ] ​Existem três grupos de metodologias de software, as metodologias antigas, as metodologias tradicionais e as metodologias ágeis​
-- [ ] ​As metodologias tradicionais de desenvolvimento de software são conhecidas também por metodologias adaptativas​
-- [ ] ​As metodologias ágeis de desenvolvimento de software são conhecidas também por metodologias preditivas​
+- [ ] ​A escolha da metodologia de desenvolvimento de software é importante para alcançar os objetivos e metas, por isso, as metodologias ágeis são sempre as melhores escolhas​
 
----
+=====
 
-Assinale a alternativa INCORRETA sobre metodologias tradicionais
+Assinale a alternativa INCORRETA sobre as metodologias tradicionais​
 
-- [ ] ​Metodologias tradicionais buscam um foco maior nas etapas do desenvolvimento de software​
-- [ ] ​As etapas do desenvolvimento de software tradicional são a análise de requisitos, a documentação, o projeto do software, a codificação, os testes e por fim a entrega​
+- [ ] Eram utilizadas no passado quando o custo para se alterar um software era muito alto, sem ferramentas para o apoio no desenvolvimento do software
+- [ ] ​São métodos que adotam um controle e são orientadas por documentação, que é validada pela equipe de desenvolvimento e pelo time do cliente​
+- [ ] ​São métodos lineares e muito rigorosos, todo o desenvolvimento do software é planejado e documentado antes de ser implementado​
+- [ ] ​São métodos funcionais, graduais e analíticos​
 - [x] **​Neste método, cada uma das etapas de desenvolvimento inicia-se independente da etapa anterior ter sido finalizada, podendo voltar a uma etapa anterior naturalmente​**
-- [ ] ​No método tradicional, a documentação é rígida e extensa para a aprovação das etapas​
-- [ ] ​O cliente no método tradicional, acompanha as etapas e aprova cada uma delas antes do início da próxima etapa​
 
----
+=====
 
-Assinale a alternativa CORRETA sobre metodologias tradicionais
+Assinale a alternativa CORRETA sobre as metodologias tradicionais​
 
-- [ ] ​Metodologias tradicionais buscam um foco maior na velocidade do desenvolvimento de software​
-- [ ] ​As etapas do desenvolvimento de software tradicional são a codificação, os testes e por fim a entrega​
-- [ ] ​Neste método, cada uma das etapas de desenvolvimento inicia-se independente da etapa anterior ter sido finalizada, podendo voltar a uma etapa anterior naturalmente​
-- [ ] ​No método tradicional, a documentação é flexível e concisa para a aprovação das etapas​
+- [ ] São utilizadas até hoje pois o custo para se alterar um software é pouco custoso, mesmo sem ferramentas para o apoio no desenvolvimento do software
+- [ ] São métodos que dispensam o controle e são orientados por documentação e implementação, validada apenas pela equipe de desenvolvimento
+- [ ] ​São métodos lineares e pouco rigorosos, todo o desenvolvimento do software é planejado e documentado durante a implementação
 - [x] **​São métodos funcionais, graduais e analíticos**
+- [ ] ​Neste método, cada uma das etapas de desenvolvimento inicia-se independente da etapa anterior ter sido finalizada, podendo voltar a uma etapa anterior naturalmente
 
----
+=====
 
-Assinale a alternativa INCORRETA sobre métodos ágeis
+Assinale a alternativa INCORRETA sobre as metodologias ágeis​
 
-- [ ] ​É um método adaptativo e flexível para o desenvolvimento de software​
-- [ ] ​Tem por objetivo a criação de um software com valor agregado e dentro do que o cliente e o usuário final buscam e esperam​
-- [ ] ​Possui uma proposta de ciclos de desenvolvimento mais curtos, com entregas bem definidas, focado nas melhorias constantes no projeto e alinhado com toda a equipe​
 - [x] **​São metodologias que focam na documentação do projeto, nos requisitos, em entregar o que foi proposto nos requisitos e na validação desses requisitos que geram o produto final​**
-- [ ] ​O cliente participa durante todo o processo de desenvolvimento do software e valida cada entrega feita​
-
----
-
-Assinale a alternativa CORRETA sobre métodos ágeis
-
-- [ ] ​É um método rígido e inflexível para o desenvolvimento de software​
-- [ ] ​Tem por objetivo a criação de um software com documentação extensa e dentro do que o cliente e o usuário final buscam e esperam​
-- [x] **​Possui uma proposta de ciclos de desenvolvimento mais curtos, com entregas bem definidas, focado nas melhorias constantes no projeto e alinhado com toda a equipe**
 - [ ] ​São metodologias que focam na documentação do projeto, nos requisitos, em entregar o que foi proposto nos requisitos e na validação desses requisitos que geram o produto final​
-- [ ] ​O cliente participa apenas ao final do processo de desenvolvimento do software e valida a entrega final​
+- [ ] ​Possui uma proposta de ciclos de desenvolvimento mais curtos, com entregas bem definidas, focado nas melhorias constantes no projeto e alinhado com toda a equipe​
+- [ ] ​Com os softwares parciais e funcionais, menor tempo de desenvolvimento com resultados e retornos rápidos, os problemas são corrigidos mais rapidamente nos estágios iniciais​
+- [ ] ​Surgiram pela necessidade de facilitar o processo com uma execução do projeto de software bem realizada e o produto final entregue de acordo com o que foi proposto​
+- [ ] ​Ficou mais fácil e simples de identificar problemas e falhas no projeto de software, com retornos constantes, flexibilizando e facilitando as adaptações e resolvendo os problemas que pudessem afetar o resultado final​
 
----
+=====
 
-## 02. Engenharia de software
+Assinale a alternativa CORRETA sobre as metodologias ágeis​
 
-Assinale a alternativa INCORRETA sobre o processo da engenharia de software
+- [ ] São metodologias que focam na documentação do projeto, nos requisitos, em entregar o que foi proposto nos requisitos e na validação desses requisitos que geram o produto final
+- [x] **​Possui uma proposta de ciclos de desenvolvimento mais curtos, com entregas bem definidas, focado nas melhorias constantes no projeto e alinhado com toda a equipe**
+- [ ] ​Com os softwares finais e funcionais, maior tempo de desenvolvimento com resultados e retornos ao final do projeto, os problemas são corrigidos na fase de testes e manutenção
+- [ ] ​Surgiram pela necessidade de facilitar o processo com uma execução do projeto de software bem realizada e de acordo com a documentação de requisitos, o produto final entregue de acordo com o que foi proposto e validado na documentação de requisitos
+- [ ] ​Ficou mais fácil e simples de identificar problemas e falhas na documentação do projeto de software, com validação nos testes finais e resolvendo os problemas que podem afetar o resultado final
 
-- [ ] ​É uma área da computação relacionada com especificação, desenvolvimento e manutenção da produção de software e aspectos relacionados a sua criação​
+=====/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/02-engenharia-de-software.md
+
+Assinale a alternativa INCORRETA sobre os conceitos e aplicações da engenharia de software
+
+- [ ] É uma área da computação relacionada com especificação, desenvolvimento e manutenção da produção de software e aspectos relacionados a sua criação
+- [ ] Reúne um conjunto de metodologias, métodos e ferramentas que são utilizadas para o entendimento do problema, do processo de criação até a entrega final do software
+- [ ] Seus fundamentos são utilizados para planejar, especificar, validar, implementar e manter o software que ajuda a resolver o problema do cliente
+- [ ] Entre seus objetivos está o de melhorar a qualidade do próprio software e diminuir os custos envolvidos no seu desenvolvimento, entregando um software que resolva o problema proposto
 - [x] **Os papéis e funções de cada uma das pessoas envolvidas na equipe são adequadamente definidos, durante a aplicação do processo da engenharia de software, em cada fase**
-- [ ] ​Garante a qualidade do software em cada etapa do desenvolvimento​
-- [ ] ​Auxilia os membros da equipe de desenvolvimento do software no entendimento e acompanhamento da produção do software em cada etapa​
-- [ ] ​Apoia a aplicação de ferramentas ao longo do desenvolvimento do software​
 
----
+=====
 
-Assinale a alternativa CORRETA sobre o processo da engenharia de software
+Assinale a alternativa CORRETA sobre os conceitos e aplicações da engenharia de software​
 
 - [x] **​É uma área da computação relacionada com especificação, desenvolvimento e manutenção da produção de software e aspectos relacionados a sua criação**
-- [ ] ​Os papéis e funções de cada uma das pessoas envolvidas na equipe são adequadamente definidos, durante a aplicação do processo da engenharia de software, em cada fase​
-- [ ] ​Garante a qualidade do software apenas na fase final de entrega do software​
-- [ ] ​Auxilia apenas os líderes da equipe de desenvolvimento do software no entendimento e acompanhamento da produção do software em cada etapa​
-- [ ] ​Descarta a aplicação de ferramentas ao longo do desenvolvimento do software​
+- [ ] Reúne um conjunto de metodologias, métodos e ferramentas que são utilizadas para que o cliente aceite o software criado, independentemente de como esteja, em entrega final do software
+- [ ] ​Seus fundamentos são utilizados para planejar, especificar, validar, implementar e manter o cliente em um software dependente que necessita de sua manutenção eterna
+- [ ] ​Entre seus objetivos está o de ignorar a qualidade do próprio software e aumentar os custos envolvidos no seu desenvolvimento, entregando um software que seja apenas funcional
+- [ ] ​Os papéis e funções de cada uma das pessoas envolvidas na equipe são adequadamente definidos, durante a aplicação do processo da engenharia de software, em cada fase
 
----
+=====
 
-Assinale a alternativa INCORRETA sobre o engenheiro de software
+Assinale a alternativa INCORRETA sobre o engenheiro de software.
 
-- [ ] ​Ele cuida da parte técnica e científica do software. Gerencia os projetos de software, realiza a arquitetura do design estrutural do sistema, está ligado no desenvolvimento do software e realiza os testes no sistema​
+- [ ] ​É uma peça fundamental quando se trata da engenharia de software para a produção e criação de um software ou sistema​​
+- [ ] ​Ele cuida da parte técnica e científica do software. Gerencia os projetos de software, realiza a arquitetura do design estrutural do sistema, está ligado no desenvolvimento do software e realiza os testes no sistema​​
 - [x] **​Está fora de sua alçada os cuidados com a gestão relacionada à criação do software e de quaisquer naturezas inerentes a ele, há uma equipe para essa gestão​​**
-- [ ] ​O engenheiro de software gerencia os projetos de criação e desenvolvimento de software​​
-- [ ] ​O engenheiro de software arquiteta o design da estrutura do sistema​​
-- [ ] ​O engenheiro de software desenvolve o software e realiza testes no sistema​
+- [ ] ​É responsável pela administração do banco de dados e da manutenção relacionado ao software em construção​​
+- [ ] ​Gerencia o negócio e os projetos da empresa relacionados ao software em desenvolvimento​​
 
----
+=====
 
-Assinale a alternativa CORRETA sobre o engenheiro de software
+​Assinale a alternativa CORRETA sobre o engenheiro de software​​
 
+- [ ] ​É uma peça importante, mas não fundamental quando se trata da engenharia de software para a produção e criação de um software ou sistema, outro engenheiro pode assumir esse papel
 - [x] **​Ele cuida da parte técnica e científica do software. Gerencia os projetos de software, realiza a arquitetura do design estrutural do sistema, está ligado no desenvolvimento do software e realiza os testes no sistema**
-- [ ] ​Está fora de sua alçada os cuidados com a gestão relacionada à criação do software e de quaisquer naturezas inerentes a ele, há uma equipe para essa gestão​​
-- [ ] ​O engenheiro de software é impedido de gerenciar os projetos de criação e desenvolvimento de software​​
-- [ ] ​O engenheiro de software desenha o design da estrutura do sistema​​
-- [ ] ​O engenheiro de software não realiza testes no sistema​
+- [ ] ​Está fora de sua alçada os cuidados com a gestão relacionada à criação do software e de quaisquer naturezas inerentes a ele, há uma equipe para essa gestão
+- [ ] É responsável pela administração do banco de dados, porém não é de sua responsabilidade a manutenção relacionada ao software em construção
+- [ ] ​Toda a parte de gerenciamento do negócio e dos projetos da empresa relacionados ao software em desenvolvimento não são de responsabilidade do engenheiro de software
 
----
+=====
 
-Assinale a alternativa INCORRETA sobre as tendências na engenharia de software
+​Assinale a alternativa INCORRETA sobre a importância da engenharia de software​​
 
 - [ ] ​A engenharia de software tem estado focada no desenvolvimento de sistemas que envolvem tecnologia​​
-- [ ] ​O uso de ferramentas automatizadas para o desenvolvimento e testes do sistema vem crescendo bastante​​
+- [ ] ​A engenharia de software busca inovar com novos e modernos métodos para o desenvolvimento de softwares, para diminuir custos, ganhar tempo e entrega com qualidade​​
+- [ ] ​Os softwares criados com novos métodos de desenvolvimento de software auxiliam no gerenciamento do software que tem por objetivo o bem de toda a sociedade​​
 - [x] **​É preciso estar antenado nas tendências, buscando a praticidade e otimização proporcionados por métodos tradicionais do desenvolvimento de software​​**
-- [ ] ​A Inteligência Artificial tem sido utilizada na engenharia de software com o uso do processamento de linguagem natural e o aprendizado de máquina no auxílio da automatização de tarefas​​
-- [ ] ​O armazenamento e o processamento de dados nas nuvens já são uma realidade bastante difundida na engenharia de software​​
+- [ ] ​É importante que o software a ser criado esteja acompanhando as inovações e novas criações que estão acontecendo no mercado, para facilitar a vida e a rotina das pessoas​​
 
----
+=====
 
-Assinale a alternativa CORRETA sobre as tendências na engenharia de software
+​Assinale a alternativa CORRETA sobre a importância da engenharia de software​​
 
 - [x] **​A engenharia de software tem estado focada no desenvolvimento de sistemas que envolvem tecnologia​​**
-- [ ] ​O uso de ferramentas automatizadas para o desenvolvimento e testes do sistema não são recomendadas​​
+- [ ] ​A engenharia de software busca inovar com novos e modernos métodos para o desenvolvimento de softwares, para aumentar custos, perder tempo e entrega com qualidade​​
+- [ ] ​Os softwares criados com métodos tradicionais de desenvolvimento de software auxiliam no gerenciamento do software que tem por objetivo o bem de toda a sociedade​​
 - [ ] ​É preciso estar antenado nas tendências, buscando a praticidade e otimização proporcionados por métodos tradicionais do desenvolvimento de software​​
-- [ ] ​A Inteligência Artificial tem sido descartada na engenharia de software pois o uso do processamento de linguagem natural e o aprendizado de máquina não auxiliam na automatização de tarefas​​
-- [ ] ​O armazenamento e o processamento de dados nas nuvens é algo que não se deve buscar no desenvolvimento moderno de engenharia de software​
+- [ ] ​Não há necessidade de que o software a ser criado esteja acompanhando as inovações e novas criações que estão acontecendo no mercado, isso não facilita a vida e a rotina das pessoas​​
 
----
+=====/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/03-cascata.md
 
-## 03. Cascata
+​Assinale a alternativa INCORRETA sobre conceitos e aplicações do método cascata​
 
-​Assinale a alternativa INCORRETA sobre o conceito do método cascata​
-
-- [ ] ​Foi o primeiro método a ser formalizado e utilizado na engenharia de software para a criação e desenvolvimento de softwares​
+- [ ] ​É um dos métodos mais populares e tradicional para o desenvolvimento de software​
+- [ ] ​Chamado de cascata porque os processos de desenvolvimento são estruturados no formato de uma cascata, onde o final de uma etapa é o início da etapa seguinte​
+- [ ] ​Em sua forma sequencial cascateada segue no desenvolvimento do software de uma fase para outra. Seu modelo clássico de desenvolvimento é sugerido para pequenos projetos​
 - [ ] ​Também conhecido como modelo clássico ou topdown pois para uma fase iniciar, a anterior precisa estar finalizada​
 - [x] **​Não é mais utilizado nos dias de hoje, por se um método mais rígido, menos administrativo e com muita documentação para cada etapa do desenvolvimento do software​**
-- [ ] ​As fases do método cascata são requisitos, projeto, implementação, testes, implantação e manutenção​
-- [ ] ​As fases do método cascata são lineares e sequenciais, onde o término de uma etapa dá início à próxima​
 
----
+=====
 
-Assinale a alternativa CORRETA sobre o conceito do método cascata
+​Assinale a alternativa CORRETA sobre conceitos e aplicações do método cascata​
 
-- [ ] ​Foi um dos últimos métodos a ser formalizado e utilizado na engenharia de software para a criação e desenvolvimento de softwares​
+- [ ] ​É um dos métodos mais populares e modernos para o desenvolvimento de software​
+- [ ] ​Chamado de cascata porque os processos de desenvolvimento são estruturados no formato de uma cascata, onde o início de uma etapa é o fim da etapa seguinte de forma contínua​
+- [ ] ​Em sua forma sequencial cascateada segue no desenvolvimento do software de uma fase para outra. Seu modelo clássico de desenvolvimento é sugerido para grandes projetos​
 - [x] **Também conhecido como modelo clássico ou topdown pois para uma fase iniciar, a anterior precisa estar finalizada​**
 - [ ] ​Não é mais utilizado nos dias de hoje, por se um método mais rígido, menos administrativo e com muita documentação para cada etapa do desenvolvimento do software​
-- [ ] ​As fases do método cascata são requisitos, codificação, implantação e manutenção​
-- [ ] ​As fases do método cascata são não lineares e sequenciais, onde o término de uma etapa dá início à próxima​
 
----
+=====
 
-Assinale a alternativa INCORRETA sobre os pontos fortes do método cascata
+Assinale a alternativa INCORRETA sobre as vantagens do método cascata​
 
-- [ ] ​O método cascata é um método simples de ser compreendido e muito fácil de ser implementado e executado​
-- [ ] ​As etapas do método cascata são bem definidas, com a finalização de uma para o início da próxima​
-- [ ] ​O método cascata é indicado para pequenos projetos e onde os requisitos são claros e bem compreendidos​
-- [ ] ​Permite que seus cronogramas e seus orçamentos sejam mais precisos, auxiliando o cliente a saber quando terá o produto final pronto para uso​
+- [ ] O desenvolvimento do software tem uma natureza que é separada em fases ou etapas. Isso permite uma implementação ao mesmo tempo com vários programadores, o que agiliza o tempo de entrega
 - [x] **​Permite que seus cronogramas e seus orçamentos sejam poucos precisos, impedindo que o cliente saiba quando terá o produto para ser utilizado**
+- [ ] ​Trabalha-se muito bem com equipe heterogênea em nível de conhecimento técnico
+- [ ] Muito conhecimento é desenvolvido e compartilhado entre a equipe, pois a documentação desenvolvida é validada entre os membros da equipe
+- [ ] ​Desenvolvimento rápido de acordo com as especificações dos requisitos validados, principalmente, se todos estiverem corretos
 
----
+=====
 
-Assinale a alternativa CORRETA sobre os pontos fortes do método cascata
+Assinale a alternativa que apresenta uma característica correta do modelo cascata no desenvolvimento de software:
 
-- [ ] O método cascata é altamente adaptável a mudanças de requisitos durante o desenvolvimento, permitindo que alterações de escopo sejam introduzidas sem impactar o cronograma
 - [x] **O modelo cascata organiza o desenvolvimento em fases sequenciais, onde cada fase precisa ser concluída e validada antes do início da próxima, proporcionando maior controle e previsibilidade no processo**
-- [ ] No método cascata, o software é entregue ao cliente de forma incremental em pequenos ciclos de desenvolvimento para validação constante
-- [ ] O envolvimento do cliente ocorre durante todo o processo de desenvolvimento, com reuniões diárias e feedbacks contínuos sobre as funcionalidades entregues
-- [ ] A fase de testes ocorre de forma contínua e paralela ao desenvolvimento do código, permitindo a correção imediata de falhas antes da entrega final
+- [ ] O modelo cascata permite que várias fases sejam realizadas simultaneamente por diferentes programadores, agilizando o tempo de entrega do projeto
+- [ ] O modelo cascata funciona melhor com equipes homogêneas em conhecimento técnico, pois a execução sequencial exige alinhamento total entre os membros da equipe
+- [ ] O modelo cascata apresenta baixa necessidade de documentação, pois as informações de cada fase não precisam ser revisadas entre os membros da equipe
+- [ ] O modelo cascata dificulta o planejamento de cronogramas e orçamentos, tornando imprevisível para o cliente saber quando o software será entregue
 
----
+=====
 
-​Assinale a alternativa INCORRETA sobre os pontos fracos do método cascata​
+Assinale a alternativa INCORRETA sobre as desvantagens do método cascata​
 
-- [ ] ​Não permite que mudanças de requisitos aconteçam durante o desenvolvimento do software​
-- [ ] ​O método cascata é inflexível e rígido​
-- [x] **​O cliente participa da validação do software apenas quando todas as fases do método cascata estiverem finalizadas, evitando riscos que o sistema pode apresentar, diminuindo custos​**
+- [ ] ​Bastante engessado em suas fases e é muito difícil de adicionar alterações no projeto​
 - [ ] ​Os riscos e as falhas de especificações mal definidas e mal validadas podem levar ao desenvolvimento incorreto ou falhas no software​
-- [ ] ​O cliente participa da validação do software apenas quando todas as fases do método cascata estiverem finalizadas, aumentando riscos que o sistema pode apresentar, aumentando custos​
+- [ ] ​O cliente precisa ter paciência, pois só verá a funcionalidade do software apenas na sua entrega​
+- [ ] ​Cada etapa precisa ser documentada e ter a sua aprovação, se for necessário realizar algum tipo de retrabalho, isso será muito custoso​
+- [x] **​O cliente participa da validação do software apenas quando todas as fases do método cascata estiverem finalizadas, evitando riscos que o sistema pode apresentar, diminuindo custos​**
 
----
+=====
 
-Assinale a alternativa CORRETA sobre os pontos fracos do método cascata​
+Assinale a alternativa CORRETA sobre as desvantagens do método cascata​
 
-- [ ] ​Permite que mudanças de requisitos aconteçam livremente durante o desenvolvimento do software​
-- [ ] ​O método cascata é flexível e maleável​
-- [ ] ​O cliente participa da validação do software durante todas as fases do método cascata, diminuindo riscos que o sistema pode apresentar, diminuindo custos​
+- [ ] ​Bastante flexível em suas fases e é muito fácil de adicionar alterações no projeto​
 - [x] **​Os riscos e as falhas de especificações mal definidas e mal validadas podem levar ao desenvolvimento incorreto ou falhas no software​**
-- [ ] ​O cliente participa da validação do software apenas quando todas as fases do método cascata estiverem finalizadas, diminuindo riscos que o sistema pode apresentar, aumentando custos​
+- [ ] O cliente está bem próximo da criação, pois valida a funcionalidade do software em cada etapa do método​
+- [ ] ​Cada etapa precisa ser documentada e ter a sua aprovação, assim, se for necessário realizar algum tipo de retrabalho, isso será de baixo custo​
+- [ ] ​O cliente participa da validação do software apenas quando todas as fases do método cascata estiverem finalizadas, evitando riscos que o sistema pode apresentar, diminuindo custos​
 
----
+=====/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/04-lean.md
 
-## 04. Lean
+Assinale a alternativa INCORRETA sobre conceitos e aplicações do método Lean.
 
-Assinale a alternativa INCORRETA sobre conceitos e aplicações do método Lean
-
-- [ ] ​O Lean Thinking é uma abordagem que segue um conjunto de conceitos para otimizar em tempo e custo o seu sistema de produção​
+- [ ] ​O Lean Thinking é uma abordagem que segue um conjunto de conceitos para otimizar em tempo e custo o seu sistema de produção
 - [ ] O Lean Thinking considera o jeito de ser, pensar, fazer e viver dos colaboradores, focando no que é necessário, no local e momento certo, com o máximo de produtividade no ambiente profissional e pessoal
 - [x] **​Busca evitar fluxos de valor e funcionalidade do software para que o cliente possa estar mais distante de todo o processo de desenvolvimento do software**
 - [ ] ​No método Lean, a criação do soffware está relacionada com o cliente ditando o ritmo do desenvolvimento e evitando o máximo de desperdícios, gerando adaptação a mudanças
 - [ ] ​O método busca a perfeição com a melhoria contínua do software para que o resultado final seja o de total satisfação do usuário final
 
----
+=====
 
 Assinale a alternativa CORRETA sobre conceitos e aplicações do método Lean
 
@@ -206,7 +200,7 @@ Assinale a alternativa CORRETA sobre conceitos e aplicações do método Lean
 - [ ] ​No método Lean, a criação do software está relacionada com o time de criação do software ditando o ritmo do desenvolvimento e evitando o máximo de desperdícios
 - [ ] ​O método busca a perfeição com a melhoria contínua do software para que o resultado final seja o de total satisfação do time de desenvolvimento
 
----
+=====
 
 Assinale a alternativa INCORRETA sobre os primeiros princípios da abordagem Lean
 
@@ -216,7 +210,7 @@ Assinale a alternativa INCORRETA sobre os primeiros princípios da abordagem Lea
 - [ ] ​Um dos princípios da abordagem Lean é a forma de criar e ampliar o conhecimento, por meio da experimentação, melhoria contínua dos processos internos, priorizando a comunicação e o retorno contínuo entre os times de desenvolvimento e o cliente​
 - [x] **​Um dos princípios da abordagem Lean é o adiantamento dos comprometimentos, de forma que quanto mais cedo as decisões forem tomadas, mais assertivas elas passam a ser​**
 
----
+=====
 
 Assinale a alternativa CORRETA sobre os primeiros princípios da abordagem Lean​
 
@@ -226,7 +220,7 @@ Assinale a alternativa CORRETA sobre os primeiros princípios da abordagem Lean�
 - [ ] ​Um dos princípios da abordagem Lean é a forma de criar e ampliar o conhecimento, evitando a experimentação e a comunicação, de forma que o retorno entre os times de desenvolvimento e o cliente aconteçam apenas na validação do software​
 - [ ] ​Um dos princípios da abordagem Lean é o adiantamento dos comprometimentos, de forma que quanto mais cedo as decisões forem tomadas, mais assertivas elas passam a ser​
 
----
+=====
 
 Assinale a alternativa INCORRETA sobre os últimos princípios da abordagem Lean
 
@@ -236,7 +230,7 @@ Assinale a alternativa INCORRETA sobre os últimos princípios da abordagem Lean
 - [ ] ​Um dos princípios da abordagem Lean é a otimização, onde se é possível utilizar métricas corretas para medir, analisando os resultados, entendendo bem o software como um todo​
 - [ ] ​Um dos princípios da abordagem Lean é a otimização, onde o software terminado não é uma soma de partes que foram desenvolvidos, mas que o software como um todo agrega valor aos objetivos do cliente​
 
----
+=====
 
 Assinale a alternativa CORRETA sobre os últimos princípios da abordagem Lean
 
@@ -246,9 +240,7 @@ Assinale a alternativa CORRETA sobre os últimos princípios da abordagem Lean
 - [ ] Um dos princípios da abordagem Lean é a otimização, onde se é possível utilizar métricas confusas para medir, analisando parcialmente os resultados, sem entender bem o software como um todo
 - [ ] Um dos princípios da abordagem Lean é a otimização, onde o software terminado é uma soma de partes que foram desenvolvidas, sem que o software como um todo agregue valor aos objetivos do cliente
 
----
-
-## 05. Manifesto Ágil
+=====/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/05-manifesto-agil.md
 
 ​Assinale a alternativa INCORRETA sobre os valores sobre os indivíduos e interação do manifesto ágil​
 
@@ -258,7 +250,7 @@ Assinale a alternativa CORRETA sobre os últimos princípios da abordagem Lean
 - [ ] ​A valorização das pessoas, da comunicação e interação é importante e fundamental, pois valoriza o lado humano e o alcance de melhores resultados​
 - [x] **​Focando em processos e ferramentas, as chances de alcançar os melhores resultados do seu software aumentam substancialmente​**
 
----
+=====
 
 Assinale a alternativa que está de acordo com os valores do Manifesto Ágil relacionados aos indivíduos e à interação:
 
@@ -268,7 +260,7 @@ Assinale a alternativa que está de acordo com os valores do Manifesto Ágil rel
 - [x] **A valorização das pessoas, da comunicação e da interação é fundamental, pois prioriza o lado humano e contribui para melhores resultados no desenvolvimento de software**
 - [ ] Focando em processos e ferramentas, as chances de alcançar melhores resultados aumentam, já que eles definem claramente os papéis e responsabilidades
 
----
+=====
 
 Assinale a alternativa INCORRETA sobre os valores sobre o software em funcionamento
 
@@ -278,7 +270,7 @@ Assinale a alternativa INCORRETA sobre os valores sobre o software em funcioname
 - [x] **​Todo analista de sistemas deve ter apenas a função de produzir modelos gráficos e textuais​**
 - [ ] ​Apesar da Engenharia de Software ter passado a produzir documentação exagerada na produção de software, ela não se restringe apenas ao desenvolvimento de documentação do software que está sendo criado​
 
----
+=====
 
 ​Assinale a alternativa CORRETA sobre os valores sobre o software em funcionamento​
 
@@ -288,7 +280,7 @@ Assinale a alternativa INCORRETA sobre os valores sobre o software em funcioname
 - [ ] Todo analista de sistemas deve ter apenas a função de produzir modelos gráficos e textuais
 - [ ] ​A Engenharia de Software passou a produzir documentação exagerada na produção de software, pois isso a restringe apenas ao desenvolvimento de documentação do software que está sendo criado
 
----
+=====
 
 ​Assinale a alternativa INCORRETA sobre o valor da colaboração com o cliente​
 
@@ -298,7 +290,7 @@ Assinale a alternativa INCORRETA sobre os valores sobre o software em funcioname
 - [x] **​É desnecessário a colaboração entre as pessoas da equipe de desenvolvimento quanto o time do cliente​**
 - [ ] ​É imprescindível a confiança e a colaboração entre os desenvolvedores e o cliente​
 
----
+=====
 
 Assinale a alternativa CORRETA sobre o valor da colaboração com o cliente
 
@@ -308,9 +300,7 @@ Assinale a alternativa CORRETA sobre o valor da colaboração com o cliente
 - [ ] ​É desnecessário a colaboração entre as pessoas da equipe de desenvolvimento quanto o time do cliente​
 - [ ] ​É desnecessário a confiança e a colaboração entre os desenvolvedores e o cliente​
 
----
-
-## 06. Princípios 1 a 4 do manifesto ágil
+=====/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/06-principios-1-a-4-do-manifesto-agil.md
 
 ​Assinale a alternativa INCORRETA sobre as mudanças de requisitos bem-vindas​
 
@@ -320,7 +310,7 @@ Assinale a alternativa CORRETA sobre o valor da colaboração com o cliente
 - [x] **​O pensamento é que as mudanças tardias são maléficas​**
 - [ ] Todo e qualquer tipo de mudança é encarado como normal​
 
----
+=====
 
 ​Assinale a alternativa CORRETA sobre mudanças de requisitos bem-vindas​
 
@@ -330,7 +320,7 @@ Assinale a alternativa CORRETA sobre o valor da colaboração com o cliente
 - [ ] ​O pensamento é que as mudanças tardias são maléficas​
 - [ ] ​Todo e qualquer tipo de mudança é encarado como anormal​
 
----
+=====
 
 Assinale a alternativa INCORRETA sobre entregas frequentes​
 
@@ -340,7 +330,7 @@ Assinale a alternativa INCORRETA sobre entregas frequentes​
 - [ ] ​A equipe consegue prever melhor a capacidade de produção de cada ciclo​
 - [ ] ​Os pontos de melhoria no software são identificados e atuados, gerando relação de confiança com o cliente​
 
----
+=====
 
 ​Assinale a alternativa CORRETA sobre entregas frequentes​
 
@@ -350,7 +340,7 @@ Assinale a alternativa INCORRETA sobre entregas frequentes​
 - [ ] ​A equipe desconhece o tempo de desenvolvimento e de produção de cada ciclo​
 - [ ] ​Os pontos de melhoria no software são identificados e ignorados, gerando relação de desconfiança com o cliente​
 
----
+=====
 
 ​Assinale a alternativa INCORRETA sobre equipe única de negócios e desenvolvedores​
 
@@ -360,7 +350,7 @@ Assinale a alternativa INCORRETA sobre entregas frequentes​
 - [ ] ​O trabalho conjunto do cliente com a equipe de desenvolvimento proporciona o trabalho contínuo, com apresentações, discussões e feedbacks​
 - [x] **​Apenas o trabalho numa equipe única de negócios e desenvolvedores não garante o sucesso do projeto​**
 
----
+=====
 
 ​Assinale a alternativa CORRETA sobre equipe única de negócios e desenvolvedores​
 
@@ -370,9 +360,7 @@ Assinale a alternativa INCORRETA sobre entregas frequentes​
 - [x] **​O trabalho conjunto do cliente com a equipe de desenvolvimento proporciona o trabalho contínuo, com apresentações, discussões e feedbacks​**
 - [ ] ​Apenas o trabalho numa equipe única de negócios e desenvolvedores não garante o sucesso do projeto​
 
----
-
-## 07. Princípios 5 a 8 do manifesto ágil
+=====/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/07-principios-5-a-8-do-manifesto-agil.md
 
 Assinale a alternativa INCORRETA sobre motivação​
 
@@ -382,7 +370,7 @@ Assinale a alternativa INCORRETA sobre motivação​
 - [ ] ​Um ambiente adequado de trabalho com clima motivador e com confiança mútua mantém a equipe motivada
 - [ ] ​O líder serve a equipe e mantem todos com o foco no objetivo do cliente para a entrega de um software com qualidade
 
----
+=====
 
 ​Assinale a alternativa CORRETA sobre motivação​
 
@@ -392,7 +380,7 @@ Assinale a alternativa INCORRETA sobre motivação​
 - [ ] ​Um ambiente adequado de trabalho com clima motivador e com confiança mútua mantém a equipe desmotivada
 - [ ] ​O líder dá ordens a equipe e mantem todos com o foco no objetivo do líder para a entrega de um software com qualidade
 
----
+=====
 
 ​Assinale a alternativa INCORRETA sobre conversa frente a frente​
 
@@ -402,7 +390,7 @@ Assinale a alternativa INCORRETA sobre motivação​
 - [ ] ​Evitar situações que levam à destruição de relações e evitar desgastes, atrasos e desperdícios de energias que serão necessários para recompor um ambiente sustentável e motivado​
 - [ ] ​Foque na troca de informações entre equipes, com conversas presenciais que geram economia de energia, eficiência e trabalhos sustentáveis​
 
----
+=====
 
 ​Assinale a alternativa CORRETA sobre conversa frente a frente​
 
@@ -412,7 +400,7 @@ Assinale a alternativa INCORRETA sobre motivação​
 - [ ] ​Manter situações que levam à destruição de relações e garantindo desgastes, atrasos e desperdícios de energias que serão dispensáveis para recompor um ambiente sustentável e motivado​
 - [ ] ​Evite a troca de informações entre equipes, com conversas presenciais que evitam economia de energia, eficiência e trabalhos sustentáveis​
 
----
+=====
 
 ​Assinale a alternativa INCORRETA sobre software funcional​
 
@@ -422,7 +410,7 @@ Assinale a alternativa INCORRETA sobre motivação​
 - [ ] ​A entrega do software funcional é mais importante do que priorizar documentos e especificações​
 - [ ] ​A entrega de um software funcional é o que mais importa para o cliente​
 
----
+=====
 
 Assinale a alternativa CORRETA sobre software funcional​
 
@@ -432,9 +420,7 @@ Assinale a alternativa CORRETA sobre software funcional​
 - [ ] ​A entrega do software funcional é menos importante do que priorizar documentos e especificações​
 - [x] **​A entrega de um software funcional é o que mais importa para o cliente​**
 
----
-
-## 08. Princípios 9 a 12 do manifesto ágil
+=====/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/08-principios-9-a-12-do-manifesto-agil.md
 
 ​Assinale a alternativa INCORRETA sobre agilidade​
 
@@ -444,7 +430,7 @@ Assinale a alternativa CORRETA sobre software funcional​
 - [ ] O foco está na teoria da emergência, buscando o conjunto restrito e muito simples de regras que deve ser obedecido por todos os membros da equipe
 - [x] **​Acontece um assincronismo da equipe com o time auto-organizado**
 
----
+=====
 
 Assinale a alternativa CORRETA sobre agilidade​
 
@@ -454,7 +440,7 @@ Assinale a alternativa CORRETA sobre agilidade​
 - [x] **O foco está na teoria da emergência, buscando o conjunto restrito e muito simples de regras que deve ser obedecido por todos os membros da equipe**
 - [ ] ​Acontece um assincronismo da equipe com o time auto-organizado
 
----
+=====
 
 ​Assinale a alternativa INCORRETA sobre simplicidade​
 
@@ -464,7 +450,7 @@ Assinale a alternativa CORRETA sobre agilidade​
 - [ ] ​Os excessos podem até gerar complexidade ao produto de software​
 - [x] **​A simplicidade busca o foco em evitar energia no desenvolvimento da coisa certa, que agregue valor ao cliente​**
 
----
+=====
 
 ​Assinale a alternativa CORRETA sobre simplicidade​
 
@@ -474,7 +460,7 @@ Assinale a alternativa CORRETA sobre agilidade​
 - [ ] ​Os excessos podem até evitar a complexidade ao produto de software​
 - [ ] ​A simplicidade busca o foco em evitar energia no desenvolvimento da coisa certa, que agregue valor ao cliente​
 
----
+=====
 
 ​Assinale a alternativa INCORRETA sobre reflexões regulares​
 
@@ -484,7 +470,7 @@ Assinale a alternativa CORRETA sobre agilidade​
 - [ ] ​Manutenção de uma regra básica de melhoria contínua de cada membro da equipe​
 - [x] **​Pouco aprendizado vai acontecer nas primeiras interações do projeto, jamais passam a ser mais harmônica​**
 
----
+=====
 
 Assinale a alternativa CORRETA sobre reflexões regulares​
 
@@ -494,9 +480,7 @@ Assinale a alternativa CORRETA sobre reflexões regulares​
 - [ ] ​Manutenção de uma regra básica de piora contínua de cada membro da equipe​
 - [ ] ​Pouco aprendizado vai acontecer nas primeiras interações do projeto, jamais passam a ser mais harmônica​
 
----
-
-## 09. Scrum e Kanban
+=====/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/09-scrum-e-kanban.md
 
 ​Assinale a alternativa INCORRETA sobre Scrum​
 
@@ -506,7 +490,7 @@ Assinale a alternativa CORRETA sobre reflexões regulares​
 - [x] **Impede mudanças de planejamento o tempo todo​**
 - [ ] ​Sprints são os ciclos de cada projeto​
 
----
+=====
 
 Assinale a alternativa CORRETA sobre Scrum
 
@@ -516,7 +500,7 @@ Assinale a alternativa CORRETA sobre Scrum
 - [ ] ​Impede mudanças de planejamento o tempo todo​
 - [ ] ​Sprints são os ciclos de cada membro da equipe​
 
----
+=====
 
 Assinale a alternativa INCORRETA sobre Kanban​
 
@@ -526,7 +510,7 @@ Assinale a alternativa INCORRETA sobre Kanban​
 - [ ] ​As atividades passam de cada etapa até serem entregues​
 - [ ] ​Possui como benefícios a visão do todo, a simplicidade, a facilidade do fluxo de trabalho, o incentivo à comunicação, as prioridades e metas claras e menos a microgestão​
 
----
+=====
 
 ​Assinale a alternativa CORRETA sobre Kanban​
 
@@ -536,7 +520,7 @@ Assinale a alternativa INCORRETA sobre Kanban​
 - [ ] ​As atividades passam apenas pelas etapas fundamentais até serem entregues​
 - [x] **​Possui como benefícios a visão do todo, a simplicidade, a facilidade do fluxo de trabalho, o incentivo à comunicação, as prioridades e metas claras e menos a microgestão​**
 
----
+=====
 
 Assinale a alternativa INCORRETA sobre aplicando Scrum e Kanban​
 
@@ -546,7 +530,7 @@ Assinale a alternativa INCORRETA sobre aplicando Scrum e Kanban​
 - [x] **​As informações não devem ser visuais e de acesso a todos da equipe​**
 - [ ] ​O desenvolvimento deve ser organizado com o to do, o doing e o done​
 
----
+=====
 
 Assinale a alternativa CORRETA sobre aplicando Scrum e Kanban​
 
@@ -556,9 +540,7 @@ Assinale a alternativa CORRETA sobre aplicando Scrum e Kanban​
 - [ ] ​As informações não devem ser visuais e de acesso a todos da equipe​
 - [ ] ​O desenvolvimento não deve ser organizado com o to do, o doing e o done​
 
----
-
-## 10. Desenvolvendo no trello
+=====/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/10-desenvolvendo-no-trello.md
 
 O Trello é uma ferramenta utilizada nos
 
@@ -568,31 +550,33 @@ O Trello é uma ferramenta utilizada nos
 - [ ] ​métodos informais de gerenciamento de projetos de criação de software​
 - [ ] ​métodos gerenciais de gerenciamento de projetos de criação de software​
 
----
+=====
 
 Para as afirmações abaixo:
 
 I - O Trello é uma ferramenta que apresenta de forma visual o que está sendo trabalhado
+
 II - O Trello é uma ferramenta que apresenta de forma visual com quem e o que está sendo trabalhado
+
 III - O Trello é uma ferramenta que apresenta de forma visual com quem uma tarefa está em um processo
 
-- [ ] Apenas a afirmação I é verdadeira
-- [ ] Apenas as afirmações I e II são verdadeiras
-- [ ] Apenas a afirmação II é verdadeira
-- [ ] Apenas as afirmações II e III são verdadeiras
+- [ ] ​Apenas a afirmação I é verdadeira​
+- [ ] ​Apenas as afirmações I e II são verdadeiras​
+- [ ] ​Apenas a afirmação II é verdadeira​
+- [ ] ​Apenas as afirmações II e III são verdadeiras​
 - [x] **​Apenas as afirmações I, II e III são verdadeiras​**
 
----
+=====
 
 Durante o desenvolvimento de um sistema em equipe utilizando o Trello, foi identificada uma Tarefa X que havia sido atribuída a um membro específico, estava com checklist parcialmente concluído, data de entrega próxima e permanecia na lista "Do – a fazer". Considerando as boas práticas dos métodos ágeis e o funcionamento da ferramenta, qual deveria ser a ação mais apropriada da equipe nesse momento?
 
 - [ ] Concluir imediatamente a tarefa, mesmo que sem a validação do checklist.
 - [ ] Arquivar a tarefa para evitar sobrecarga na visualização do quadro.
 - [ ] Manter a tarefa na lista "Do – a fazer" até a data de entrega expirar.
-- [x] **Mover a tarefa para a lista "Doing – fazendo", indicando início de execução e reforçar a priorização junto ao responsável.**
-- [ ] Mover diretamente para "Done – feito", pois o checklist já está parcialmente preenchido.
+- [x] **​Mover a tarefa para a lista "Doing – fazendo", indicando início de execução e reforçar a priorização junto ao responsável.**
+- [ ] ​Mover diretamente para "Done – feito", pois o checklist já está parcialmente preenchido.
 
----
+=====
 
 Em uma equipe que utiliza o Trello para gerenciamento de tarefas em um projeto de software, um membro propõe a criação de novas listas além das tradicionais "Do", "Doing" e "Done". Segundo os princípios da ferramenta e os métodos ágeis, essa personalização é:
 
@@ -600,33 +584,35 @@ Em uma equipe que utiliza o Trello para gerenciamento de tarefas em um projeto d
 - [ ] Permitida, porém somente se autorizada pela administração do Trello.
 - [x] **Válida, desde que respeite os objetivos do time e contribua para a organização visual e fluidez do processo.**
 - [ ] Desnecessária, pois compromete o controle de versionamento das tarefas.
-- [ ] Obrigatória, pois as listas padrões não são recomendadas para projetos de software.
+- [ ] ​Obrigatória, pois as listas padrões não são recomendadas para projetos de software.
 
----
+=====
 
 No Trello, você pode criar várias listas e cada lista pode contar vários cartões com tarefas. A sugestão é que você tenha pelo menos um básico de listas que são:​
 
-- [ ] Apenas o Do – a fazer
-- [ ] Apenas o Doing – fazendo
-- [ ] Apenas o Done – feito
+- [ ] ​Apenas o Do – a fazer​
+- [ ] ​Apenas o Doing – fazendo​
+- [ ] ​Apenas o Done – feito​
 - [x] **​Apenas o Do – a fazer, o Doing – fazendo e o Done – feito​**
-- [ ] Apenas o Do – a fazer e do Done – feito
+- [ ] ​Apenas o Do – a fazer e do Done – feito​
 
----
+=====
 
 Para as afirmações abaixo, acerca dos cartões de tarefa no Trello:
 
 I. Para cada tarefa, você pode adicionar membros e etiquetas
+
 II. Para cada tarefa, você pode adicionar checklist e data de entrega
+
 III. Para cada tarefa, você pode adicionar capa
 
-- [ ] Apenas a afirmação I é verdadeira
-- [ ] Apenas as afirmações I e II são verdadeiras
-- [ ] Apenas a afirmação II é verdadeira
-- [ ] Apenas as afirmações II e III são verdadeiras
+- [ ] ​Apenas a afirmação I é verdadeira​
+- [ ] ​Apenas as afirmações I e II são verdadeiras​
+- [ ] ​Apenas a afirmação II é verdadeira​
+- [ ] ​Apenas as afirmações II e III são verdadeiras​
 - [x] **​Apenas as afirmações I, II e III são verdadeiras​**
 
----
+=====
 
 O Trello é uma ferramenta de gerenciamento de projetos disponível tanto para desktop quanto para telefones celulares Android e iPhone. Embora a plataforma seja comumente usada por empresas na gestão das suas tarefas, ela também funciona para administrar afazeres pessoais e organizar projetos dentro e fora do ambiente corporativo.
 
@@ -634,13 +620,11 @@ Descreva as funções/áreas básicas do Trello que podem ser utilizadas pelo us
 
 **Resposta:**
 
-A estrutura central do Trello baseia-se no modelo visual Kanban, sendo organizada hierarquicamente em **Quadros (*Boards*)**, **Listas (*Lists*)** e **Cartões (*Cards*)**. Os quadros delimitam a área de trabalho ou projeto geral; as listas representam as colunas que definem as etapas do fluxo de desenvolvimento (comumente estruturadas no padrão *Do / A Fazer*, *Doing / Fazendo* e *Done / Feito*); e os cartões correspondem às tarefas individuais que transitam dinamicamente entre as colunas conforme a evolução das entregas.
+O Trello estrutura seu gerenciamento visual no modelo Kanban por meio de três componentes fundamentais: os **Quadros (Boards)**, que delimitam o projeto como um todo; as **Listas (Lists)**, que organizam o fluxo de trabalho em colunas sequenciais (como *Do / A Fazer*, *Doing / Em Andamento* e *Done / Concluído*); e os **Cartões (Cards)**, que representam as tarefas individuais que transitam entre as listas conforme seu progresso.
 
-Dentro de cada cartão, o usuário dispõe de recursos essenciais para detalhar e gerenciar a execução da tarefa: atribuição de **membros responsáveis**, inclusão de **etiquetas coloridas (*labels*)** para categorização temática ou prioridade, criação de **listas de verificação (*checklists*)** para subtarefas, definição de **prazos de entrega (*due dates*)** com alertas visuais coloridos de proximidade ou atraso, além de inserção de **anexos**, **capas visuais** e registro do histórico de **comentários e atividades**.
+Dentro de cada cartão, o usuário conta com diversas funcionalidades de controle e colaboração, incluindo a atribuição de membros responsáveis, definição de datas de entrega e prazos com notificações, criação de checklists de subtarefas, etiquetas coloridas para categorização e priorização, anexo de arquivos e campo para descrições e comentários entre a equipe.
 
----
-
-## 11. Por que inovar?
+=====/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/11-por-que-inovar.md
 
 Assinale a alternativa INCORRETA sobre o que é Design Thinking
 
@@ -650,7 +634,7 @@ Assinale a alternativa INCORRETA sobre o que é Design Thinking
 - [ ] ​O designer entende que o problema está relacionado ao que pode impedir a experiência e o bem-estar das pessoas​
 - [ ] ​O Design Thinking desafia padrões e transforma oportunidades em negócios​
 
----
+=====
 
 Assinale a alternativa CORRETA sobre o que é Design Thinking​
 
@@ -660,7 +644,7 @@ Assinale a alternativa CORRETA sobre o que é Design Thinking​
 - [ ] ​O designer entende que a solução está relacionada ao que pode impedir a experiência e o bem-estar das pessoas​
 - [ ] ​O Design Thinking mantém os padrões e aproveita as oportunidades existentes nos negócios​
 
----
+=====
 
 ​Assinale a alternativa INCORRETA sobre porque Design Thinking​
 
@@ -670,7 +654,7 @@ Assinale a alternativa CORRETA sobre o que é Design Thinking​
 - [ ] ​O objetivo do Design Thinking é ter informações com o entendimento de culturas, experiências, emoções, pensamento e comportamento das pessoas para o desenvolvimento das soluções​
 - [x] **​No Design Thinking, os dados são obtidos por meio de questionários eletrônios com o cliente e usuário final​**
 
----
+=====
 
 ​Assinale a alternativa CORRETA sobre porque Design Thinking​
 
@@ -680,7 +664,7 @@ Assinale a alternativa CORRETA sobre o que é Design Thinking​
 - [ ] ​O Design Thinking se afasta das informações com o entendimento de culturas, experiências, emoções, pensamento e comportamento das pessoas para o desenvolvimento das soluções​
 - [ ] ​No Design Thinking, os dados são obtidos por meio de questionários eletrônios com o cliente e usuário final​
 
----
+=====
 
 Assinale a alternativa INCORRETA sobre pesquisa​
 
@@ -690,7 +674,7 @@ Assinale a alternativa INCORRETA sobre pesquisa​
 - [ ] ​A pesquisa desk é uma pesquisa realizada em fontes bibliográficas e seguras, diferente das dos clientes e usuários finais​
 - [x] **​Na pesquisa desk, a pesquisa gerada é registrada em planilhas eletrônicas​**
 
----
+=====
 
 Assinale a alternativa CORRETA sobre pesquisa​
 
@@ -700,9 +684,7 @@ Assinale a alternativa CORRETA sobre pesquisa​
 - [ ] ​A pesquisa desk é uma pesquisa realizada em fontes bibliográficas e seguras, juntamente com os clientes e usuários finais​
 - [ ] ​Na pesquisa desk, a pesquisa gerada é registrada em planilhas eletrônicas​
 
----
-
-## 12. Imersão
+=====/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/12-imersao.md
 
 Assinale a alternativa INCORRETA sobre imersão em profundidade
 
@@ -712,7 +694,7 @@ Assinale a alternativa INCORRETA sobre imersão em profundidade
 - [ ] ​O resultado da pesquisa qualitativa observa, interage e descobre o que o usuário faz, como faz e o que sentem​
 - [x] **​Distancia das crenças, anseios e necessidades por meio a empatia​**
 
----
+=====
 
 Assinale a alternativa CORRETA sobre imersão em profundidade
 
@@ -722,7 +704,7 @@ Assinale a alternativa CORRETA sobre imersão em profundidade
 - [ ] ​O resultado da pesquisa quantitativa observa, interage e descobre o que o usuário faz, como faz e o que sentem​
 - [ ] ​Distancia das crenças, anseios e necessidades por meio a empatia​
 
----
+=====
 
 Assinale a alternativa INCORRETA sobre sessão generativa​
 
@@ -732,7 +714,7 @@ Assinale a alternativa INCORRETA sobre sessão generativa​
 - [ ] ​Utiliza-se o caderno de sensibilização para se ter uma reflexão das memórias, sentimentos e motivações
 - [x] **​Evita a construção e expressão de experiências mais profundas, para se ter mais riqueza de informações**
 
----
+=====
 
 ​Assinale a alternativa CORRETA sobre sessão generativa​
 
@@ -742,7 +724,7 @@ Assinale a alternativa INCORRETA sobre sessão generativa​
 - [ ] ​Utiliza-se o caderno de insights para se ter uma reflexão das memórias, sentimentos e motivações​
 - [ ] ​Evita a construção e expressão de experiências mais profundas, para se ter mais riqueza de informações​
 
----
+=====
 
 ​Assinale a alternativa INCORRETA sobre um dia na vida​
 
@@ -752,7 +734,7 @@ Assinale a alternativa INCORRETA sobre sessão generativa​
 - [ ] ​A equipe que vive um dia na vida passa a ter empatia de forma a gerar insights importantes​
 - [x] **​Evita-se o aprendizado de comportamentos, atitudes, limitações mimetizando a experiência do usuário​**
 
----
+=====
 
 ​Assinale a alternativa CORRETA sobre um dia na vida​
 
@@ -762,9 +744,7 @@ Assinale a alternativa INCORRETA sobre sessão generativa​
 - [ ] ​A equipe que vive um dia na vida passa a ter empatia de forma a evitar insights importantes​
 - [ ] ​Evita-se o aprendizado de comportamentos, atitudes, limitações mimetizando a experiência do usuário​
 
----
-
-## 13. Análise e Síntese
+=====/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/13-analise-e-sintese.md
 
 Assinale a alternativa INCORRETA sobre cartão de insight e diagrama de afinidade
 
@@ -774,17 +754,17 @@ Assinale a alternativa INCORRETA sobre cartão de insight e diagrama de afinidad
 - [ ] ​O diagrama de afinidades é desenvolvido quando a informação precisa ser conectada entre os temas e as áreas de oportunidades do projeto​
 - [x] **​O diagrama de afinidades não pode ser realizado de forma colaborativa, por meio de uma equipe multidisciplinar​**
 
----
+=====
 
 Assinale a alternativa CORRETA sobre cartão de insight e diagrama de afinidade
 
-- [ ] ​Os cartões de insights são reflexões das informações obtidas de forma aleatória​
+- [ ] ​Os cartões de insights são reflexões das informações obtidas de forma aleatória
 - [ ] ​Os cartões de insights não são utilizados para a criação do diagrama de afinidades​
-- [ ] ​Os cartões de insights possuem micro áreas, divisões e interdependência dentro do tema do projeto​
-- [x] **O diagrama de afinidades é desenvolvido quando a informação precisa ser conectada entre os temas e as áreas de oportunidades do projeto**
-- [ ] ​O diagrama de afinidades não pode ser realizado de forma colaborativa, por meio de uma equipe multidisciplinar​
+- [ ] ​Os cartões de insights possuem micro áreas, divisões e interdependência dentro do tema do projeto
+- [x] **​O diagrama de afinidades é desenvolvido quando a informação precisa ser conectada entre os temas e as áreas de oportunidades do projeto**
+- [ ] O diagrama de afinidades não pode ser realizado de forma colaborativa, por meio de uma equipe multidisciplinar
 
----
+=====
 
 ​Assinale a alternativa INCORRETA sobre mapa conceitual e critérios norteadores​
 
@@ -794,7 +774,7 @@ Assinale a alternativa CORRETA sobre cartão de insight e diagrama de afinidade
 - [x] **​Com os critérios norteadores, o cliente e o usuário final acabam atrapalhando o direcionamento do projeto​**
 - [ ] ​Com os critérios norteadores, é possível parametrizar e orientar as soluções, mantendo em evidência a adequação que é importante ao escopo que deve ser respeitado​
 
----
+=====
 
 Assinale a alternativa CORRETA sobre mapa conceitual e critérios norteadores
 
@@ -804,7 +784,7 @@ Assinale a alternativa CORRETA sobre mapa conceitual e critérios norteadores
 - [ ] ​Com os critérios norteadores, o cliente e o usuário final acabam atrapalhando o direcionamento do projeto​
 - [ ] ​Com os critérios norteadores, é impossível parametrizar e orientar as soluções, mantendo em evidência a adequação que é importante ao escopo que deve ser respeitado​
 
----
+=====
 
 ​Assinale a alternativa INCORRETA sobre jornada do usuário e blueprint​
 
@@ -814,7 +794,7 @@ Assinale a alternativa CORRETA sobre mapa conceitual e critérios norteadores
 - [ ] ​O Blueprint é uma ferramenta visualmente na forma de matriz que representa o sistema de interações de uma prestação de serviço​
 - [ ] ​O objetivo do Blueprint é descrever as evidências físicas, atores, ações e interdependências entre elas​
 
----
+=====
 
 ​Assinale a alternativa CORRETA sobre jonada do usuário e blueprint​
 
@@ -824,188 +804,184 @@ Assinale a alternativa CORRETA sobre mapa conceitual e critérios norteadores
 - [ ] ​O Blueprint é uma ferramenta eletrônica não visual que representa o sistema de interações de uma prestação de serviço​
 - [x] **​O objetivo do Blueprint é descrever as evidências físicas, atores, ações e interdependências entre elas​**
 
----
+=====/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/14-ideacao.md
 
-## 14. Ideação
+Assinale a alternativa INCORRETA sobre o workshop de cocriação
 
-​Assinale a alternativa INCORRETA sobre brainstorming e workshop de cocriação​
+- [ ] ​É uma ferramenta onde as pessoas envolvidas no projeto se encontram para estimular a criatividade e a colaboração de novas ideias​
+- [ ] ​É útil e utilizada em momento de impasse no desenvolvimento do projeto​
+- [x] **​realizado para a validação de ideias individuais que sejam os mesmos ao do desenvolvimento do projeto em si​**
+- [ ] ​As atividades dinâmicas têm curta duração e em pequenos grupos​
+- [ ] ​São bem vistos para eliminar os impasses e manter um desenvolvimento de qualidade do projeto​
 
-- [ ] O brainstorming é uma técnica de geração rápida de ideias
-- [ ] ​O brainstorming é conduzido por um moderador para gerar ideias com sugestões e em direção adequada para o novo software​
-- [ ] ​No brainstorming todas as ideias são consideradas no processo criativo​
-- [ ] ​O workshop de cocriação é realizado para a validação de ideias por equipes que sejam diferentes ao do desenvolvimento​
-- [x] **​No workshop de cocriação as atividades têm longa duração e em grandes grupos​**
+=====
 
----
+​Assinale a alternativa CORRETA sobre workshop de cocriação​
 
-Assinale a alternativa CORRETA sobre brainstorming e workshop de cocriação​
+- [x] **​É uma ferramenta onde as pessoas envolvidas no projeto se encontram para estimular a criatividade e a colaboração de novas ideias​**
+- [ ] ​É útil e utilizada em momento de equilíbrio no desenvolvimento do projeto​
+- [ ] É realizado para a validação de ideias individuais que sejam os mesmos ao do desenvolvimento do projeto em si​
+- [ ] ​As atividades dinâmicas têm longa duração e em grupos grandes​
+- [ ] ​São mal vistos para eliminar os impasses e manter um desenvolvimento de qualidade do projeto​
 
-- [ ] O brainstorming é uma técnica de geração lenta de ideias
-- [ ] ​O brainstorming é conduzido por um membro aleatório da equipe para gerar ideias sem sugestões e em direção inadequada para o novo software
-- [ ] ​No brainstorming as ideias são descartadas no processo criativo​
-- [x] **​O workshop de cocriação é realizado para a validação de ideias por equipes que sejam diferentes ao do desenvolvimento​**
-- [ ] ​No workshop de cocriação as atividades têm longa duração e em grandes grupos​
+=====
 
----
+​Assinale a alternativa INCORRETA sobre cardápio de ideias​
 
-Assinale a alternativa INCORRETA sobre cardápio de ideias​
+- [x] **​Ferramenta que desenvolve um catálogo com todas as ideias completas geradas no projeto​**
+- [ ] ​São armazenadas as ideias, desdobramentos e oportunidades de negócios que são gerados a partir do software que está sendo criado​
+- [ ] ​Fica mais fácil a visualização das ideias para que os gestores e as equipes tenham insumos para uma melhor tomada de decisão para a criação do negócio​
+- [ ] ​Facilita o desenvolvimento de um documento com os resultados parciais do projeto​
+- [ ] ​O documento final pode ser impresso ou digital e de fácil acesso aos envolvidos​
 
-- [ ] ​O cardápio de ideias desenvolve um catálogo com a síntese de ideias geradas no projeto​
-- [ ] ​O cardápio de ideias dá uma visão geral das ideias que são necessárias para o desenvolvimento do software​
-- [ ] ​No cardápio de ideias são armazenadas as ideias, desdobramentos e oportunidades de negócios que serão gerados​
-- [x] **​O cardápio de ideias dificulta a visualização das ideias para os gestores e as equipes​**
-- [ ] ​O resultado do cardápio de ideias pode ser impresso ou digital​
-
----
+=====
 
 ​Assinale a alternativa CORRETA sobre cardápio de ideias​
 
-- [x] **​O cardápio de ideias desenvolve um catálogo com a síntese de ideias geradas no projeto​**
-- [ ] ​O cardápio de ideias impede a visão geral das ideias que são necessárias para o desenvolvimento do software​
-- [ ] ​No cardápio de ideias são descartadas as ideias, desdobramentos e oportunidades de negócios que serão gerados​
-- [ ] ​O cardápio de ideias dificulta a visualização das ideias para os gestores e as equipes​
-- [ ] ​O resultado do cardápio de ideias deve ser impresso e jamais digital​
+- [ ] ​Ferramenta que desenvolve um catálogo com todas as ideias completas geradas no projeto​
+- [ ] ​Não são armazenadas as ideias, desdobramentos e oportunidades de negócios que são gerados a partir do software que está sendo criado​
+- [x] **​Fica mais fácil a visualização das ideias para que os gestores e as equipes tenham insumos para uma melhor tomada de decisão para a criação do negócio​**
+- [ ] ​Dificulta o desenvolvimento de um documento com os resultados parciais do projeto​
+- [ ] ​O documento final pode ser impresso ou digital e de difícil acesso aos envolvidos​
 
----
+=====
 
-​Assinale a alternativa INCORRETA sobre matriz de posicionamento​
+Assinale a alternativa INCORRETA sobre matriz de posicionamento
 
-- [ ] ​A matriz de posicionamento é uma ferramenta que gera uma análise estratégica das ideias geradas​
-- [ ] ​A matriz de posicionamento é utilizada para validar as ideias de acordo com critérios norteadores e personas​
-- [ ] ​Os resultados da matriz de posicionamento oferecem apoio necessário no processo de decisão por meio de comunicação eficiente​
-- [x] **​As ideias menos estratégicas dos resultados da matriz de posicionamento são selecionadas para serem desenvolvidas​**
-- [ ] ​A matriz de posicionamento tem seu preenchimento colaborativo da equipe envolvida no desenvolvimento​
+- [ ] ​Ferramenta que gera uma análise estratégica das ideias geradas do brainstorming e do workshop de cocriação​
+- [x] **​Dificilmente é utilizada para validar as ideias, com critérios moderadores, de acordo com as necessidades e problemas dos clientes​**
+- [ ] ​Oferece apoio necessário no processo de decisão por meio de uma comunicação eficiente de benefícios e desafios da solução que o cliente busca​
+- [ ] Seus melhores resultados estratégicos são selecionados para serem desenvolvidos nas primeiras versões funcionais do produto
+- [ ] ​Seu preenchimento é colaborativo, buscando-se a avaliação de cada ideia​
 
----
+=====
 
 ​Assinale a alternativa CORRETA sobre matriz de posicionamento​
 
-- [ ] ​A matriz de posicionamento é uma ferramenta que gera uma análise pontual das ideias geradas​
-- [ ] ​A matriz de posicionamento é utilizada para descartar as ideias de acordo com critérios norteadores e personas​
-- [ ] ​Os resultados da matriz de posicionamento dificultam o apoio necessário no processo de decisão por meio de comunicação ineficiente​
-- [ ] ​As ideias menos estratégicas dos resultados da matriz de posicionamento são selecionadas para serem desenvolvidas​
-- [x] **​A matriz de posicionamento tem seu preenchimento colaborativo da equipe envolvida no desenvolvimento​**
+- [ ] ​Ferramenta que impede uma análise estratégica das ideias geradas do brainstorming e do workshop de cocriação​
+- [ ] ​Dificilmente é utilizada para validar as ideias, com critérios moderadores, de acordo com as necessidades e problemas dos clientes​
+- [ ] ​Dificulta o processo de decisão por meio de uma comunicação eficiente de benefícios e desafios da solução que o cliente busca​
+- [ ] Seus melhores resultados estratégicos são ignorados para serem desenvolvidos nas primeiras versões funcionais do produto
+- [x] **​Seu preenchimento é colaborativo, buscando-se a avaliação de cada ideia​**
 
----
+=====/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/15-prototipacao.md
 
-## 15. Prototipação
+Assinale a alternativa INCORRETA sobre a fidelidade da visão da equipe do projeto
 
-Assinale a alternativa INCORRETA sobre fidelidade e contextualidade na prototipação
+- [x] **O protótipo é desenvolvido de forma a intangibilizar uma ideia**
+- [ ] ​O protótipo representa a realidade que será experimentada pelo cliente do software funcional para ser validado​
+- [ ] ​A prototipação pode ser desenvolvida pela ótica da equipe de desenvolvimento do projeto​
+- [ ] ​A prototipação pode ser realizada ao longo de todo o processo de desenvolvimento do projeto​
+- [ ] ​Os níveis de fidelidade, pela visão da equipe de desenvolvimento do projeto pode ser baixa, média ou alta​
 
-- [ ] ​O protótipo passa do abstrato para o físico​
-- [ ] ​O nível de fidelidade média está associado à representação de aspectos da ideia​
-- [ ] ​No nível de contextualidade restrita, a prototipação acontece em ambiente controlado​
-- [ ] ​No nível de contextualidade parcial, a prototipação acontece com usuário final ou ambiente final​
-- [x] **​No nível de contextualidade total, a prototipação acontece com o usuário final em qualquer ambiente​**
+=====
 
----
+​Assinale a alternativa CORRETA sobre a fidelidade da visão da equipe do projeto​
 
-​Assinale a alternativa CORRETA sobre fidelidade e contextualidade na prototipação​
+- [ ] O protótipo é desenvolvido de forma a intangibilizar uma ideia
+- [ ] ​O protótipo representa a imaginação que será experimentada pelo cliente do software funcional para ser validado​
+- [ ] ​A prototipação não pode ser desenvolvida pela ótica da equipe de desenvolvimento do projeto​
+- [ ] A prototipação não pode ser realizada ao longo de todo o processo de desenvolvimento do projeto
+- [x] **​Os níveis de fidelidade, pela visão da equipe de desenvolvimento do projeto pode ser baixa, média ou alta​**
 
-- [ ] ​O protótipo passa do físico para o abstrato​
-- [ ] ​O nível de fidelidade baixa está associado à representação de aspectos da ideia​
-- [ ] ​No nível de contextualidade geral, a prototipação acontece em ambiente controlado​
-- [x] **​No nível de contextualidade parcial, a prototipação acontece com usuário final ou ambiente final​**
-- [ ] ​No nível de contextualidade total, a prototipação acontece com o usuário final em qualquer ambiente​
+=====
 
----
+​Assinale a alternativa INCORRETA sobre a contextuallidade pela visão do usuário​
 
-​Assinale a alternativa INCORRETA sobre o por que prototipar
+- [ ] ​A prototipação está associada à contextualidade quando tem a visão do usuário​
+- [x] **​A prototipação não está relacionada com a interação com o modelo criado seguindo diferentes níveis de contextualidade​**
+- [ ] ​A prototipação tem a avaliação do software funcional pelo próprio cliente​
+- [ ] Permite o fornecimento de insumos para a evolução do próprio projeto​
+- [ ] ​Os níveis de contextualidade numa prototipação pela visão do usuário está qualificada em restrita, geral, parcial e total​
 
-- [ ] A prototipação auxilia na identificação de uma solução final mais assertiva
-- [ ] O processo envolve formular questões, respostas, criação de modelos, testes e análise
-- [ ] Quanto maior a quantidade de testes, maior o aprendizado e as chances de sucesso
-- [ ] ​As prototipações são simulações que antecipam eventuais problemas no software final​
-- [x] **​A prototipação impede a seleção e refino de ideias e impede a avaliação das soluções​**
+=====
 
----
+​Assinale a alternativa CORRETA sobre a contextuallidade pela visão do usuário​
 
-​Assinale a alternativa CORRETA sobre o por que prototipar
+- [ ] ​A prototipação não está associada à contextualidade quando tem a visão do usuário​
+- [ ] ​A prototipação não está relacionada com a interação com o modelo criado seguindo diferentes níveis de contextualidade​
+- [ ] ​A prototipação não tem a avaliação do software funcional pelo próprio cliente​
+- [ ] ​Não permite o fornecimento de insumos para a evolução do próprio projeto​
+- [x] **​Os níveis de contextualidade numa prototipação pela visão do usuário está qualificada em restrita, geral, parcial e total​**
 
-- [ ] ​A prototipação impede a identificação de uma solução final mais assertiva​
-- [ ] ​O processo envolve formular respostas para a criação de modelos e a análise do software funcional​
-- [ ] Quanto menor a quantidade de testes, maior o aprendizado e as chances de sucesso​
-- [x] **​As prototipações são simulações que antecipam eventuais problemas no software final​**
-- [ ] ​A prototipação impede a seleção e refino de ideias e impede a avaliação das soluções​
+=====
 
----
+​Assinale a alternativa INCORRETA sobre porque prototipar​
 
-​Assinale a alternativa INCORRETA sobre protótipo de papel​
+- [ ] ​Quando a prototipação é realizada, é possível reduzir as incertezas e passa a ser uma forma ágil de abandonar as alternativas que são ruins​
+- [ ] ​Por ser um processo que auxilia na identificação de uma solução final mais assertiva​
+- [ ] ​Para cada software funcional que é desenvolvido, os resultados são analisados e o ciclo se repete​
+- [x] **​As prototipações não são simulações que antecipam os eventuais problemas que poderiam acontecer no software final​**
+- [ ] ​Os protótipos permitem selecionar e refinar ideias de forma assertiva, reduzindo riscos e otimizando os gastos​
 
-- [ ] As representações acontecem com diferentes níveis de fidelidade​
-- [ ] As representações iniciam-se de forma simples e aumentam o grau de complexidade​
-- [ ] ​É realizado para avaliar o fluxo de informações e a navegação do sistema​
-- [ ] ​Pode ser realizado à mão, como rascunho ou com o auxílio do computador para os detalhes​
-- [x] **​Pode acontecer apenas em níveis de contexto restrito e parcial​**
+=====
 
----
+​Assinale a alternativa CORRETA sobre porque prototipar​
 
-​Assinale a alternativa CORRETA sobre protótipo de papel​
+- [ ] ​Quando a prototipação é realizada, não é possível reduzir as incertezas e passa a ser uma forma ágil de abandonar as alternativas que são ruins​
+- [ ] ​Por ser um processo que dificulta a identificação de uma solução final mais assertiva​
+- [x] **​Para cada software funcional que é desenvolvido, os resultados são analisados e o ciclo se repete​**
+- [ ] ​As prototipações não são simulações que antecipam os eventuais problemas que poderiam acontecer no software final​
+- [ ] Os protótipos não permitem selecionar e refinar ideias de forma assertiva, reduzindo riscos e otimizando os gastos​
 
-- [ ] ​As representações acontecem com um único nível de fidelidade​
-- [ ] ​As representações iniciam-se de forma complexa e aumentam o grau de simplicidade​
-- [x] **​É realizado para avaliar o fluxo de informações e a navegação do sistema​**
-- [ ] ​Pode ser realizado à mão, e jamais com auxílio do computador para os detalhes​
-- [ ] ​Pode acontecer apenas em níveis de contexto restrito e parcial​
+=====/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/16-prototipo.md
 
----
+Assinale a alternativa INCORRETA sobre modelo de volume​
 
-## 16. Protótipo
+- [ ] ​Tipo de protótipo que tem por finalidade representações de um produto​
+- [ ] ​No nível de fidelidade baixa, você vai ter um protótipo com poucos detalhes e no nível de fidelidade alta, você vai ter um protótipo bem próximo ao produto final​
+- [x] **​Tem o objetivo de que o desenvolvimento saia de uma visão prática e passe a tangibilizar a ideia​**
+- [ ] ​Permite uma visualização mais tridimensional do produto ou serviço​
+- [ ] ​A viabilização da produção é mais assertiva​
 
-Assinale a alternativa INCORRETA sobre modelo de volume e encenação​
+=====
 
-- [ ] ​O principal objetivo do modelo de volume é sair de uma visão conceitual para tangibilizar a ideia​
-- [ ] ​O modelo volumétrico permite uma visualização mais tridimensional do produto ou serviço​
-- [ ] ​Na encenação, acontece uma simulação improvisada da situação do produto ou serviço​
-- [ ] ​Na encenação, acontece a representação da interação da pessoa com a máquina​
-- [x] **​No protótipo de encenação, seleciona-se uma pessoa apenas e com diálogo decorado​**
+​Assinale a alternativa CORRETA sobre modelo de volume​
 
----
+- [ ] ​Tipo de protótipo que tem por finalidade representações de uma ideia vaga​
+- [ ] ​No nível de fidelidade alta, você vai ter um protótipo com poucos detalhes e no nível de fidelidade baixa, você vai ter um protótipo bem próximo ao produto final​
+- [ ] ​Tem o objetivo de que o desenvolvimento saia de uma visão prática e passe a tangibilizar a ideia​
+- [x] **​Permite uma visualização mais tridimensional do produto ou serviço​**
+- [ ] ​A viabilização da produção é menos assertiva​
 
-Assinale a alternativa CORRETA sobre modelo de volume e encenação​
+=====
 
-- [ ] ​O principal objetivo do modelo de volume é sair de uma visão tangibilizada para uma visão conceitual da ideia​
-- [x] **​O modelo volumétrico permite uma visualização mais tridimensional do produto ou serviço​**
-- [ ] ​Na encenação, acontece uma simulação decorada da situação do produto ou serviço​
-- [ ] ​Na encenação, impede a representação da interação da pessoa com a máquina​
-- [ ] ​No protótipo de encenação, seleciona-se uma pessoa apenas e com diálogo decorado​
+​Assinale a alternativa INCORRETA sobre encenação​
 
----
+- [x] **​Não acontece a representação da interação da pessoa com a máquina​**
+- [ ] ​Os testes da interação acontecem para melhorar a experiência do usuário final com o produto que está sendo desenvolvido​
+- [ ] ​Acontece a seleção de um grupo ou de duas pessoas para participar da encenação​
+- [ ] ​Cada ator tem um papel determinado para exercer em um ambiente que pode ter cenário com o produto​
+- [ ] ​A interação entre as pessoas e a interação da pessoa com os objetos são importantes​
 
-Assinale a alternativa INCORRETA sobre Storyboard
+=====
 
-- [ ] ​A representação visual é realizada por meio de quadros estáticos, semelhantes aos quadrinhos​
-- [ ] ​Os elementos são o desenho, a colagem, a fotografia, entre outros​
-- [ ] ​A ideia fundamental é a comunicação da ideia para terceiros​
-- [ ] ​Ao final acontece o refinamento do serviço final para a melhoria do produto​
-- [x] **​Não há necessidade da elaboração de um roteiro por escrito​**
+​Assinale a alternativa CORRETA sobre encenação​
 
----
+- [ ] ​Não acontece a representação da interação da pessoa com a máquina​
+- [ ] ​Os testes da interação acontecem para dificultar a experiência do usuário final com o produto que está sendo desenvolvido​
+- [x] **​Acontece a seleção de um grupo ou de duas pessoas para participar da encenação​**
+- [ ] ​Nenhum ator tem um papel determinado para exercer em um ambiente que pode ter cenário com o produto​
+- [ ] ​A interação entre as pessoas e a interação da pessoa com os objetos são desnecessárias​
 
-Assinale a alternativa CORRETA sobre Storyboard​
+=====
 
-- [ ] ​A representação visual é realizada por meio de quadros dinâmicos, semelhantes a filmes​
-- [ ] ​Os elementos são apenas os desenhos​
-- [ ] ​A ideia fundamental é a comunicação da ideia para o próprio criador​
-- [x] **​Ao final acontece o refinamento do serviço final para a melhoria do produto​**
-- [ ] ​Não há necessidade da elaboração de um roteiro por escrito​
+​Assinale a alternativa INCORRETA sobre storyboard​
 
----
+- [ ] ​Os elementos de um protótipo por meio de storyboard são desenho, colagem, fotografia, entre outros​
+- [ ] ​Acontece a visualização do encadeamento da solução que está sendo desenvolvida​
+- [ ] ​Acontece um refinamento do serviço final, que vai servir para a melhoria do produto de software que está sendo criado​
+- [x] **​Inexiste a necessidade da elaboração de um roteiro por escrito, com separação da história em seções com cenários, atores e enquadramentos​**
+- [ ] ​Determina a técnica de representação, utiliza-se a representação visual do que se quer comunicar​
 
-Assinale a alternativa INCORRETA sobre protótipo de serviços
+=====
 
-- [ ] ​A prototipação acontece por meio de artefatos materiais, ambientes ou relações interpessoais​
-- [ ] ​O objetivo é a representação de aspectos de serviço​
-- [ ] ​O envolvimento do usuário final é fundamental para simular a solução proposta​
-- [x] **​Não há necessidade de gerenciar as interações dos usuários​**
-- [ ] ​Segue-se com o objetivo de desenhar uma solução encantadora para o cliente final​
+​Assinale a alternativa CORRETA sobre storyboard​
 
----
+- [ ] ​Os elementos de um protótipo por meio de storyboard não pode ser desenho, colagem, fotografia, entre outros​
+- [ ] ​Não acontece a visualização do encadeamento da solução que está sendo desenvolvida​
+- [ ] ​Não acontece um refinamento do serviço final, que vai servir para a melhoria do produto de software que está sendo criado​
+- [ ] ​Inexiste a necessidade da elaboração de um roteiro por escrito, com separação da história em seções com cenários, atores e enquadramentos​
+- [x] **​Determina a técnica de representação, utiliza-se a representação visual do que se quer comunicar​**
 
-​Assinale a alternativa CORRETA sobre protótipo de serviços​
-
-- [ ] ​A prototipação acontece por meio de softwares e ambientes puramente digitais​
-- [ ] ​O objetivo é a representação de aspectos de softwares​
-- [ ] ​O envolvimento do desenvolvedor final é fundamental para simular a solução proposta​
-- [ ] ​Não há necessidade de gerenciar as interações dos usuários​
-- [x] **​Segue-se com o objetivo de desenhar uma solução encantadora para o cliente final​**
+=====
