@@ -40,6 +40,7 @@
 | **HTTPS** | Hypertext Transfer Protocol Secure | Versão segura e criptografada do protocolo HTTP |
 | **IaaS** | Infrastructure as a Service | Infraestrutura como Serviço (computação, rede e storage brutos) |
 | **ICMP** | Internet Control Message Protocol | Protocolo de mensagens de controle e diagnóstico da camada de rede (ex.: ping e delivery problems) |
+| **IoE** | Internet of Everything | Internet de Todas as Coisas; conceito ampliado da Cisco unindo pessoas, processos, dados e objetos conectados |
 | **IP** | Internet Protocol | Protocolo de Internet; endereçamento e roteamento de pacotes |
 | **MVC** | Minimum Viable Cloud | Nuvem Mínima Viável; menor pacote inicial de serviços cloud com proposta de valor real |
 | **MVP** | Minimum Viable Product | Produto Mínimo Viável; menor versão viável de um produto capaz de validar sua proposta de valor |
@@ -52,6 +53,7 @@
 | **SaaS** | Software as a Service | Software como Serviço (aplicação final entregue ao usuário pela nuvem) |
 | **SES** | Simple Email Service | Serviço gerenciado de envio e recebimento de e-mails em escala da AWS |
 | **SLA** | Service Level Agreement | Acordo de Nível de Serviço |
+| **SLI** | Service Level Indicator | Indicador de Nível de Serviço; métrica quantitativa real do nível de serviço entregue (ex.: percentual de uptime medido) |
 | **SMTP** | Simple Mail Transfer Protocol | Protocolo simples para transferência e envio de e-mails entre servidores |
 | **SNS** | Simple Notification Service | Serviço gerenciado de mensageria pub/sub e notificações móveis/SMS da AWS |
 | **SOA** | Service-Oriented Architecture | Arquitetura Orientada a Serviços (provedor, consumidor e registro de serviços) |
