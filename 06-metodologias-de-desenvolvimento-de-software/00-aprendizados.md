@@ -145,3 +145,96 @@ def processar_dados_incrementais_com_qualidade(data_execucao: date) -> pd.DataFr
     
     return df_resultado # Retorna o dataframe processado e validado
 ```
+
+---
+
+## 2. Princípios do Manifesto Ágil e Equipes Auto-Organizáveis
+
+### 2.1 Os Fundamentos dos Princípios Ágeis
+O **Manifesto Ágil (2001)** estabeleceu 4 valores fundamentais desdobrados em **12 princípios práticos**. Dentre eles, destaca-se a autonomia e a colaboração técnica:
+- **Princípio 4**: Pessoas de negócio e desenvolvedores devem trabalhar juntos diariamente ao longo do projeto.
+- **Princípio 7**: Software funcionando é a medida primária de progresso (e não métricas de vaidade ou relatórios de defeitos).
+- **Princípio 8**: Os patrocinadores, desenvolvedores e usuários devem ser capazes de manter um ritmo sustentável e constante indefinidamente.
+- **Princípio 9**: A contínua atenção à excelência técnica e ao bom design aumenta a agilidade (a simplicidade não é desculpa para código mal estruturado).
+- **Princípio 11**: **As melhores arquiteturas, requisitos e designs emergem de equipes auto-organizáveis**.
+- **Princípio 12**: Em intervalos regulares, a equipe reflete sobre como se tornar mais eficaz e refina seu comportamento.
+
+```mermaid
+flowchart TD
+    subgraph Equipe_Auto_Organizada["Princípio 11: Teoria da Emergência"]
+        R["Regras Simples & Metas Claras"] --> Time["Equipe Multidisciplinar Autônoma"]
+        Time --> A["Melhores Arquiteturas"]
+        Time --> Req["Requisitos Assertivos"]
+        Time --> D["Designs Elegantes e Sustentáveis"]
+    end
+```
+
+---
+
+### 2.2 O Princípio 11 e a Teoria da Emergência
+Conforme a aula `08-principios-9-a-12-do-manifesto-agil.md`:
+- **Teoria da Emergência**: Em sistemas complexos de desenvolvimento, soluções robustas não surgem de imposições centralizadas de comando-e-controle ou microgerenciamento de tarefas.
+- **Mecanismo real**: Fornece-se à equipe um conjunto restrito e simples de regras claras (critérios de aceitação, padrões de código e metas da sprint). A própria equipe decide a melhor forma de organizar o trabalho técnico, escolher as ferramentas e desenhar a arquitetura para atingir a meta.
+- **Evitar a Sistematização Excessiva**: Tentar prescrever antecipadamente cada passo e microtarefa burocrática engessa a inovação e aumenta as chances de falhas arquiteturais.
+
+---
+
+### 2.3 Tabela Comparativa: Princípios Reais vs. Distorções Comuns em Avaliações
+
+| Princípio Ágil Real (Canônico) | Conceito Técnico Correto | Distorção / Pegadinha Comum de Prova |
+|---|---|---|
+| **Software Funcionando (Princípio 7)** | A entrega de software operacional em produção que gera valor é o termômetro de avanço do projeto. | *Dizer que "defeitos no software são a medida primária de progresso"* (Incorreto). |
+| **Colaboração Diária (Princípio 4)** | Especialistas de negócio e engenheiros interagem diariamente em ciclos curtos de alinhamento. | *Dizer que "devem trabalhar isoladamente e se reunir apenas ao final"* (Incorreto). |
+| **Excelência Técnica (Princípio 9)** | Código limpo, testes automatizados e refatoração contínua viabilizam a velocidade no longo prazo. | *Dizer que "excelência técnica deve ser evitada para não atrasar a agilidade"* (Incorreto). |
+| **Ritmo Sustentável (Princípio 8)** | Evita sobrecarga e horas extras crônicas (*burnout*), garantindo previsibilidade estável. | *Dizer que o ritmo constante deve ocorrer "evitando intervalos regulares de descanso/reflexão"* (Incorreto). |
+| **Equipes Auto-Organizáveis (Princípio 11)** | As melhores soluções técnicas, requisitos e designs nascem da autonomia do time próximo ao problema. | **Princípio Legítimo e Verdadeiro do Manifesto Ágil.** |
+
+---
+
+### 2.4 Ponto de Vista da Engenharia de Sistemas e Plataforma
+Para um líder de engenharia de infraestrutura ou sistemas distribuídos:
+- **Mecanismo real**: Um time auto-organizado possui liberdade técnica para definir o particionamento de microsserviços, a topologia de mensageria e o fluxo de CI/CD sem precisar de aprovações burocráticas centralizadas para cada linha de código, desde que respeitem os guardrails de segurança e SLAs da plataforma.
+
+---
+
+### 2.5 Exemplo Real em Engenharia de Dados: Autonomia em Squads e Data Mesh
+Na engenharia de dados moderna:
+- Em vez de um modelo antigo centralizado onde um único "comitê de arquitetura" ditava como cada tabela deveria ser criada, adota-se o modelo de **Data Mesh / Squads Auto-Organizadas**:
+  - A squad de Logística ou Pagamentos tem total autonomia para modelar suas tabelas *Silver* e *Gold*, definir partições e criar transformações SQLX/Dataform.
+  - A equipe responde diretamente pela qualidade do dado e pela escolha das melhores estratégias de compressão e indexação para o caso de uso real de negócio.
+
+---
+
+### 2.6 Exemplo com Código: Pipeline Declarativo Autogerenciado (Dataform / SQLX)
+
+No exemplo abaixo, uma equipe de engenharia de dados auto-organizada define declarativamente o contrato, a documentação e os testes de qualidade de sua própria tabela dimensional, sem intervenção burocrática externa:
+
+```sql
+-- Definição declarativa da tabela na camada Gold gerenciada pela squad autônoma
+config {
+  type: "table", -- Define que o Dataform irá materializar este modelo como uma tabela física no BigQuery
+  schema: "gold_vendas", -- Especifica o dataset de destino com governança definida pelo próprio time
+  description: "Tabela dimensional de clientes ativos modelada pela equipe de dados", -- Documenta a finalidade do modelo para toda a organização
+  columns: { -- Inicia a definição e documentação de cada coluna da tabela
+    id_cliente: "Identificador exclusivo do cliente no sistema", -- Documenta a chave primária da entidade
+    total_compras: "Valor acumulado de compras realizadas pelo cliente", -- Documenta a métrica de negócio calculada
+    data_ultima_compra: "Data da transação mais recente do cliente" -- Documenta a data de controle analítico
+  }, -- Fecha o bloco de metadados das colunas
+  assertions: { -- Bloco de testes automatizados autogerenciados pela equipe
+    uniqueKey: ["id_cliente"], -- Garante automaticamente que não existem registros duplicados para o mesmo cliente
+    nonNull: ["id_cliente", "total_compras"] -- Valida que colunas obrigatórias jamais contenham valores nulos
+  } -- Fecha o bloco de testes de qualidade
+}
+
+SELECT
+  c.id_cliente, -- Seleciona o identificador do cliente vindo da camada limpa Silver
+  COALESCE(SUM(v.valor), 0.0) AS total_compras, -- Soma o total vendido substituindo nulos por zero
+  MAX(v.data_venda) AS data_ultima_compra -- Obtém a data da compra mais recente
+FROM
+  ${ref("silver_clientes")} AS c -- Faz referência à tabela Silver de clientes gerenciada no projeto
+LEFT JOIN
+  ${ref("silver_vendas")} AS v -- Realiza a junção com a tabela Silver de vendas
+  ON c.id_cliente = v.id_cliente -- Condição de relacionamento através do identificador do cliente
+GROUP BY
+  c.id_cliente -- Agrupa os registros por cliente para consolidação das métricas
+```
