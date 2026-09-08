@@ -881,3 +881,88 @@ Descreva as funções/áreas básicas do Trello que podem ser utilizadas pelo us
 
 /home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/11-por-que-inovar.md
 
+Assinale a alternativa INCORRETA sobre o que é Design Thinking
+
+
+​O Design Thinking nasceu da necessidade por novos caminhos que vão de encontro com a inovação​
+
+​O Design Thinking é uma abordagem que está focada no ser humano​
+
+​O principal objetivo do Design Thinking é a promoção do mal-estar das pessoas​
+
+​O designer entende que o problema está relacionado ao que pode impedir a experiência e o bem-estar das pessoas​
+
+​O Design Thinking desafia padrões e transforma oportunidades em negócios​
+
+=====
+
+Assinale a alternativa CORRETA sobre o que é Design Thinking​
+
+​O Design Thinking nasceu da necessidade por novos caminhos que vão de encontro com a inovação​
+
+​O Design Thinking é uma abordagem que está focada no problema​
+
+​O principal objetivo do Design Thinking é a promoção do mal-estar das pessoas​
+
+​O designer entende que a solução está relacionada ao que pode impedir a experiência e o bem-estar das pessoas​
+
+​O Design Thinking mantém os padrões e aproveita as oportunidades existentes nos negócios​
+
+=====
+
+​Assinale a alternativa INCORRETA sobre porque Design Thinking​
+
+​O Design Thinking traz uma inovação com novos significados aos produtos, serviços e relacionamentos​
+
+​No Design Thinking, as soluções produzidas possuem novos significados e passam a estimular os aspectos cognitivo, emocional e sensorial do ser humano​
+
+​O Design Thinking é uma abordagem que está focada no ser humano​
+
+​O objetivo do Design Thinking é ter informações com o entendimento de culturas, experiências, emoções, pensamento e comportamento das pessoas para o desenvolvimento das soluções​
+
+​No Design Thinking, os dados são obtidos por meio de questionários eletrônios com o cliente e usuário final​
+
+=====
+
+​Assinale a alternativa CORRETA sobre porque Design Thinking​
+
+​O Design Thinking traz uma inovação com velhos significados aos produtos, serviços e relacionamentos​
+
+​No Design Thinking, as soluções produzidas possuem novos significados e passam a estimular os aspectos cognitivo, emocional e sensorial do ser humano​
+
+​O Design Thinking é uma abordagem que está focada no robô​
+
+​O Design Thinking se afasta das informações com o entendimento de culturas, experiências, emoções, pensamento e comportamento das pessoas para o desenvolvimento das soluções​
+
+​No Design Thinking, os dados são obtidos por meio de questionários eletrônios com o cliente e usuário final​
+
+=====
+
+Assinale a alternativa INCORRETA sobre pesquisa​
+
+A pesquisa exploratória é uma pesquisa preliminar para que se possa definir o perfil do cliente e do usuário final​
+
+A pesquisa exploratória permite uma aproximação maior com o cliente e seu usuário final​
+
+​A pesquisa exploratória é realizada em campo onde os clientes e seus usuários finais se encontram​
+
+​A pesquisa desk é uma pesquisa realizada em fontes bibliográficas e seguras, diferente das dos clientes e usuários finais​
+
+​Na pesquisa desk, a pesquisa gerada é registrada em planilhas eletrônicas​
+
+=====
+
+Assinale a alternativa CORRETA sobre pesquisa​
+
+A pesquisa exploratória é uma pesquisa preliminar para que se possa eliminar o perfil do cliente e do usuário final
+
+​A pesquisa exploratória permite um distanciamento maior com o cliente e seu usuário final​
+
+​A pesquisa exploratória é realizada em campo onde os clientes e seus usuários finais se encontram​
+
+​A pesquisa desk é uma pesquisa realizada em fontes bibliográficas e seguras, juntamente com os clientes e usuários finais​
+
+​Na pesquisa desk, a pesquisa gerada é registrada em planilhas eletrônicas​
+
+=====
+
