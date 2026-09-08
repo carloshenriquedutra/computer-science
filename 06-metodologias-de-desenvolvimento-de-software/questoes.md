@@ -966,3 +966,437 @@ A pesquisa exploratória é uma pesquisa preliminar para que se possa eliminar o
 
 =====
 
+/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/12-imersao.md
+
+Assinale a alternativa INCORRETA sobre imersão em profundidade
+
+​Tem por objetivo entender com mais detalhes o contexto de vida do assunto a ser trabalhado e do cliente e do usuário final​
+
+​É importante ter respostas sobre o que as pessoas falam, como as pessoas agem, o que as pessoas pensam e como as pessoas se sentem​
+
+​A intenção e a identificação de comportamentos externos e o mapeamento dos padrões e necessidades inerentes aos clientes e usuários finais​
+
+​O resultado da pesquisa qualitativa observa, interage e descobre o que o usuário faz, como faz e o que sentem​
+
+​Distancia das crenças, anseios e necessidades por meio a empatia​
+
+=====
+
+Assinale a alternativa CORRETA sobre imersão em profundidade
+
+
+​Tem por objetivo entender com mais detalhes o contexto de vida do assunto a ser trabalhado e do cliente e do usuário final​
+
+​É importante ignorar respostas sobre o que as pessoas falam, como as pessoas agem, o que as pessoas pensam e como as pessoas se sentem​
+
+​A intenção e a eliminação de comportamentos externos e o mapeamento dos padrões e necessidades inerentes aos clientes e usuários finais​
+
+​O resultado da pesquisa quantitativa observa, interage e descobre o que o usuário faz, como faz e o que sentem​
+
+​Distancia das crenças, anseios e necessidades por meio a empatia​
+
+=====
+
+Assinale a alternativa INCORRETA sobre sessão generativa​
+
+É um encontro onde o usuário divide suas experiências em atividades conjuntas nos assuntos relacionados com o projeto
+
+​Busca uma exposição do usuário em relação ao que ele sabe, sente e sonha
+
+​Busca entender as experiências diárias do usuário e do cliente final e de sua complexidade
+
+​Utiliza-se o caderno de sensibilização para se ter uma reflexão das memórias, sentimentos e motivações
+
+​Evita a construção e expressão de experiências mais profundas, para se ter mais riqueza de informações
+
+=====
+
+​Assinale a alternativa CORRETA sobre sessão generativa​
+
+É um encontro onde o usuário esconde suas experiências em atividades conjuntas nos assuntos relacionados com o projeto
+
+​Busca uma exposição do usuário em relação ao que ele sabe, sente e sonha​
+
+​Evita entender as experiências diárias do usuário e do cliente final e de sua complexidade​
+
+​Utiliza-se o caderno de insights para se ter uma reflexão das memórias, sentimentos e motivações​
+
+​Evita a construção e expressão de experiências mais profundas, para se ter mais riqueza de informações​
+
+=====
+
+​Assinale a alternativa INCORRETA sobre um dia na vida​
+
+​Forma de simulação da vida de uma pessoa ou situação​
+
+​O objetivo é de se ter uma visão da vida cliente e do usuário final sob outra perspectiva​
+
+​As equipes envolvidas nessa dinâmica precisam ter estudado a fundo o tema a ser desenvolvido​
+
+​A equipe que vive um dia na vida passa a ter empatia de forma a gerar insights importantes​
+
+​Evita-se o aprendizado de comportamentos, atitudes, limitações mimetizando a experiência do usuário​
+
+=====
+
+​Assinale a alternativa CORRETA sobre um dia na vida​
+
+​Forma de simulação da vida das pessoas envolvidas na equipe de desenvolvimento​
+
+​O objetivo é de se ter uma visão da vida cliente e do usuário final sob outra perspectiva​
+
+As equipes envolvidas nessa dinâmica não precisam ter estudado a fundo o tema a ser desenvolvido​
+
+​A equipe que vive um dia na vida passa a ter empatia de forma a evitar insights importantes​
+
+​Evita-se o aprendizado de comportamentos, atitudes, limitações mimetizando a experiência do usuário​
+
+=====
+
+/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/13-analise-e-sintese.md
+
+Assinale a alternativa INCORRETA sobre cartão de insight e diagrama de afinidade
+
+​Os cartões de insights são reflexões das informações obtidas da pesquisa exploratória, desk e de profundidade​
+
+​Os cartões de insights são utilizados para a criação do diagrama de afinidades​
+
+​O diagrama de afinidade possui micro áreas, divisões e interdependência dentro do tema do projeto​
+
+​O diagrama de afinidades é desenvolvido quando a informação precisa ser conectada entre os temas e as áreas de oportunidades do projeto​
+
+​O diagrama de afinidades não pode ser realizado de forma colaborativa, por meio de uma equipe multidisciplinar​
+
+=====
+
+Assinale a alternativa CORRETA sobre cartão de insight e diagrama de afinidade
+
+​Os cartões de insights são reflexões das informações obtidas de forma aleatória
+
+​Os cartões de insights não são utilizados para a criação do diagrama de afinidades​
+
+​Os cartões de insights possuem micro áreas, divisões e interdependência dentro do tema do projeto
+
+​O diagrama de afinidades é desenvolvido quando a informação precisa ser conectada entre os temas e as áreas de oportunidades do projeto
+
+O diagrama de afinidades não pode ser realizado de forma colaborativa, por meio de uma equipe multidisciplinar
+
+=====
+
+​Assinale a alternativa INCORRETA sobre mapa conceitual e critérios norteadores​
+
+​O mapa conceitual é uma visualização gráfica que visa simplificar e organizar os dados complexos de forma visual em diferentes níveis de profundidade e abstração​
+
+​A forma como o mapa conceitual é disposto permite uma visualização das informações​
+
+​Os critérios norteadores permitem que os aspectos importantes permaneçam evidenciados durante as etapas do projeto​
+
+​Com os critérios norteadores, o cliente e o usuário final acabam atrapalhando o direcionamento do projeto​
+
+​Com os critérios norteadores, é possível parametrizar e orientar as soluções, mantendo em evidência a adequação que é importante ao escopo que deve ser respeitado​
+
+=====
+
+Assinale a alternativa CORRETA sobre mapa conceitual e critérios norteadores
+
+​O mapa conceitual é uma visualização gráfica que impede simplificar e organizar os dados complexos de forma visual em diferentes níveis de profundidade e abstração​
+
+​A forma como o mapa conceitual é disposto permite uma visualização das informações​
+
+​Os critérios norteadores impedem que os aspectos importantes permaneçam evidenciados durante as etapas do projeto​
+
+​Com os critérios norteadores, o cliente e o usuário final acabam atrapalhando o direcionamento do projeto​
+
+​Com os critérios norteadores, é impossível parametrizar e orientar as soluções, mantendo em evidência a adequação que é importante ao escopo que deve ser respeitado​
+
+=====
+
+​Assinale a alternativa INCORRETA sobre jornada do usuário e blueprint​
+
+​A jornada do usuário permite descrever o processo de aquisição e utilização do projeto de software antes, durante e depois​
+
+​Com a jornada do usuário, é impossível analisar as expectativas do cliente, sem entender as necessidades e impossível surpreendê-los com os resultados​
+
+​Cada persona pode ser utilizada na jornada do usuário para explorar os diferentes ciclos de vida do produto de software a ser desenvolvido​
+
+​O Blueprint é uma ferramenta visualmente na forma de matriz que representa o sistema de interações de uma prestação de serviço​
+
+​O objetivo do Blueprint é descrever as evidências físicas, atores, ações e interdependências entre elas​
+
+=====
+
+​Assinale a alternativa CORRETA sobre jonada do usuário e blueprint​
+
+​A jornada do usuário impede a descrição do processo de aquisição e utilização do projeto de software antes, durante e depois​
+
+​Com a jornada do usuário, é impossível analisar as expectativas do cliente, sem entender as necessidades e impossível surpreendê-los com os resultados​
+
+​Nenhum persona pode ser utilizado na jornada do usuário para explorar os diferentes ciclos de vida do produto de software a ser desenvolvido​
+
+​O Blueprint é uma ferramenta eletrônica não visual que representa o sistema de interações de uma prestação de serviço​
+
+​O objetivo do Blueprint é descrever as evidências físicas, atores, ações e interdependências entre elas​
+
+=====
+
+/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/14-ideacao.md
+
+Assinale a alternativa INCORRETA sobre o workshop de cocriação
+
+​É uma ferramenta onde as pessoas envolvidas no projeto se encontram para estimular a criatividade e a colaboração de novas ideias​
+
+​É útil e utilizada em momento de impasse no desenvolvimento do projeto​
+
+​realizado para a validação de ideias individuais que sejam os mesmos ao do desenvolvimento do projeto em si​
+
+​As atividades dinâmicas têm curta duração e em pequenos grupos​
+
+​São bem vistos para eliminar os impasses e manter um desenvolvimento de qualidade do projeto​
+
+=====
+
+​Assinale a alternativa CORRETA sobre workshop de cocriação​
+
+​É uma ferramenta onde as pessoas envolvidas no projeto se encontram para estimular a criatividade e a colaboração de novas ideias​
+
+​É útil e utilizada em momento de equilíbrio no desenvolvimento do projeto​
+
+É realizado para a validação de ideias individuais que sejam os mesmos ao do desenvolvimento do projeto em si​
+
+​As atividades dinâmicas têm longa duração e em grupos grandes​
+
+​São mal vistos para eliminar os impasses e manter um desenvolvimento de qualidade do projeto​
+
+=====
+
+​Assinale a alternativa INCORRETA sobre cardápio de ideias​
+
+​Ferramenta que desenvolve um catálogo com todas as ideias completas geradas no projeto​
+
+​São armazenadas as ideias, desdobramentos e oportunidades de negócios que são gerados a partir do software que está sendo criado​
+
+​Fica mais fácil a visualização das ideias para que os gestores e as equipes tenham insumos para uma melhor tomada de decisão para a criação do negócio​
+
+​Facilita o desenvolvimento de um documento com os resultados parciais do projeto​
+
+​O documento final pode ser impresso ou digital e de fácil acesso aos envolvidos​
+
+=====
+
+​Assinale a alternativa CORRETA sobre cardápio de ideias​
+
+​Ferramenta que desenvolve um catálogo com todas as ideias completas geradas no projeto​
+
+​Não são armazenadas as ideias, desdobramentos e oportunidades de negócios que são gerados a partir do software que está sendo criado​
+
+​Fica mais fácil a visualização das ideias para que os gestores e as equipes tenham insumos para uma melhor tomada de decisão para a criação do negócio​
+
+​Dificulta o desenvolvimento de um documento com os resultados parciais do projeto​
+
+​O documento final pode ser impresso ou digital e de difícil acesso aos envolvidos​
+
+
+
+=====
+
+Assinale a alternativa INCORRETA sobre matriz de posicionamento
+
+​Ferramenta que gera uma análise estratégica das ideias geradas do brainstorming e do workshop de cocriação​
+
+​Dificilmente é utilizada para validar as ideias, com critérios moderadores, de acordo com as necessidades e problemas dos clientes​
+
+​Oferece apoio necessário no processo de decisão por meio de uma comunicação eficiente de benefícios e desafios da solução que o cliente busca​
+
+Seus melhores resultados estratégicos são selecionados para serem desenvolvidos nas primeiras versões funcionais do produto
+
+​Seu preenchimento é colaborativo, buscando-se a avaliação de cada ideia​
+
+=====
+
+​Assinale a alternativa CORRETA sobre matriz de posicionamento​
+
+​Ferramenta que impede uma análise estratégica das ideias geradas do brainstorming e do workshop de cocriação​
+
+​Dificilmente é utilizada para validar as ideias, com critérios moderadores, de acordo com as necessidades e problemas dos clientes​
+
+​Dificulta o processo de decisão por meio de uma comunicação eficiente de benefícios e desafios da solução que o cliente busca​
+
+Seus melhores resultados estratégicos são ignorados para serem desenvolvidos nas primeiras versões funcionais do produto
+​Seu preenchimento é colaborativo, buscando-se a avaliação de cada ideia​
+
+=====
+
+/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/15-prototipacao.md
+
+Assinale a alternativa INCORRETA sobre a fidelidade da visão da equipe do projeto
+
+O protótipo é desenvolvido de forma a intangibilizar uma ideia
+
+​O protótipo representa a realidade que será experimentada pelo cliente do software funcional para ser validado​
+
+​A prototipação pode ser desenvolvida pela ótica da equipe de desenvolvimento do projeto​
+
+​A prototipação pode ser realizada ao longo de todo o processo de desenvolvimento do projeto​
+
+​Os níveis de fidelidade, pela visão da equipe de desenvolvimento do projeto pode ser baixa, média ou alta​
+
+=====
+
+​Assinale a alternativa CORRETA sobre a fidelidade da visão da equipe do projeto​
+
+O protótipo é desenvolvido de forma a intangibilizar uma ideia
+​O protótipo representa a imaginação que será experimentada pelo cliente do software funcional para ser validado​
+
+​A prototipação não pode ser desenvolvida pela ótica da equipe de desenvolvimento do projeto​
+
+A prototipação não pode ser realizada ao longo de todo o processo de desenvolvimento do projeto
+
+
+
+​Os níveis de fidelidade, pela visão da equipe de desenvolvimento do projeto pode ser baixa, média ou alta​
+
+=====
+
+​Assinale a alternativa INCORRETA sobre a contextuallidade pela visão do usuário​
+
+​A prototipação está associada à contextualidade quando tem a visão do usuário​
+
+​A prototipação não está relacionada com a interação com o modelo criado seguindo diferentes níveis de contextualidade​
+
+​A prototipação tem a avaliação do software funcional pelo próprio cliente​
+
+Permite o fornecimento de insumos para a evolução do próprio projeto​
+
+​Os níveis de contextualidade numa prototipação pela visão do usuário está qualificada em restrita, geral, parcial e total​
+
+=====
+
+​Assinale a alternativa CORRETA sobre a contextuallidade pela visão do usuário​
+
+​A prototipação não está associada à contextualidade quando tem a visão do usuário​
+
+​A prototipação não está relacionada com a interação com o modelo criado seguindo diferentes níveis de contextualidade​
+
+​A prototipação não tem a avaliação do software funcional pelo próprio cliente​
+
+​Não permite o fornecimento de insumos para a evolução do próprio projeto​
+
+​Os níveis de contextualidade numa prototipação pela visão do usuário está qualificada em restrita, geral, parcial e total​
+
+=====
+
+​Assinale a alternativa INCORRETA sobre porque prototipar​
+
+​Quando a prototipação é realizada, é possível reduzir as incertezas e passa a ser uma forma ágil de abandonar as alternativas que são ruins​
+
+​Por ser um processo que auxilia na identificação de uma solução final mais assertiva​
+
+​Para cada software funcional que é desenvolvido, os resultados são analisados e o ciclo se repete​
+
+​As prototipações não são simulações que antecipam os eventuais problemas que poderiam acontecer no software final​
+
+​Os protótipos permitem selecionar e refinar ideias de forma assertiva, reduzindo riscos e otimizando os gastos​
+
+=====
+
+​Assinale a alternativa CORRETA sobre porque prototipar​
+
+​Quando a prototipação é realizada, não é possível reduzir as incertezas e passa a ser uma forma ágil de abandonar as alternativas que são ruins​
+
+​Por ser um processo que dificulta a identificação de uma solução final mais assertiva​
+
+​Para cada software funcional que é desenvolvido, os resultados são analisados e o ciclo se repete​
+
+​As prototipações não são simulações que antecipam os eventuais problemas que poderiam acontecer no software final​
+
+Os protótipos não permitem selecionar e refinar ideias de forma assertiva, reduzindo riscos e otimizando os gastos​
+
+=====
+
+/home/carlosdutra/dev/computer-science/06-metodologias-de-desenvolvimento-de-software/16-prototipo.md
+
+Assinale a alternativa INCORRETA sobre modelo de volume​
+
+​Tipo de protótipo que tem por finalidade representações de um produto​
+
+​No nível de fidelidade baixa, você vai ter um protótipo com poucos detalhes e no nível de fidelidade alta, você vai ter um protótipo bem próximo ao produto final​
+
+​Tem o objetivo de que o desenvolvimento saia de uma visão prática e passe a tangibilizar a ideia​
+
+​Permite uma visualização mais tridimensional do produto ou serviço​
+
+​A viabilização da produção é mais assertiva​
+
+=====
+
+​Assinale a alternativa CORRETA sobre modelo de volume​
+
+​Tipo de protótipo que tem por finalidade representações de uma ideia vaga​
+
+​No nível de fidelidade alta, você vai ter um protótipo com poucos detalhes e no nível de fidelidade baixa, você vai ter um protótipo bem próximo ao produto final​
+
+​Tem o objetivo de que o desenvolvimento saia de uma visão prática e passe a tangibilizar a ideia​
+
+​Permite uma visualização mais tridimensional do produto ou serviço​
+
+​A viabilização da produção é menos assertiva​
+
+=====
+
+​Assinale a alternativa INCORRETA sobre encenação​
+
+​Não acontece a representação da interação da pessoa com a máquina​
+
+​Os testes da interação acontecem para melhorar a experiência do usuário final com o produto que está sendo desenvolvido​
+
+​Acontece a seleção de um grupo ou de duas pessoas para participar da encenação​
+
+​Cada ator tem um papel determinado para exercer em um ambiente que pode ter cenário com o produto​
+
+​A interação entre as pessoas e a interação da pessoa com os objetos são importantes​
+
+=====
+
+​Assinale a alternativa CORRETA sobre encenação​
+
+​Não acontece a representação da interação da pessoa com a máquina​
+
+​Os testes da interação acontecem para dificultar a experiência do usuário final com o produto que está sendo desenvolvido​
+
+​Acontece a seleção de um grupo ou de duas pessoas para participar da encenação​
+
+​Nenhum ator tem um papel determinado para exercer em um ambiente que pode ter cenário com o produto​
+
+​A interação entre as pessoas e a interação da pessoa com os objetos são desnecessárias​
+
+=====
+
+​Assinale a alternativa INCORRETA sobre storyboard​
+
+​Os elementos de um protótipo por meio de storyboard são desenho, colagem, fotografia, entre outros​
+
+
+​Acontece a visualização do encadeamento da solução que está sendo desenvolvida​
+
+​Acontece um refinamento do serviço final, que vai servir para a melhoria do produto de software que está sendo criado​
+
+​Inexiste a necessidade da elaboração de um roteiro por escrito, com separação da história em seções com cenários, atores e enquadramentos​
+
+​Determina a técnica de representação, utiliza-se a representação visual do que se quer comunicar​
+
+=====
+
+​Assinale a alternativa CORRETA sobre storyboard​
+
+​Os elementos de um protótipo por meio de storyboard não pode ser desenho, colagem, fotografia, entre outros​
+
+​Não acontece a visualização do encadeamento da solução que está sendo desenvolvida​
+
+​Não acontece um refinamento do serviço final, que vai servir para a melhoria do produto de software que está sendo criado​
+
+​Inexiste a necessidade da elaboração de um roteiro por escrito, com separação da história em seções com cenários, atores e enquadramentos​
+
+​Determina a técnica de representação, utiliza-se a representação visual do que se quer comunicar​
+
+=====
+
