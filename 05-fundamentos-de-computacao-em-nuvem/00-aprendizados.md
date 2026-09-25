@@ -137,34 +137,6 @@ flowchart LR
 ### 1.7 Exemplo com Código (Terraform)
 Declaração de infraestrutura em nuvem demonstrando o desacoplamento das camadas de banco/persistência e aplicação, permitindo substituir ou recriar a camada de aplicação sem tocar na camada de dados:
 
-```hcl
-# Definição da Camada 3: Banco de Dados Relacional (Persistência)
-resource "google_sql_database_instance" "app_database" { # Declara a instância de banco de dados no Google Cloud
-  name             = "production-db-instance"            # Nome identificador único da instância de banco
-  database_version = "POSTGRES_15"                       # Especifica o motor e versão do banco de dados
-  region           = "us-east1"                          # Define a região geográfica onde os dados ficarão armazenados
-
-  settings {                                             # Inicia o bloco de configurações operacionais da instância
-    tier = "db-custom-4-16384"                           # Define a capacidade de hardware do banco (4 vCPUs, 16 GB RAM)
-  }                                                      # Fecha o bloco de configurações do banco
-}                                                        # Fecha a declaração do recurso de banco de dados
-
-# Definição da Camada 2: Aplicação Backend (Pode ser destruída/recriada de forma independente)
-resource "google_cloud_run_v2_service" "app_backend" {   # Declara o serviço de backend que roda na camada de aplicação
-  name     = "core-business-api"                         # Nome identificador do serviço de negócio
-  location = "us-east1"                                  # Região onde os containers da aplicação serão executados
-
-  template {                                             # Especifica o modelo de implantação dos containers
-    containers {                                         # Abre a definição do container da aplicação
-      image = "gcr.io/my-project/api-service:v2.1"       # Imagem do container com a lógica de negócio compilada
-      env {                                              # Configura as variáveis de ambiente necessárias para a API
-        name  = "DATABASE_HOST"                          # Nome da variável que aponta para a camada de dados
-        value = google_sql_database_instance.app_database.ip_address.0.ip_address # Conecta dinamicamente na Camada 3 pelo IP
-      }                                                  # Fecha o bloco da variável de ambiente
-    }                                                    # Fecha o bloco de containers
-  }                                                      # Fecha o template de execução
-}                                                        # Fecha a declaração do serviço de backend
-```
 
 ---
 
@@ -367,36 +339,6 @@ Em plataformas de dados:
 ### 4.8 Exemplo com Código (API B2B com Autenticação de Empresa Parceira)
 Exemplo prático de uma API em **Python/FastAPI** consumida por outra empresa (B2B) para envio de dados de inventário:
 
-```python
-from fastapi import FastAPI, Header, HTTPException, status # Importa classes do framework web FastAPI para construir APIs
-
-app = FastAPI(title="B2B Supply Chain Ingestion API")      # Inicializa a aplicação FastAPI com título corporativo
-
-VALID_PARTNER_API_KEYS = {                                # Dicionário simulando chaves de acesso de empresas clientes (B2B)
-    "partner-corp-key-123": "Empresa Logistica Alfa S.A.", # Mapeia a chave de API para a razão social da empresa parceira
-    "partner-corp-key-456": "Varejista Beta Ltda."        # Mapeia outra empresa autorizada
-}                                                          # Fecha o dicionário de parceiros autorizados
-
-@app.post("/api/v1/b2b/inventory/sync")                    # Rota HTTP POST para sincronização de dados B2B
-async def sync_partner_inventory(                          # Função assíncrona que processa a requisição do parceiro
-    payload: dict,                                         # Corpo da requisição recebendo os dados do estoque em JSON
-    x_api_key: str = Header(...)                           # Exige o envio da chave da empresa parceira no cabeçalho HTTP
-):
-    if x_api_key not in VALID_PARTNER_API_KEYS:            # Valida se a empresa solicitante possui contrato B2B ativo
-        raise HTTPException(                               # Lança erro HTTP se a chave for inválida ou não autorizada
-            status_code=status.HTTP_401_UNAUTHORIZED,      # Retorna código de status 401 (Não Autorizado)
-            detail="Credencial B2B inválida ou inativa."   # Mensagem explicativa do erro de autenticação
-        )
-
-    partner_name = VALID_PARTNER_API_KEYS[x_api_key]       # Identifica o nome da empresa parceira autenticada
-    items_count = len(payload.get("items", []))            # Conta quantos itens de inventário foram enviados no lote
-
-    return {                                               # Retorna confirmação estruturada em JSON para o parceiro
-        "status": "sucesso",                               # Indica que o lote foi aceito para processamento
-        "parceiro": partner_name,                          # Retorna o nome da empresa identificada
-        "itens_recebidos": items_count                     # Confirma a quantidade de registros aceitos na ingestão
-    }
-```
 
 ---
 
@@ -480,39 +422,6 @@ Na engenharia de dados em larga escala, esses cinco pilares funcionam de maneira
 ### 5.8 Exemplo com Código (Terraform — Provisionamento com Governança e Proteção contra Ransomware)
 Código em **Terraform (HCL)** demonstrando o provisionamento de infraestrutura cloud aplicando governança de custos (labels/tags), ciclo de vida e defesa anti-ransomware (versionamento e retenção imutável):
 
-```hcl
-# Declaração do Bucket de Dados com Governança e Proteção contra Ransomware
-resource "google_storage_bucket" "data_lake_raw" {             # Declara um bucket de armazenamento no Google Cloud Storage
-  name          = "enterprise-datalake-raw-zone-prod"          # Nome globalmente exclusivo do bucket de dados
-  location      = "us-east1"                                   # Região geográfica onde os dados ficarão armazenados
-  force_destroy = false                                        # Impede a deleção acidental ou maliciosa do bucket se contiver dados
-
-  versioning {                                                 # Bloco de configuração de versionamento de objetos
-    enabled = true                                             # Ativa o versionamento: protege contra ransomware mantendo versões anteriores
-  }                                                            # Fecha o bloco de versionamento
-
-  retention_policy {                                           # Define a política de retenção imutável (Regra WORM)
-    is_locked        = true                                    # Trava a política de retenção para que ninguém (nem admin) possa diminuir o prazo
-    retention_period = 2592000                                 # Garante retenção obrigatória de 30 dias (em segundos) contra exclusão/alteração
-  }                                                            # Fecha o bloco de política de retenção
-
-  labels = {                                                   # Bloco de etiquetas para controle e Governança de TI (FinOps)
-    environment = "production"                                 # Identifica o ambiente produtivo para segregação de acesso
-    cost_center = "data-engineering-1042"                      # Centro de custo para auditoria e governança financeira
-    managed_by  = "terraform-devops"                           # Identifica que o recurso é gerido automaticamente via CI/CD
-  }                                                            # Fecha o bloco de etiquetas
-
-  lifecycle_rule {                                             # Define regras automáticas de ciclo de vida para otimização de custo
-    action {                                                   # Ação a ser executada quando a condição for atingida
-      type = "Delete"                                          # Exclui apenas as versões antigas não correntes
-    }                                                          # Fecha o bloco de ação
-    condition {                                                # Condição para disparo da regra de ciclo de vida
-      num_newer_versions = 3                                   # Mantém com segurança as 3 versões mais recentes antes de descartar
-      days_since_noncurrent_time = 60                          # Aguarda 60 dias após a substituição da versão para economizar storage
-    }                                                            # Fecha o bloco de condição
-  }                                                            # Fecha a regra de ciclo de vida
-}                                                              # Fecha o recurso do bucket
-```
 
 ---
 
@@ -743,49 +652,6 @@ Na engenharia de dados em larga escala:
 ### 7.8 Exemplo com Código (Terraform — Provisionamento com Localização Local, CMEK para Descarte Seguro e VMs Virtualizadas)
 Código em **Terraform (HCL)** demonstrando a configuração de recursos em nuvem com conformidade geográfica, chave de criptografia para descarte seguro e instâncias de máquinas virtuais:
 
-```hcl
-# 1. Chave Criptográfica Gerenciada pelo Cliente (Garante o Descarte Seguro dos Dados via Crypto-Shredding)
-resource "google_kms_crypto_key" "data_security_key" {          # Declara uma chave criptográfica KMS dedicada
-  name            = "datalake-encryption-key"                    # Nome identificador da chave de segurança
-  key_ring        = "projects/my-data-proj/locations/southamerica-east1/keyRings/prod-ring" # Anel de chaves na região local
-  rotation_period = "7776000s"                                  # Rotação automática da chave a cada 90 dias
-
-  lifecycle {                                                    # Bloco de ciclo de vida da infraestrutura
-    prevent_destroy = false                                      # Permite destruição da chave para descarte permanente e irreversível dos dados
-  }                                                              # Fecha o bloco de ciclo de vida
-}                                                                # Fecha a declaração da chave
-
-# 2. Bucket de Dados com Localização Geográfica Restrita (Questões Legais e Soberania de Dados)
-resource "google_storage_bucket" "secure_datalake" {             # Declara o repositório de dados na nuvem
-  name          = "enterprise-curated-data-sp"                   # Nome global exclusivo do bucket
-  location      = "southamerica-east1"                           # Localização física no Brasil (evita morosidade jurídica no exterior)
-  force_destroy = false                                          # Impede deleções acidentais da estrutura
-
-  encryption {                                                   # Bloco de criptografia em repouso
-    default_kms_key_name = google_kms_crypto_key.data_security_key.id # Vincula à chave CMEK para viabilizar descarte seguro
-  }                                                              # Fecha o bloco de criptografia
-}                                                                # Fecha a declaração do bucket
-
-# 3. Instância de Máquina Virtual (VM gerenciada pelo Hypervisor sobre o Host Físico)
-resource "google_compute_instance" "data_processing_node" {      # Declara um nó de máquina virtual
-  name         = "etl-worker-node-01"                            # Nome da VM de processamento
-  machine_type = "e2-standard-4"                                 # Tipo de máquina virtualizada (4 vCPUs e 16 GB de RAM compartilhados)
-  zone         = "southamerica-east1-a"                          # Zona de disponibilidade física do data center
-
-  boot_disk {                                                    # Bloco de configuração do disco da VM
-    initialize_params {                                          # Parâmetros de inicialização do sistema
-      image = "debian-cloud/debian-12"                           # Sistema operacional convidado que roda isolado na VM
-      size  = 50                                                 # Capacidade em GB alocada pelo hypervisor no disco físico
-    }                                                            # Fecha os parâmetros de inicialização
-  }                                                              # Fecha o disco de boot
-
-  network_interface {                                            # Configuração da interface de rede virtual (vSwitch)
-    network = "default"                                          # Conecta à rede virtual padrão isolada
-    access_config {                                              # Configura endereço de saída para a web
-    }                                                            # Fecha a configuração de acesso
-  }                                                              # Fecha a interface de rede
-}                                                                # Fecha a declaração da máquina virtual
-```
 
 ---
 
@@ -882,61 +748,6 @@ No contexto moderno da engenharia de dados:
 ### 8.7 Exemplo com Código (Portal de Suporte à Decisão em Python com Streamlit)
 Aplicação em **Python com Streamlit** representando um portal corporativo de suporte à decisão que consome dados de um Data Warehouse e disponibiliza relatórios executivos centralizados com filtros dinâmicos:
 
-```python
-# Importação das bibliotecas essenciais para construção do portal corporativo
-import streamlit as st                                           # Biblioteca para criar interfaces web analíticas interativas
-import pandas as pd                                              # Biblioteca para manipulação e estruturação de tabelas de dados
-import numpy as np                                               # Biblioteca para operações e cálculos numéricos
-
-# Configuração da página e identidade visual do Portal Corporativo
-st.set_page_config(                                             # Define as propriedades globais da aplicação web
-    page_title="Portal Corporativo de Suporte à Decisão",        # Título exibido na aba do navegador
-    layout="wide"                                                # Configura o layout da tela no formato expandido
-)                                                                # Fecha a configuração da página
-
-# Cabeçalho do Portal: Ponto único de acesso para a Gestão do Conhecimento
-st.title("🏢 Portal de Inteligência e Suporte à Decisão")        # Exibe o título principal da aplicação na tela
-st.markdown("Central de relatórios analíticos integrados ao Data Warehouse corporativo.") # Subtítulo explicativo
-
-# Barra lateral para controle de acesso e filtros do analista de negócios
-st.sidebar.header("Filtros de Negócio")                           # Cria seção de filtros na barra lateral
-regiao_selecionada = st.sidebar.selectbox(                       # Cria menu seletor para filtragem de dados
-    "Selecione a Região Comercial:",                             # Rótulo do campo de seleção
-    ["Todas", "Sudeste", "Sul", "Nordeste", "Centro-Oeste"]      # Opções disponíveis para o tomador de decisão
-)                                                                # Fecha a criação do seletor
-
-# Simulação da Camada de Dados: Consulta ao Data Warehouse
-@st.cache_data                                                   # Otimiza o desempenho armazenando o resultado em cache de memória
-def carregar_dados_dw():                                         # Função que simula a extração de dados analíticos do DW
-    dados = {                                                    # Dicionário com registros de desempenho corporativo
-        "Regiao": ["Sudeste", "Sul", "Nordeste", "Centro-Oeste", "Sudeste"], # Regiões de venda
-        "Faturamento_Milhoes": [45.2, 28.7, 19.4, 14.8, 52.1],   # Receita registrada em milhões
-        "Margem_Lucro_Pct": [18.5, 22.1, 15.3, 12.4, 20.0],     # Margem percentual de lucro da operação
-        "Status_Meta": ["Atingida", "Atingida", "Em Risco", "Em Risco", "Atingida"] # Indicador de cumprimento da meta
-    }                                                            # Fecha o dicionário de dados
-    return pd.DataFrame(dados)                                   # Retorna os dados estruturados em formato de DataFrame
-
-df_dw = carregar_dados_dw()                                      # Executa a carga dos dados analíticos
-
-# Aplicação da regra de filtragem para tomada de decisão
-if regiao_selecionada != "Todas":                                # Verifica se o usuário escolheu uma região específica
-    df_exibicao = df_dw[df_dw["Regiao"] == regiao_selecionada]   # Filtra as linhas correspondentes à região
-else:                                                            # Caso contrário
-    df_exibicao = df_dw                                          # Mantém todas as regiões na visualização
-
-# Exibição dos Indicadores Chave de Desempenho (KPIs)
-col1, col2, col3 = st.columns(3)                                 # Cria três colunas lado a lado na interface
-with col1:                                                       # Define o conteúdo da primeira coluna
-    st.metric("Faturamento Total", f"R$ {df_exibicao['Faturamento_Milhoes'].sum():.1f}M") # Exibe a soma total de faturamento
-with col2:                                                       # Define o conteúdo da segunda coluna
-    st.metric("Margem Média", f"{df_exibicao['Margem_Lucro_Pct'].mean():.1f}%") # Exibe a margem percentual média
-with col3:                                                       # Define o conteúdo da terceira coluna
-    st.metric("Operações Analisadas", len(df_exibicao))          # Exibe o total de operações no recorte selecionado
-
-# Tabela Analítica: Desbloqueio da Informação para os Tomadores de Decisão
-st.subheader("📊 Relatório Analítico Detalhado")                 # Subtítulo da seção de visualização de dados
-st.dataframe(df_exibicao, use_container_width=True)              # Renderiza a tabela interativa ajustada à largura da tela
-```
 
 ### 8.8 O Portal de Negócios em Detalhe (Eckerson & Davydov)
 Os **Portais de Negócios** ocupam uma posição estratégica dentro dos servidores corporativos:
@@ -1005,36 +816,6 @@ Na engenharia de dados moderna:
 ### 9.4 Exemplo com Código (Deploy em Modelo PaaS via Terraform com Google Cloud Run)
 Código em **Terraform (HCL)** demonstrando a simplicidade de provisionar uma aplicação em um serviço **PaaS (Cloud Run)**: o desenvolvedor apenas aponta a imagem da aplicação e as variáveis de ambiente, sem precisar configurar máquinas virtuais, sistemas operacionais ou balanceadores de rede:
 
-```hcl
-# Declaração de Serviço em Modelo PaaS (Google Cloud Run)
-resource "google_cloud_run_v2_service" "data_api_paas" {        # Declara o serviço totalmente gerenciado na plataforma PaaS
-  name     = "sales-analytics-api"                               # Nome identificador da aplicação
-  location = "southamerica-east1"                                # Região do data center gerenciada pelo provedor
-
-  template {                                                     # Modelo de execução da aplicação
-    scaling {                                                    # Configuração de elasticidade automática (gerenciada pelo PaaS)
-      min_instance_count = 0                                     # Escala a zero instâncias quando ocioso (economia total)
-      max_instance_count = 10                                    # Escala automaticamente até 10 instâncias sob carga
-    }                                                            # Fecha o bloco de escalabilidade
-
-    containers {                                                 # Bloco de especificação do container da aplicação
-      image = "gcr.io/enterprise-data-proj/sales-api:v1.0"       # Imagem com o código do desenvolvedor empacotado
-
-      resources {                                                # Alocação de recursos por container
-        limits = {                                               # Limites computacionais configurados
-          cpu    = "1000m"                                       # 1 vCPU gerenciada pelo runtime
-          memory = "512Mi"                                       # 512 MB de memória RAM gerenciada
-        }                                                        # Fecha limites de recursos
-      }                                                          # Fecha bloco de recursos
-
-      env {                                                      # Variável de ambiente necessária para a lógica da aplicação
-        name  = "ENVIRONMENT"                                    # Nome da variável de configuração
-        value = "production"                                     # Valor indicando o ambiente produtivo
-      }                                                          # Fecha variável de ambiente
-    }                                                            # Fecha bloco do container
-  }                                                              # Fecha o template de execução
-}                                                                # Fecha a declaração do serviço PaaS
-```
 
 ---
 
@@ -1119,37 +900,6 @@ No ecossistema de dados:
 ### 10.6 Exemplo com Código (Contrato de Serviço Agnóstico em Python)
 Exemplo demonstrando a definição de um contrato e serviço desacoplado seguindo o paradigma SOA, independente da tecnologia cliente:
 
-```python
-# Importação dos módulos para tipagem e definição de contratos de serviço
-from abc import ABC, abstractmethod                              # Módulo nativo para criação de classes abstratas e interfaces
-from typing import Dict, Any                                     # Tipagem estruturada para dicionários de dados genéricos
-
-# Contrato da Arquitetura SOA: Define a interface do serviço de negócio de forma agnóstica
-class ServicoProcessamentoPagamento(ABC):                        # Contrato abstrato que qualquer implementação deve respeitar
-    @abstractmethod                                              # Decorador que torna a assinatura do método obrigatória
-    def processar_transacao(self, dados: Dict[str, Any]) -> Dict[str, Any]: # Assinatura com entrada e saída padronizadas
-        """Define o contrato de execução do serviço de pagamento corporativo."""
-        pass                                                     # Não possui código concreto na interface abstrata
-
-# Implementação do Provedor de Serviço (Service Provider)
-class ProvedorCartaoCredito(ServicoProcessamentoPagamento):       # Implementação concreta do provedor de cartões
-    def processar_transacao(self, dados: Dict[str, Any]) -> Dict[str, Any]: # Executa a lógica de negócio do serviço
-        valor = dados.get("valor", 0.0)                          # Extrai o valor monetário da transação
-        cliente_id = dados.get("cliente_id", "DESCONHECIDO")     # Extrai o identificador único do cliente
-        
-        # Simula a validação e liquidação da transação de negócio
-        return {                                                 # Retorna a mensagem estruturada padronizada
-            "status": "APROVADO",                                # Status da execução do serviço
-            "cliente_id": cliente_id,                            # Identificador do cliente atendido
-            "valor_processado": valor,                           # Confirmação do montante liquidado
-            "mensagem": "Transação liquidada com sucesso no provedor SOA" # Mensagem amigável de auditoria
-        }                                                        # Fecha a estrutura de resposta
-
-# Consumidor do Serviço (Service Requester): Acoplado apenas ao contrato abstrato, não à tecnologia interna
-def executar_fluxo_compra(servico: ServicoProcessamentoPagamento, payload: Dict[str, Any]): # Função consumidora
-    resposta = servico.processar_transacao(payload)              # Invoca o serviço através da interface padronizada
-    print(f"Resultado do Serviço: {resposta['status']} | {resposta['mensagem']}") # Exibe o resultado do processamento
-```
 
 ---
 
@@ -1212,24 +962,6 @@ No dia a dia da Engenharia de Dados:
 
 ### 11.8 Exemplo com Código (Autoscaling de Cluster de Processamento em Terraform)
 
-```hcl
-# Definição do recurso de grupo de instâncias elásticas no Google Cloud
-resource "google_compute_autoscaler" "autoscaler_processamento_dados" { # Declaração do recurso de autoscaling automático
-  name   = "autoscaler-dados-etl"                                      # Nome de identificação do mecanismo de escalabilidade
-  zone   = "us-central1-a"                                              # Zona física do data center onde os nós serão alocados
-  target = google_compute_instance_group_manager.etl_group.id          # Vincula o autoscaler ao grupo de instâncias de processamento
-
-  autoscaling_policy {                                                  # Bloco que define a política de elasticidade dinâmica
-    max_replicas    = 20                                               # Número máximo de servidores em momentos de pico de dados
-    min_replicas    = 2                                                # Número mínimo de servidores em períodos de baixa demanda
-    cooldown_period = 60                                               # Tempo em segundos de espera antes de avaliar nova contração/expansão
-
-    cpu_utilization {                                                  # Métrica de controle para autorregulação dos nós
-      target = 0.75                                                    # Dispara novos nós quando a utilização média de CPU atingir 75%
-    }                                                                  # Fecha o bloco de métrica de CPU
-  }                                                                    # Fecha a política de escalonamento
-}                                                                      # Fecha a declaração do autoscaler
-```
 
 ---
 
@@ -1290,31 +1022,6 @@ No dia a dia da Engenharia de Dados:
 
 ### 12.7 Exemplo com Código (Extração de Dados de API SaaS em Python)
 
-```python
-import requests  # Importa a biblioteca padrão para envio de requisições HTTP via internet
-import json      # Importa a biblioteca para manipulação e estruturação de dados no formato JSON
-
-# URL do endpoint REST fornecido pelo provedor do serviço SaaS para consulta de clientes
-SAAS_API_URL = "https://api.crm-saas-provedor.com/v1/clientes"  # Endereço web do serviço na nuvem
-
-# Cabeçalhos HTTP contendo o token de autenticação e formato de dados
-headers = {                                                      # Dicionário de cabeçalhos da requisição
-    "Authorization": "Bearer TOKEN_SECRETO_DO_CLIENTE_ABC123",    # Chave de segurança para autenticar o acesso à API do SaaS
-    "Accept": "application/json"                                 # Informa que esperamos os dados de resposta no formato JSON
-}                                                                # Fecha a definição dos cabeçalhos
-
-# Executa a chamada HTTP GET através da internet para buscar os dados no servidor do SaaS
-resposta = requests.get(SAAS_API_URL, headers=headers)           # Dispara a requisição web para a nuvem
-
-# Valida se o servidor do provedor SaaS respondeu com sucesso (código HTTP 200)
-if resposta.status_code == 200:                                  # Testa se a comunicação com o serviço foi bem-sucedida
-    dados_clientes = resposta.json()                             # Converte o payload de texto recebido em estrutura Python
-    print(f"Total de registros obtidos do SaaS: {len(dados_clientes)}")  # Exibe a quantidade de registros retornados
-    for cliente in dados_clientes:                               # Itera sobre cada registro de cliente recebido
-        print(f"ID: {cliente['id']} - Nome: {cliente['nome']}")  # Imprime os campos extraídos para processamento no pipeline
-else:                                                            # Bloco executado caso ocorra falha na chamada
-    print(f"Erro ao acessar o serviço SaaS: {resposta.status_code}")  # Exibe o código de erro retornado pela nuvem
-```
 
 ---
 
@@ -1416,35 +1123,6 @@ No dia a dia de um **Engenheiro de Dados Sênior**:
 ### 13.8 Exemplo com Código (Declaração de Aplicação PaaS via Terraform no Google App Engine)
 Exemplo em **Terraform (HCL)** configurando uma aplicação PaaS no **Google App Engine**, demonstrando como o desenvolvedor apenas define os runtimes e a escala, enquanto o provedor gerencia compiladores, middleware, SO e hardware:
 
-```hcl
-# Declaração do recurso de aplicação PaaS no Google App Engine
-resource "google_app_engine_standard_app_version" "api_dados_paas" { # Declara a versão da aplicação no PaaS gerenciado
-  version_id = "v1"                                                  # Identificador da versão do software implementado
-  service    = "pipeline-analytics-service"                          # Nome lógico do microserviço no ambiente PaaS
-  runtime    = "python310"                                           # Define o runtime da linguagem fornecido pela plataforma
-
-  entrypoint {                                                       # Bloco que define o ponto de entrada de execução
-    shell = "gunicorn -b :$PORT -w 4 main:app"                       # Comando de inicialização do servidor de aplicação
-  }                                                                  # Fecha o bloco do entrypoint
-
-  deployment {                                                       # Bloco de implantação do código-fonte do desenvolvedor
-    zip {                                                            # Define a fonte dos arquivos compactados do projeto
-      source_url = "https://storage.googleapis.com/meu-bucket-deploy/app.zip" # Pacote de código enviado pelo desenvolvedor
-    }                                                                # Fecha a definição do pacote compactado
-  }                                                                  # Fecha o bloco de deployment
-
-  automatic_scaling {                                                # Bloco de alocação dinâmica e escalabilidade gerenciada
-    max_concurrent_requests = 80                                     # Limite de conexões simultâneas por instância antes de escalar
-    min_idle_instances      = 0                                      # Escala até 0 nós em períodos sem demanda (economia total)
-    max_idle_instances      = 2                                      # Limite de instâncias ociosas prontas para absorver picos
-  }                                                                  # Fecha o bloco de escalabilidade automática
-
-  env_variables = {                                                  # Variáveis de ambiente injetadas na aplicação
-    DATA_ENVIRONMENT = "production"                                  # Configuração indicando o ambiente de execução
-    LOG_LEVEL        = "INFO"                                        # Nível de granularidade dos logs de auditoria
-  }                                                                  # Fecha o dicionário de variáveis de ambiente
-}                                                                    # Fecha o recurso do Google App Engine
-```
 
 ---
 
@@ -1505,38 +1183,3 @@ No dia a dia de um **Engenheiro de Dados Sênior**:
 ### 14.6 Exemplo com Código (Terraform — Provisionamento Resiliente de EC2 com Load Balancer e Multi-AZ)
 Exemplo em **Terraform (HCL)** configurando a infraestrutura elástica e resiliente contra indisponibilidade (baseada no caso Expresso Guanabara), com balanceamento de carga e instâncias EC2 (IaaS):
 
-```hcl
-# Declaração do grupo de segurança para controlar portas de tráfego web
-resource "aws_security_group" "sg_web_resiliente" {                  # Cria o firewall lógico das instâncias
-  name        = "sg-aplicacao-passagens"                             # Nome identificador do grupo de segurança
-  description = "Permite trafego HTTP de entrada para a aplicacao"   # Descrição da finalidade do firewall
-
-  ingress {                                                          # Bloco de regras de entrada de rede
-    from_port   = 80                                                 # Porta inicial permitida (protocolo HTTP padrão)
-    to_port     = 80                                                 # Porta final permitida
-    protocol    = "tcp"                                              # Protocolo de transporte utilizado
-    cidr_blocks = ["0.0.0.0/0"]                                      # Permite tráfego originado de qualquer endereço IP
-  }                                                                  # Fecha a regra de entrada
-
-  egress {                                                           # Bloco de regras de saída de rede
-    from_port   = 0                                                  # Permite saída para qualquer porta
-    to_port     = 0                                                  # Qualquer porta de destino
-    protocol    = "-1"                                               # Todos os protocolos liberados para saída
-    cidr_blocks = ["0.0.0.0/0"]                                      # Saída liberada para toda a internet
-  }                                                                  # Fecha a regra de saída
-}                                                                    # Fecha a definição do grupo de segurança
-
-# Provisionamento da instância virtual Amazon EC2 (IaaS)
-resource "aws_instance" "servidor_vendas_iaas" {                     # Cria o servidor virtual elástico na AWS
-  ami                    = "ami-0c55b159cbfafe1f0"                   # Identificador da imagem base do Sistema Operacional
-  instance_type          = "t3.medium"                               # Tipo e porte da máquina virtual (CPU e Memória RAM)
-  availability_zone      = "us-east-1a"                              # Zona física isolada do datacenter para tolerância a falhas
-  vpc_security_group_ids = [aws_security_group.sg_web_resiliente.id] # Associa o firewall lógico à máquina virtual
-
-  tags = {                                                           # Metadados de identificação corporativa do recurso
-    Name        = "Servidor-Vendas-Passagens-01"                     # Nome de exibição da instância no painel de controle
-    Ambiente    = "Producao"                                         # Tag indicando o ambiente operacional
-    TipoServico = "IaaS"                                             # Classificação do modelo de serviço em nuvem
-  }                                                                  # Fecha o bloco de tags
-}                                                                    # Fecha o recurso da instância EC2
-```

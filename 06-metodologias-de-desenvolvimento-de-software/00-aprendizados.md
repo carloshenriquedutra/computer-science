@@ -122,29 +122,6 @@ flowchart LR
 
 O exemplo abaixo ilustra uma rotina de engenharia de dados que exemplifica os objetivos da engenharia de software moderna: validação preventiva de qualidade de dados (evitando retrabalho e bugs) e processamento incremental eficiente (reduzindo custo de computação e energia):
 
-```python
-import pandas as pd  # Importa a biblioteca pandas para manipulação eficiente de tabelas de dados em memória
-from datetime import date, timedelta  # Importa classes para cálculo e controle de datas no calendário
-
-def processar_dados_incrementais_com_qualidade(data_execucao: date) -> pd.DataFrame: # Declara a função do pipeline recebendo a data alvo
-    caminho_origem = f"gs://bucket-raw/eventos/ano={data_execucao.year}/mes={data_execucao.month:02d}/dia={data_execucao.day:02d}/" # Monta o caminho particionado para ler apenas a fatia necessária
-    
-    # 1. Leitura Otimizada (FinOps e Sustentabilidade: evita ler todo o Data Lake)
-    df = pd.read_parquet(caminho_origem, columns=["id_transacao", "id_usuario", "valor_transacao", "status"]) # Carrega apenas as colunas úteis em formato colunar comprimido
-    
-    # 2. Validação de Qualidade de Software (Garantia de Qualidade Preventiva)
-    assert not df["id_transacao"].isnull().any(), "Erro de Qualidade: id_transacao não pode conter valores nulos" # Interrompe a execução caso existam registros sem identificador único
-    assert (df["valor_transacao"] >= 0).all(), "Erro de Qualidade: valor_transacao não pode ser negativo" # Garante integridade das regras financeiras antes da gravação
-    
-    # 3. Transformação e Agregação (Foco em resolver o problema do negócio)
-    df_aprovadas = df[df["status"] == "CONCLUIDO"].copy() # Filtra em memória apenas as transações finalizadas com sucesso
-    df_resultado = df_aprovadas.groupby("id_usuario", as_index=False)["valor_transacao"].sum() # Agrupa o volume financeiro total por cliente
-    
-    caminho_destino = f"gs://bucket-curated/metricas_diarias/data={data_execucao.isoformat()}/dados.parquet" # Define o caminho de saída particionado por data
-    df_resultado.to_parquet(caminho_destino, index=False, compression="snappy") # Salva o resultado final comprimido para baratear queries analíticas futuras
-    
-    return df_resultado # Retorna o dataframe processado e validado
-```
 
 ---
 
@@ -209,35 +186,6 @@ Na engenharia de dados moderna:
 
 No exemplo abaixo, uma equipe de engenharia de dados auto-organizada define declarativamente o contrato, a documentação e os testes de qualidade de sua própria tabela dimensional, sem intervenção burocrática externa:
 
-```sql
--- Definição declarativa da tabela na camada Gold gerenciada pela squad autônoma
-config {
-  type: "table", -- Define que o Dataform irá materializar este modelo como uma tabela física no BigQuery
-  schema: "gold_vendas", -- Especifica o dataset de destino com governança definida pelo próprio time
-  description: "Tabela dimensional de clientes ativos modelada pela equipe de dados", -- Documenta a finalidade do modelo para toda a organização
-  columns: { -- Inicia a definição e documentação de cada coluna da tabela
-    id_cliente: "Identificador exclusivo do cliente no sistema", -- Documenta a chave primária da entidade
-    total_compras: "Valor acumulado de compras realizadas pelo cliente", -- Documenta a métrica de negócio calculada
-    data_ultima_compra: "Data da transação mais recente do cliente" -- Documenta a data de controle analítico
-  }, -- Fecha o bloco de metadados das colunas
-  assertions: { -- Bloco de testes automatizados autogerenciados pela equipe
-    uniqueKey: ["id_cliente"], -- Garante automaticamente que não existem registros duplicados para o mesmo cliente
-    nonNull: ["id_cliente", "total_compras"] -- Valida que colunas obrigatórias jamais contenham valores nulos
-  } -- Fecha o bloco de testes de qualidade
-}
-
-SELECT
-  c.id_cliente, -- Seleciona o identificador do cliente vindo da camada limpa Silver
-  COALESCE(SUM(v.valor), 0.0) AS total_compras, -- Soma o total vendido substituindo nulos por zero
-  MAX(v.data_venda) AS data_ultima_compra -- Obtém a data da compra mais recente
-FROM
-  ${ref("silver_clientes")} AS c -- Faz referência à tabela Silver de clientes gerenciada no projeto
-LEFT JOIN
-  ${ref("silver_vendas")} AS v -- Realiza a junção com a tabela Silver de vendas
-  ON c.id_cliente = v.id_cliente -- Condição de relacionamento através do identificador do cliente
-GROUP BY
-  c.id_cliente -- Agrupa os registros por cliente para consolidação das métricas
-```
 
 ---
 
@@ -309,25 +257,3 @@ Em uma equipe de engenharia de dados:
 
 O script abaixo simula como uma equipe ágil calcula sua capacidade empírica para planejar a Sprint com base em Story Points:
 
-```python
-from dataclasses import dataclass  # Importa o decorador dataclass para criar classes de dados de forma concisa e legível
-from typing import List  # Importa o tipo List para tipagem estática de coleções de dados
-
-@dataclass
-class ItemBacklog:  # Define a estrutura de um item do backlog do produto
-    titulo: str  # Nome ou identificador da funcionalidade ou pipeline a ser construído
-    story_points: int  # Estimativa de esforço relativo atribuída pela equipe técnica
-
-def planejar_sprint(itens_priorizados: List[ItemBacklog], velocidade_media: int) -> List[ItemBacklog]:  # Declara a função de planejamento
-    sprint_backlog: List[ItemBacklog] = []  # Inicializa a lista de itens que entrarão no Sprint Backlog
-    pontos_acumulados = 0  # Inicializa o contador de esforço total selecionado
-
-    for item in itens_priorizados:  # Itera sobre os itens previamente ordenados por valor pelo Product Owner
-        if pontos_acumulados + item.story_points <= velocidade_media:  # Verifica se o item cabe na capacidade empírica do time
-            sprint_backlog.append(item)  # Adiciona o item ao compromisso da Sprint atual
-            pontos_acumulados += item.story_points  # Atualiza a soma de pontos planejados
-        else:  # Caso o item ultrapasse o limite de capacidade sustentável
-            break  # Interrompe a inclusão para evitar sobrecarga e manter o ritmo sustentável
-
-    return sprint_backlog  # Retorna o conjunto de itens selecionados para a Sprint
-```

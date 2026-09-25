@@ -76,28 +76,6 @@ No seu mundo de dados: **tolerância a falhas** é o seu pipeline que retenta e 
 
 **Exemplo com código (Terraform)** — redundância e alta disponibilidade, na prática:
 
-```hcl
-# Duas réplicas do banco de RH em zonas/AZs diferentes.
-# Se uma zona cair, a outra continua servindo (tolerância a falhas).
-
-resource "google_sql_database_instance" "rh" { # declara um recurso: uma instância de banco do GCP
-  name             = "rh-db"                    # dá um nome pra essa instância: "rh-db"
-  database_version = "POSTGRES_15"              # diz qual versão do banco usar (Postgres 15)
-  region           = "us-central1"              # define a região onde o banco vai ficar
-
-  settings {                                    # abre o bloco de configurações da instância
-    tier              = "db-custom-2-7680"       # define o tamanho da máquina (2 vCPU, 7,5 GB RAM)
-    availability_type = "REGIONAL"              # ATENÇÃO: cria réplica automática em OUTRA zona (redundância!)
-    backup_configuration {                      # configura o backup automático do banco
-      enabled                        = true     # liga o backup (deve estar ligado pra restaurar se algo der errado)
-      point_in_time_recovery_enabled = true     # permite restaurar em qualquer minuto (PITR), não só no horário do backup
-    }
-  }
-}
-
-# Releitura da aplicação: se o job de RH não achar a instância primária,
-# ele faz autofailover pra réplica — o "desvio de caminho" da rede confiável.
-```
 
 **Verificação com Bash** — consultar o estado da instância criada:
 
@@ -191,19 +169,6 @@ Uma **intranet** é o conjunto privado de LANs e enlaces WAN pertencentes a uma 
 
 **Exemplo com código (Terraform)** — representar uma rede privada interna:
 
-```hcl
-resource "google_compute_network" "intranet_rh" { # cria uma rede virtual privada para os sistemas internos de RH
-  name                    = "intranet-rh" # define o nome usado para identificar a rede privada
-  auto_create_subnetworks = false # impede a criação automática de sub-redes para manter o desenho sob controle
-}
-
-resource "google_compute_subnetwork" "dados" { # cria uma sub-rede privada para os componentes de dados
-  name          = "subnet-dados-rh" # dá um nome à sub-rede usada pelos serviços de dados
-  ip_cidr_range = "10.30.0.0/24" # reserva endereços privados para os recursos dessa sub-rede
-  region        = "us-central1" # coloca a sub-rede em uma região específica
-  network       = google_compute_network.intranet_rh.id # conecta a sub-rede à intranet criada acima
-}
-```
 
 Esse código representa a infraestrutura privada, mas uma intranet completa também depende de conexões entre redes, controles de acesso, DNS interno, VPN ou Interconnect e regras de firewall.
 
@@ -333,32 +298,6 @@ Função de cada camada do **TCP/IP**:
 
 **Exemplo com código (Terraform)** — a camada de rede decidindo o caminho (roteamento):
 
-```hcl
-# A camada Internet/Redes "decide o melhor caminho" — aqui, via tabela de rotas.
-
-resource "google_compute_network" "rh" { # cria uma rede (VPC) chamada "vpc-rh"
-  name                    = "vpc-rh"     # nome da rede no GCP
-  auto_create_subnetworks = false        # NÃO cria sub-redes automaticamente; a gente cria manual
-}
-
-# Rota padrão: tudo que não é local vai pro gateway da internet
-resource "google_compute_route" "default" {    # cria uma rota (regra de caminho) na rede
-  name             = "rota-internet"           # nome dessa rota: "rota-internet"
-  network          = google_compute_network.rh.name # qual rede essa rota pertence (a vpc-rh criada acima)
-  dest_range       = "0.0.0.0/0"               # para QUALQUER destino (0.0.0.0/0 = todo endereço) — "rota padrão"
-  next_hop_gateway = "default-internet-gateway" # sai pelo gateway da internet (o "portão" da rede pro mundo)
-}
-
-# Rota específica: tráfego pro datacenter de RH vai pelo túnel VPN (caminho preferido)
-# = "roteamento dinâmico escolhe o melhor caminho" (aula: camada de rede / roteamento)
-resource "google_compute_route" "to_dc" {          # cria outra rota específica
-  name             = "rota-datacenter-rh"          # nome dessa rota: "rota-datacenter-rh"
-  network          = google_compute_network.rh.name # mesma rede da anterior (vpc-rh)
-  dest_range       = "10.20.0.0/16"                # só para a rede interna do datacenter de RH (10.20.x.x)
-  next_hop_ip = "10.30.0.1"                         # manda para o IP do appliance/roteador VPN que encaminha ao datacenter
-}
-# Resumo: roteamento = "qual caminho cada pacote segue" — a camada de rede decide isso
-```
 
 **Verificação com Bash** — consultar a rota escolhida pelo host:
 
@@ -397,14 +336,6 @@ graph LR
 
 **Exemplo com código (Scapy)** — visualizar uma PDU carregada dentro de outra:
 
-```python
-from scapy.all import Ether, IP, TCP, Raw  # importa as camadas usadas para montar a comunicação
-dados = Raw(load=b"consulta de colaboradores")  # cria os dados da aplicação como bytes
-segmento = TCP(sport=50000, dport=443) / dados  # coloca os dados dentro de um segmento TCP com portas
-pacote = IP(src="192.168.50.10", dst="10.20.0.15") / segmento  # coloca o segmento dentro de um pacote IP
-quadro = Ether(src="00:11:22:33:44:55", dst="aa:bb:cc:dd:ee:ff") / pacote  # coloca o pacote dentro de um quadro Ethernet
-quadro.show()  # exibe a estrutura para visualizar o encapsulamento camada por camada
-```
 
 Neste exemplo, `dados` está dentro de `segmento`, que está dentro de `pacote`, que está dentro de `quadro`. O `/` do Scapy representa essa composição das camadas; em uma comunicação real, o kernel e a NIC fazem esse trabalho.
 
@@ -506,30 +437,6 @@ flowchart TB
 
 **Exemplo com código (Scapy)** — montar um pacote camada a camada e ver o encapsulamento:
 
-```python
-from scapy.all import Ether, IP, TCP  # importa as "camadas" que iremos empilhar
-
-# CONCEITO: cada linha abaixo é UMA camada embrulhando a anterior.
-# É exatamente o "cada camada adiciona seu cabeçalho" da teoria.
-
-pacote = Ether()                  # camada 2 (Enlace): cria um quadro Ethernet vazio
-pacote = Ether()/IP()             # embrulha o quadro dentro de um pacote IP (camada 3 / Rede)
-pacote = Ether()/IP()/TCP()       # embrulha o pacote IP num segmento TCP (camada 4 / Transporte)
-
-# Agora preenchemos os endereços que "cada camada sabe" (que vimos na tabela de PDUs):
-pacote[Ether].dst = "aa:bb:cc:dd:ee:ff"  # MAC de destino (o próximo salto no enlace) — Ethernet responde pelo MAC
-pacote[Ether].src = "00:11:22:33:44:55"  # MAC de origem (minha placa de rede)
-pacote[IP].dst    = "8.8.8.8"            # IP de destino (a máquina final) — camada de Rede responde pelo IP
-pacote[IP].src    = "192.168.1.10"       # IP de origem (meu computador)
-pacote[TCP].dport = 443                  # porta de destino (HTTPS) — camada de Transporte responde pela porta
-pacote[TCP].sport = 50000                # porta de origem (aleatória, pra resposta chegar de volta)
-
-# Repare: cada camada só conhece o "endereço" dela (MAC / IP / porta).
-# Empilhadas, elas formam uma PDU com cabeçalhos de enlace, rede e transporte.
-
-# Para ver o resultado encapsulado (mostra os cabeçalhos hexadecimais na ordem):
-# pacote.show()   # descomente p/ exibir a estrutura em texto
-```
 
 > ⚙️ **Por baixo dos panos:** esse "empilhamento" que o Scapy monta pra você é, no mundo real, feito em **baixo nível** — o kernel grava esses cabeçalhos direto na memória usando **raw sockets / eBPF (XDP)** em C, e a placa de rede (NIC) transmite os bytes. O Scapy só **revela** o conceito de forma legível; a implementação de verdade é low-level.
 
@@ -852,22 +759,6 @@ Resultado: `10101000`.
 
 ### 7.8 Exemplo com código (Python) — converter IPv4 entre decimal e binário
 
-```python
-# Recebe um IP decimal e mostra o binário de cada octeto.
-# Útil pra entender que, por trás do que vemos na tela, tudo vira 0 e 1.
-
-ip_decimal = "192.168.11.10"  # endereço IPv4 no formato que humanos leem
-octetos = ip_decimal.split(".")  # separa a string nos 4 octetos, usando o ponto como divisor
-
-binarios = []  # lista que vai guardar cada octeto convertido para binário
-for octeto in octetos:  # percorre cada um dos 4 octetos
-    numero = int(octeto)  # transforma o texto do octeto em número inteiro
-    binario = format(numero, "08b")  # converte para binário com 8 dígitos (preenche com zeros à esquerda)
-    binarios.append(binario)  # adiciona o resultado na lista
-
-print(".".join(binarios))  # junta os 4 octetos binários com pontos e imprime
-# Saída: 11000000.10101000.00001011.00001010
-```
 
 > ⚙️ **Por baixo dos panos:** quando você pinga `192.168.11.10`, o sistema operacional não envia "192" para a placa de rede. Ele converte cada octeto para 8 bits e monta o pacote IP com essa sequência binária. A placa Ethernet, por sua vez, lê e transmite bits — sejam eles de IPv4, IPv6 ou MAC.
 
@@ -920,22 +811,6 @@ Total: 6 octetos × 8 bits = **48 bits**.
 
 #### Exemplo com código (Python) — explorar bits, octetos e bytes
 
-```python
-# Mostra como 8 bits formam 1 octeto/1 byte.
-# Útil pra ver que, em redes, "octeto" e "byte" significam a mesma coisa: 8 bits.
-
-numero = 168  # escolhe um valor de exemplo (um octeto qualquer, de 0 a 255)
-
-bits = format(numero, "08b")  # converte o número para binário com 8 dígitos
-print(f"Decimal: {numero}")  # imprime o valor em decimal
-print(f"Binário: {bits}")    # imprime os 8 bits
-print(f"Quantidade de bits: {len(bits)}")  # conta: deve dar 8
-
-# Em Python, 1 byte é representado por bytes() com um único elemento.
-um_byte = numero.to_bytes(1, "big")  # transforma o número em 1 byte (8 bits)
-print(f"Representação como byte: {um_byte}")  # mostra o objeto byte
-print(f"Tamanho em bytes: {len(um_byte)}")    # deve dar 1
-```
 
 > ⚙️ **Por baixo dos panos:** quando você transfere um arquivo CSV de 100 MB, o "B" maiúsculo significa **bytes**. Como cada byte tem 8 bits, o arquivo tem 800 milhões de bits. Quando a rede diz "link de 1 Gbit/s", ela mede em bits. Dividir por 8 é o que converte a capacidade da rede na mesma unidade do arquivo.
 
@@ -1034,13 +909,6 @@ flowchart LR
 
 ### 8.3 Exemplo prático de cálculo
 
-```python
-tamanho_gb = 10  # define o tamanho do arquivo Parquet que o pipeline precisa enviar, em gigabytes
-banda_gbps = 1  # define a capacidade teórica do enlace, em gigabits por segundo
-tamanho_gbits = tamanho_gb * 8  # converte gigabytes em gigabits, porque a banda é medida em bits
-tempo_teorico_segundos = tamanho_gbits / banda_gbps  # calcula o tempo ideal, sem overhead, latência ou concorrência
-print(tempo_teorico_segundos)  # exibe o tempo teórico aproximado da transferência
-```
 
 > 🧠 **Analogística dos Correios:** "Esse cálculo é como **calcular quanto tempo levará para uma carta viajar do Rio de Janeiro para São Paulo** considerando a velocidade média do caminhão. O resultado é apenas uma estimativa: pode demorar mais se houver greve dos correios (concorrência), se o caminhão quebrar (gargalo), se a carta precisar ser reenviada (retransmissão), ou se houver atraso na triagem (latência)."
 
@@ -1365,26 +1233,6 @@ Imagine um pipeline de dados em engenharia de dados onde um worker Python em con
 
 O exemplo abaixo em Terraform demonstra a criação de uma interface de rede virtual (vNIC) onde a camada de enlace opera, associando o endereço MAC virtual à máquina do worker de dados:
 
-```hcl
-# Declara a criação de uma interface de rede virtual (vNIC - Camada 2 / Enlace) no Google Cloud
-resource "google_compute_instance" "worker_dados" {
-  name         = "worker-etl-pipeline"                  # Define o nome da máquina virtual que rodará o pipeline de dados
-  machine_type = "e2-standard-4"                        # Especifica o porte do hardware virtual (4 vCPUs e 16 GB de RAM)
-  zone         = "us-central1-a"                        # Define a zona física do data center onde a instância será provisionada
-
-  boot_disk {                                           # Bloco de configuração do disco de inicialização do sistema operacional
-    initialize_params {                                 # Define os parâmetros de criação do disco boot
-      image = "debian-cloud/debian-11"                  # Define a imagem do sistema operacional Linux Debian 11
-    }                                                   # Fecha o bloco de parâmetros do disco
-  }                                                     # Fecha o bloco de configuração do boot_disk
-
-  network_interface {                                   # Bloco que cria a vNIC (Interface de Rede / Camada de Enlace / MAC virtual)
-    network    = "default"                              # Associa a interface de rede à VPC padrão do projeto
-    subnetwork = "default"                              # Associa a interface à sub-rede padrão da região escolhida
-    # A plataforma Cloud atribui automaticamente um Endereço MAC (Camada 2) e um IP privado (Camada 3) a esta vNIC
-  }                                                     # Fecha o bloco da interface de rede
-}                                                       # Fecha a declaração do recurso de instância computacional
-```
 
 **Verificação no terminal Linux (Bash)** — inspecionar a camada de enlace (endereços MAC, estatísticas de CRC/erros) na placa de rede do worker:
 
@@ -1770,27 +1618,6 @@ ip addr show lo
 
 **2. Script Python em Pipeline de Dados verificando integridade de conexão TCP sobre IP:**
 
-```python
-import socket  # Biblioteca padrão do Python para operações de rede e sockets de baixo nível
-
-# Cria um socket TCP (SOCK_STREAM) sobre o protocolo IPv4 (AF_INET)
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-# Define o tempo limite máximo de espera da conexão em 2 segundos
-sock.settimeout(2.0)
-
-# Tenta conectar no banco de dados local que roda na interface de loopback na porta 5432
-resultado = sock.connect_ex(("127.0.0.1", 5432))
-
-# Se o resultado for 0, o serviço local está respondendo normalmente
-if resultado == 0:
-    print("PostgreSQL local em 127.0.0.1:5432 está ativo e pronto para receber dados.")
-else:
-    print("PostgreSQL local inacessível ou porta fechada.")
-
-# Fecha o socket liberando o descritor de arquivo do sistema operacional
-sock.close()
-```
 
 ---
 
@@ -1923,22 +1750,6 @@ Em data centers modernos e nuvens públicas (GCP, AWS, Azure):
 
 Script Python para demonstrar a criação e cálculo programático de sub-redes IPv6 `/64` a partir de um bloco `/48`:
 
-```python
-import ipaddress  # Biblioteca padrão do Python para manipulação e cálculos de endereços IP
-
-# Define o bloco de rede IPv6 atribuído pelo provedor (/48)
-bloco_global = ipaddress.IPv6Network("2001:db8::/48")
-
-# Calcula o total de sub-redes /64 possíveis dividindo o prefixo /48
-subredes = list(bloco_global.subnets(new_prefix=64))
-
-# Imprime o total de sub-redes calculadas (esperado: 2^(64-48) = 65.536)
-print(f"Total de sub-redes /64 geradas: {len(subredes)}")
-
-# Exibe os 3 primeiros blocos de sub-rede /64 alocados para pipelines de dados
-for i, sub in enumerate(subredes[:3]):
-    print(f"Sub-rede {i+1}: {sub}")
-```
 
 ---
 
@@ -2243,54 +2054,9 @@ Em pipelines de dados distribuídos:
 
 **1. Cliente UDP (envio direto sem handshake):**
 
-```python
-import socket  # Biblioteca padrão do Python para chamadas de rede e sockets de baixo nível
-
-# Cria um socket UDP (SOCK_DGRAM) utilizando o protocolo IPv4 (AF_INET)
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-# Define o endereço IP do servidor de destino e a porta bem conhecida (DNS: 53 ou NTP: 123)
-servidor_destino = ("8.8.8.8", 53)
-
-# Mensagem simples em bytes para envio imediato (sem necessidade de handshake de 3 vias)
-mensagem = b"ping_telemetria"
-
-# O cliente envia o datagrama diretamente para o destino
-client_socket.sendto(mensagem, servidor_destino)
-
-# Obtém as informações do socket local alocado pelo sistema operacional
-ip_origem, porta_origem_alocada = client_socket.getsockname()
-
-# Imprime a porta de origem selecionada aleatoriamente/dinamicamente pelo kernel
-print(f"Datagrama UDP enviado com sucesso!")
-print(f"Porta de Origem alocada aleatoriamente pelo SO: {porta_origem_alocada}")
-print(f"Porta de Destino do Servidor: {servidor_destino[1]}")
-
-# Fecha o descritor de socket no sistema operacional
-client_socket.close()
-```
 
 **2. Cliente TCP (executando o Handshake de 3 Vias):**
 
-```python
-import socket  # Biblioteca padrão do Python para chamadas de rede
-
-# Cria um socket TCP (SOCK_STREAM) utilizando o protocolo IPv4 (AF_INET)
-sock_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-# Define o destino do banco de dados (Host e Porta TCP 5432)
-destino_banco = ("10.0.1.50", 5432)
-
-# O comando connect() aciona no kernel o envio de SYN, recebimento de SYN-ACK e envio de ACK (Handshake de 3 Vias)
-print("Iniciando Handshake TCP de 3 vias...")
-sock_tcp.connect(destino_banco)
-
-# Quando o método connect() retorna sem erros, a sessão TCP está no estado ESTABLISHED
-print("Sessão TCP estabelecida com sucesso via 3-Way Handshake!")
-
-# Fecha a conexão disparando a sequência FIN-ACK de encerramento
-sock_tcp.close()
-```
 
 ---
 
@@ -2576,108 +2342,16 @@ Análise de cada atividade desempenhada pelo usuário e seu protocolo correspond
 
 **1. Consulta DNS de Cliente via UDP (Resolução rápida de IP para conexões de dados):**
 
-```python
-import dns.query  # Módulo dnspython para despacho de requisições de rede DNS
-import dns.message  # Módulo para construção de mensagens e pacotes DNS
-
-# 1. Cria uma mensagem de consulta DNS para o domínio desejado
-mensagem_consulta = dns.message.make_query("bigquery.googleapis.com", "A")
-
-# 2. Envia a consulta diretamente via protocolo UDP na porta 53 (rápido e sem handshake)
-resposta_udp = dns.query.udp(mensagem_consulta, "8.8.8.8", port=53, timeout=2.0)
-
-# 3. Itera sobre os registros retornados na resposta DNS
-for registro in resposta_udp.answer:
-    print(f"Registro resolvido via DNS/UDP: {registro}")
-```
 
 **2. Transferência de Zona DNS Servidor-Servidor via TCP (Sincronização completa de registros):**
 
-```python
-import dns.query  # Módulo dnspython para despacho de requisições de rede DNS
-import dns.zone   # Módulo para manipulação de base de dados de zonas DNS
-
-# 1. Executa a transferência de zona completa (AXFR) conectando ao servidor DNS via protocolo TCP (porta 53)
-# O TCP garante que nenhum registro da zona seja perdido ou corrompido durante a sincronização entre servidores
-zona_sincronizada = dns.zone.from_xfr(dns.query.xfr("192.168.1.10", "interno.corp", port=53))
-
-# 2. Exibe os nós e registros da zona sincronizada com integridade TCP garantida
-for nome, node in zona_sincronizada.nodes.items():
-    print(f"Host sincronizado entre servidores DNS via TCP: {nome}")
-```
 
 **3. Envio de e-mail de alerta de pipeline via SMTP:**
 
-```python
-import smtplib  # Biblioteca nativa do Python para conexão com servidores de e-mail via protocolo SMTP
-from email.mime.text import MIMEText  # Módulo para formatação do corpo do e-mail no padrão MIME
-
-# Configurações do servidor SMTP do provedor de e-mail
-servidor_smtp = "smtp.gmail.com"
-porta_smtp = 587  # Porta padrão para submissão segura de e-mail com STARTTLS
-usuario_email = "pipeline-alerts@empresa.com"
-senha_app = "senha_de_aplicativo_segura"
-
-# Montagem do conteúdo do e-mail de alerta de falha no pipeline de dados
-corpo_mensagem = "ALERTA: O Job Spark 'etl_vendas_gold' falhou durante a execucao na etapa de escrita no BigQuery."
-msg = MIMEText(corpo_mensagem)
-msg["Subject"] = "[URGENTE] Falha no Pipeline de Dados - ETL Vendas"
-msg["From"] = usuario_email
-msg["To"] = "engenharia-de-dados@empresa.com"
-
-# 1. Abre a conexão TCP com o servidor SMTP na porta 587
-with smtplib.SMTP(servidor_smtp, porta_smtp) as servidor:
-    # 2. Envia o comando EHLO para identificar o cliente ao servidor SMTP
-    servidor.ehlo()
-    
-    # 3. Eleva a conexão de texto puro para uma sessão segura criptografada com TLS
-    servidor.starttls()
-    servidor.ehlo()
-    
-    # 4. Realiza a autenticação do usuário no servidor SMTP
-    servidor.login(usuario_email, senha_app)
-    
-    # 5. Executa o comando SMTP MAIL FROM e RCPT TO para enviar o e-mail
-    servidor.sendmail(msg["From"], [msg["To"]], msg.as_string())
-    print("E-mail de alerta de falha de pipeline enviado com sucesso via protocolo SMTP!")
-```
 
 **4. Conexão persistente de longo prazo para leitura de arquivos em rede via SMB:**
 
 
-```python
-from smbprotocol.connection import Connection  # Conexão de transporte TCP com o servidor SMB
-from smbprotocol.session import Session        # Sessão autenticada de longo prazo do usuário SMB
-from smbprotocol.tree import TreeConnect       # Mapeamento do diretório compartilhado remoto
-from smbprotocol.open import Open, FilePipePrinterAccessMask, CreateDisposition # Manipulação de arquivos remotos
-
-# 1. Estabelece a conexão TCP de longo prazo com o servidor SMB na porta 445
-conexao_smb = Connection(uuid=None, server="10.0.1.100", port=445)
-conexao_smb.connect()
-
-# 2. Autentica a sessão de usuário no servidor de arquivos
-sessao_smb = Session(conexao_smb, username="etl_worker", password="senha_segura_rede")
-sessao_smb.connect()
-
-# 3. Conecta à árvore de compartilhamento (Share //10.0.1.100/dados_legados)
-compartilhamento = TreeConnect(sessao_smb, r"\\10.0.1.100\dados_legados")
-compartilhamento.connect()
-
-# 4. Abre o arquivo remoto diretamente pela rede persistente (como se fosse disco local)
-arquivo_remoto = Open(compartilhamento, "vendas_diarias.csv")
-arquivo_remoto.create(
-    desired_access=FilePipePrinterAccessMask.GENERIC_READ,
-    create_disposition=CreateDisposition.FILE_OPEN
-)
-
-# 5. Lê os primeiros 1024 bytes do arquivo remoto diretamente pela sessão SMB aberta
-conteudo_bytes = arquivo_remoto.read(0, 1024)
-print(f"Conteúdo lido da pasta compartilhada SMB: {conteudo_bytes[:100]}")
-
-# 6. Encerra o manipulador de arquivo e a sessão de rede
-arquivo_remoto.close()
-conexao_smb.disconnect()
-```
 
 ---
 
@@ -2871,36 +2545,6 @@ No desenho de arquitetura de dados de alta escala:
 
 ### 15.7 Exemplo de Código Real (Terraform / Infraestrutura como Código com Redundância e Alta Disponibilidade)
 
-```hcl
-# Definição de VPC e Sub-redes Redundantes em Múltiplas Zonas de Disponibilidade (Multi-AZ)
-
-# 1. Criação da VPC principal da infraestrutura de dados
-resource "aws_vpc" "vpc_dados" {
-  cidr_block           = "10.0.0.0/16" # Bloco de endereçamento IP privado da rede
-  enable_dns_hostnames = true          # Habilita resolução interna de nomes DNS
-  enable_dns_support   = true          # Suporte a resolução DNS da nuvem
-}
-
-# 2. Sub-rede Primária na Zona de Disponibilidade A (AZ 1)
-resource "aws_subnet" "subnet_primaria" {
-  vpc_id            = aws_vpc.vpc_dados.id # Associa à VPC criada
-  cidr_block        = "10.0.1.0/24"        # Bloco de IPs para a sub-rede da AZ A
-  availability_zone = "us-east-1a"         # Zona física de data center 1
-}
-
-# 3. Sub-rede Secundária na Zona de Disponibilidade B (AZ 2 - Redundância Física)
-resource "aws_subnet" "subnet_secundaria" {
-  vpc_id            = aws_vpc.vpc_dados.id # Associa à mesma VPC
-  cidr_block        = "10.0.2.0/24"        # Bloco de IPs para a sub-rede da AZ B
-  availability_zone = "us-east-1b"         # Zona física de data center 2 separada contra desastres
-}
-
-# 4. Gateway NAT redundante para garantir que a falha de uma AZ não derrube o cluster
-resource "aws_nat_gateway" "nat_gw_a" {
-  allocation_id = "eipalloc-01"                      # IP elástico dedicado
-  subnet_id     = aws_subnet.subnet_primaria.id      # Alocado no primeiro caminho redundante
-}
-```
 
 ---
 
@@ -3075,32 +2719,6 @@ Em projetos de **Smart Grids e Indústria 4.0**:
 
 ### 16.6 Exemplo de Código Real (Python / Ingestão de Dados de Sensores Powerline/PLC em Pipeline Kafka)
 
-```python
-import json  # Biblioteca para serialização de dados no formato JSON
-from kafka import KafkaProducer  # Cliente Kafka para publicação de mensagens em tópicos de streaming
-
-# 1. Configuração do produtor Kafka conectado ao cluster de mensageria
-produtor = KafkaProducer(
-    bootstrap_servers=["kafka-broker.corp.internal:9092"], # Endereço do broker Kafka
-    value_serializer=lambda v: json.dumps(v).encode("utf-8") # Serializa o dicionário Python para bytes JSON
-)
-
-# 2. Dados de telemetria recebidos via barramento Powerline (PLC) de medidores elétricos
-leitura_sensor_powerline = {
-    "sensor_id": "PLC-METER-042",               # Identificador único do dispositivo Powerline
-    "protocolo_meio": "Powerline_PLC_HomePlug", # Tecnologia de transmissão física (rede elétrica)
-    "tensao_volts": 220.4,                      # Tensão medida na rede elétrica local
-    "consumo_kwh": 14.85,                       # Consumo de energia acumulado
-    "temperatura_celsius": 32.1                 # Temperatura operacional do equipamento
-}
-
-# 3. Publicação do evento no tópico de telemetria do Data Lake
-topico_destino = "iot_telemetria_powerline"
-produtor.send(topico_destino, value=leitura_sensor_powerline) # Envia o registro de forma assíncrona
-produtor.flush() # Garante a entrega do lote de dados no broker
-
-print(f"Evento de telemetria do medidor Powerline enviado com sucesso para o tópico: {topico_destino}")
-```
 
 ---
 
